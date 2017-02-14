@@ -137,7 +137,7 @@ export class App {
                 view.isActive    = true;
                 view.isVisible   = true;
                 view.isPeeking   = false;
-                view.isScrolling = false;
+                view.isScrolling = true;
 
                 this.State.view = view;
 

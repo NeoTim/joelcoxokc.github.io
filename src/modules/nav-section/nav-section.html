@@ -36,8 +36,8 @@
                     ${view.isVisible ? 'visible' : ''}">
 
             <icon class="menu-icon" click.delegate="toggleNavigation($event)" ico="menu"></icon>
-            <icon class="direction-icon" click.delegate="navigateDirection($event)" ico="arrow_back"></icon>
-            <span class="header-title">${view.title}</span>
+            <icon if.bind="view.viewIndex > 0" class="direction-icon" click.delegate="navigateDirection($event)" ico="arrow_back"></icon>
+            <span if.bind="view.viewIndex > 0" class="header-title">${view.title}</span>
         </header>
     </section>
 </template>

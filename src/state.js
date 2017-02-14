@@ -101,6 +101,9 @@ export class State {
 
         if (!this.view) {
             this.view = view;
+            this.view.isVisible   = true;
+            this.view.isActive    = true;
+            this.view.isScrolling = true;
         }
 
         if (this.view && this.views.length === 2) {

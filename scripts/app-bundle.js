@@ -108,7 +108,7 @@ define('app',['exports', 'aurelia-framework', 'modules/header/header', 'modules/
                     view.isActive = true;
                     view.isVisible = true;
                     view.isPeeking = false;
-                    view.isScrolling = false;
+                    view.isScrolling = true;
 
                     _this.State.view = view;
 
@@ -424,6 +424,9 @@ define('state',['exports', 'aurelia-framework', 'aurelia-event-aggregator'], fun
 
             if (!this.view) {
                 this.view = view;
+                this.view.isVisible = true;
+                this.view.isActive = true;
+                this.view.isScrolling = true;
             }
 
             if (this.view && this.views.length === 2) {
@@ -998,6 +1001,23 @@ define('modules/education/education',["exports"], function (exports) {
         };
     };
 });
+define('modules/footer/footer',["exports"], function (exports) {
+    "use strict";
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var Footer = exports.Footer = function Footer() {
+        _classCallCheck(this, Footer);
+    };
+});
 define('modules/experience/experience',["exports"], function (exports) {
     "use strict";
 
@@ -1017,23 +1037,6 @@ define('modules/experience/experience',["exports"], function (exports) {
         this.props = {
             experiences: experiences.list
         };
-    };
-});
-define('modules/footer/footer',["exports"], function (exports) {
-    "use strict";
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    var Footer = exports.Footer = function Footer() {
-        _classCallCheck(this, Footer);
     };
 });
 define('modules/header/header',['exports', 'aurelia-framework', 'core/core'], function (exports, _aureliaFramework, _core) {
@@ -1662,10 +1665,10 @@ define('text!modules/footer/footer.html', ['module'], function(module) { module.
 define('text!modules/header/header.html', ['module'], function(module) { module.exports = "<template><nav><button><icon ico=home></icon></button><button click.delegate=\"setActiveTab('profile')\">Profile</button><button click.delegate=\"setActiveTab('projects')\">Projects</button><button click.delegate=\"setActiveTab('experience')\">Experience</button><button click.delegate=\"setActiveTab('educuation')\">Educuation</button></nav></template>"; });
 define('text!modules/nav/nav.html', ['module'], function(module) { module.exports = "<template><ul><li repeat.for=\"items of leftNav\" click.delegate=\"navigateToItem($event, item)\"><a>${item.name}</a></li></ul><button click.delegate=buttonClicked($event)></button><ul><li repeat.for=\"items of rightNav\" click.delegate=\"navigateToItem($event, item)\"><a>${item.name}</a></li></ul></template>"; });
 define('text!modules/nav-bar/nav-bar.html', ['module'], function(module) { module.exports = "<template><button class=static-button><span class=text>${currentTitle}</span></button><ul class=slider><li repeat.for=\"section of sections\"><span class=text>${section.heading}</span><span class=icon></span></li></ul></template>"; });
-define('text!modules/nav-section/nav-section.html', ['module'], function(module) { module.exports = "<template class=\"${view.isActive ? 'active' : ''} ${view.isScrolling ? 'scrolling' : ''} ${view.isPeeking ? 'peeking' : ''} ${view.isVisible ? 'visible' : ''}\"><section class=section-container><header ref=header click.delegate=headerClicked($event) class=\"${positionClass} nav-section-header ${view.isActive ? 'active' : ''} ${view.isScrolling ? 'scrolling' : ''} ${view.isPeeking ? 'peeking' : ''} ${view.isVisible ? 'visible' : ''}\"><icon class=direction-icon ico=arrow_back></icon><span class=header-title>${view.title}</span></header><compose containerless view-model.bind=view.viewModel></compose><header ref=fixedheader class=\"${positionClass} nav-section-header fixed app-${view.name}-header ${view.isActive ? 'active' : ''} ${view.isScrolling ? 'scrolling' : ''} ${view.isPeeking ? 'peeking' : ''} ${view.isVisible ? 'visible' : ''}\"><icon class=menu-icon click.delegate=toggleNavigation($event) ico=menu></icon><icon class=direction-icon click.delegate=navigateDirection($event) ico=arrow_back></icon><span class=header-title>${view.title}</span></header></section></template>"; });
+define('text!modules/nav-section/nav-section.html', ['module'], function(module) { module.exports = "<template class=\"${view.isActive ? 'active' : ''} ${view.isScrolling ? 'scrolling' : ''} ${view.isPeeking ? 'peeking' : ''} ${view.isVisible ? 'visible' : ''}\"><section class=section-container><header ref=header click.delegate=headerClicked($event) class=\"${positionClass} nav-section-header ${view.isActive ? 'active' : ''} ${view.isScrolling ? 'scrolling' : ''} ${view.isPeeking ? 'peeking' : ''} ${view.isVisible ? 'visible' : ''}\"><icon class=direction-icon ico=arrow_back></icon><span class=header-title>${view.title}</span></header><compose containerless view-model.bind=view.viewModel></compose><header ref=fixedheader class=\"${positionClass} nav-section-header fixed app-${view.name}-header ${view.isActive ? 'active' : ''} ${view.isScrolling ? 'scrolling' : ''} ${view.isPeeking ? 'peeking' : ''} ${view.isVisible ? 'visible' : ''}\"><icon class=menu-icon click.delegate=toggleNavigation($event) ico=menu></icon><icon if.bind=\"view.viewIndex > 0\" class=direction-icon click.delegate=navigateDirection($event) ico=arrow_back></icon><span if.bind=\"view.viewIndex > 0\" class=header-title>${view.title}</span></header></section></template>"; });
 define('text!modules/navigation/navigation.html', ['module'], function(module) { module.exports = "<template><header></header><section><ul class=navigation-list><li repeat.for=\"view of views\" class=\"${view === State.view ? 'active' : ''}\" click.delegate=navigateToView(view)><icon ico.bind=view.icon></icon><span class=text>${view.title}</span></li></ul></section></template>"; });
+define('text!modules/profile/profile.html', ['module'], function(module) { module.exports = "<template><style>@media screen and (max-width:1200px){.app-profile .row{flex-direction:column}.app-profile .row .profile-info{width:100%}.app-profile .row .profile-info ul{margin:24px}}</style><div class=row><div class=profile-image><img src=http://placehold.it/350x450 alt=\"\"></div><div class=profile-info><ul><li><label>Name</label><p>${props.name}</p></li><li><label>Birthday</label><p>${props.birthday}</p></li><li><label>Titles</label><p repeat.for=\"title of props.titles\">${title}</p></li><li><label>Locations</label><p repeat.for=\"loc of props.locations\">${loc}</p></li><li><label>Info</label><p>${props.info}</p></li></ul></div></div></template>"; });
 define('text!modules/projects/projects.html', ['module'], function(module) { module.exports = "<template><template repeat.for=\"project of props.projects\"><article><div class=project-heading><div class=project-image if.bind=project.image><img src.bind=project.image alt.bind=project.name></div><div class=project-title>${project.name}</div><div class=project-date>${project.date}</div></div><ul class=project-details><li repeat.for=\"note of project.notes\"><icon ico=check_circle></icon><span class=text>${note}</span></li></ul><ul class=project-tech><li repeat.for=\"tech of project.tech\">${tech}</li></ul></article></template></template>"; });
-define('text!modules/profile/profile.html', ['module'], function(module) { module.exports = "<template><div class=row><div class=profile-image><img src=http://placehold.it/350x450 alt=\"\"></div><div class=profile-info><ul><li><label>Name</label><p>${props.name}</p></li><li><label>Birthday</label><p>${props.birthday}</p></li><li><label>Titles</label><p repeat.for=\"title of props.titles\">${title}</p></li><li><label>Locations</label><p repeat.for=\"loc of props.locations\">${loc}</p></li><li><label>Info</label><p>${props.info}</p></li></ul></div></div></template>"; });
 define('text!modules/technology/technology.html', ['module'], function(module) { module.exports = "<template><template repeat.for=\"tech of props.technologies\"><article><h1>${tech.title}</h1><ul><li repeat.for=\"item of tech.list\"><img src.bind=item.img alt.bind=item.name><span class=text>${item.title}</span></li></ul></article></template></template>"; });
 define('text!modules/title/title.html', ['module'], function(module) { module.exports = "<template><style>.app-title .title-image{height:450px;width:350px;display:block;float:left;margin:75px 75px 0 75px}.app-title .title-text h1{margin-top:75px;margin-bottom:75px;text-align:center;font-size:56px}.app-title .title-text{display:block;width:100%;text-align:center}</style><div class=title-text><h1>${title}</h1><h3>${summary}</h3></div></template>"; });
 //# sourceMappingURL=app-bundle.js.map
