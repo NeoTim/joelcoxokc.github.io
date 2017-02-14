@@ -123,6 +123,8 @@ export class App {
                 view.isScrolling = false;
             }
         }
+
+        
         target.onscroll = (event)=> {
 
             let scrollBottom = target.scrollTop + target.clientHeight;
@@ -134,57 +136,82 @@ export class App {
             if (scrollTop === 0) {
                 view = this.State.views[0];
                 
-                view.isActive    = true;
-                view.isVisible   = true;
-                view.isPeeking   = false;
-                view.isScrolling = true;
+                view.reset({
+                    isActive: true,
+                    isVisible: true,
+                    isScrolling: true
+                });
 
                 this.State.view = view;
 
                 next = this.State.views[1];
 
-                next.isActive    = false;
-                next.isVisible   = false;
-                next.isPeeking   = true;
-                next.isScrolling = false;
+                if (next) {
+                    next.reset({
+                        isPeeking: true
+                    });
+                }
 
-                resetViewsAtIndex(2);
+                this.State.views.slice(2).forEach(view => view.reset());
                 return;
             }
 
-            resetViewsAtIndex(0);
+            this.State.views.slice(2).forEach(view => view.reset());
 
             while(view = this.State.views[index++]) {
                 next = this.State.views[index];
 
 
-                let bottom = view.element.offsetTop + view.element.clientHeight;
-                let offset = view.element.offsetTop - scrollTop;
-                let backset = (view.element.offsetTop + view.element.clientHeight) - scrollTop;
+                let bottom = view.coords.bottom();
+                let offset = view.coords.top() - scrollTop;
+                let backset = (view.coords.top() + view.element.clientHeight) - scrollTop;
 
 
                 // Is View Scrolling
-                if (scrollTop < bottom && scrollTop >= view.element.offsetTop) {
-                    view.isScrolling = true;
-                    view.isActive    = true;
-                    view.isVisible   = true;
-                    view.isPeeking   = false;
+                if (scrollTop < bottom && scrollTop >= view.coords.top()) {
+                    view.reset({
+                        isScrolling: true,
+                        isVisible: true,
+                        isActive: true
+                    });
 
                     this.State.view = view;
 
+                    if (next && next.coords.top()) {
+                        next.reset({isPeeking: true});
+
+                        if (next.coords.top() <= (scrollTop + (target.clientHeight - 56))) {
+                            next.reset({
+                                isVisible: true
+                            });
+                        }
+
+                        if (next.coords.top() <= (scrollTop + (target.clientHeight / 2))) {
+                            next.reset({
+                                isVisible: true,
+                                isActive: true
+                            })
+                        }
+
+                        if (this.State.views[index+1]) {
+                            this.State.views.slice(index+1).forEach(view => view.reset());
+                        }
+                        break;
+                    }
+
                     if (next) {
-                        if (next.element.offsetTop >= scrollTop) {
+                        if (next.coords.top() >= scrollTop) {
                             next.isVisible   = false;
                             next.isPeeking   = true;
                             next.isActive    = false;
                             next.isScrolling = false;
 
-                            if (next.element.offsetTop <= (scrollTop + (target.clientHeight - 56))) {
+                            if (next.coords.top() <= (scrollTop + (target.clientHeight - 56))) {
                                 next.isPeeking = false;
                                 next.isVisible = true;
                             }
 
-                            if (next.element.offsetTop <= (scrollTop + (target.clientHeight / 2))) {
+                            if (next.coords.top() <= (scrollTop + (target.clientHeight / 2))) {
 
                                 next.isPeeking   = false;
                                 next.isVisible   = true;
@@ -192,6 +219,7 @@ export class App {
                                 next.isScrolling = false;
 
                                 next = this.State.views[index+1];
+                                
                                 if (next) {
                                     next.isPeeking   = true;
                                     next.isActive    = false;
@@ -218,17 +246,11 @@ export class App {
                 }
 
                 else if (bottom < scrollTop) {
-                    view.isActive    = true;
-                    view.isVisible   = false;
-                    view.isPeeking   = false;
-                    view.isScrolling = false;
+                    view.reset({isActive: true});
                 }
                 else {
-                    resetViewsAtIndex(index);
-                    view.isActive = false;
-                    view.isPeeking = false;
-                    view.isVisible = false;
-                    view.isScrolling = false;
+                    this.State.views.slice(index).forEach(view => view.reset());
+                    view.reset();
                 }
             }
         }

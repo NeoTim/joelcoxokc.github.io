@@ -65,12 +65,9 @@ nav-section {
 container {
     display: block;
     background: white;
-    margin: 100px;
     box-shadow: 2px 3px 4px rgba(0, 0, 0, 0.1), -2px 0px 4px rgba(0, 0, 0, 0.1), 0 10px 20px -5px rgba(0,0,0,0.2);
-    border-radius: 12px;
     z-index: 2;
     position: relative;
-    max-height: calc(100% - 200px);
     height: 100%;
     overflow: hidden;
 }
@@ -111,7 +108,6 @@ container > main {
     left: 0;
     right: 0;
     bottom: 0;
-    border-radius: 2px;
     height: 100%;
     width: 100%;
     max-height: 100%;
@@ -122,9 +118,6 @@ container > main {
     overflow-x: hidden;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch; /* lets it scroll lazy */
-    > nav-section {
-        // z-index: 2;
-    }
     
     .nav-section-container {
         display: flex;
@@ -432,9 +425,6 @@ container {
 
 @media screen and (min-width: 1200px) {
     container {
-        border-radius: 12px;
-        max-height: calc(100vh - 200px);
-        margin: 100px;
     }
 }
 

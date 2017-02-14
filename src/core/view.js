@@ -18,9 +18,6 @@ export class View {
 
     bgElement: Element = null;
 
-    constructor(properties) {
-        Object.assign(this, properties)
-    }
 
     get sectionHeight() {
         const defaultHeight = window.innerHeight - 200;
@@ -28,6 +25,33 @@ export class View {
             return this.navSection.element.clientHeight || defaultHeight;
         }
         return defaultHeight;
+    }
+
+    constructor(props) {
+        Object.assign(this, props);
+
+        this.coords = {};
+
+        this.coords.top = ()=> {
+            return this.element.offsetTop;
+        }
+
+        this.coords.bottom = ()=> {
+            return this.element.offsetTop + this.element.clientHeight;
+        }
+    }
+
+    reset(properties) {
+        Object.assign(this, {
+            isVisible: false,
+            isScrolling: false,
+            isPeeking: false,
+            isActive: false
+        }, properties);
+    }
+
+    configure(props) {
+        Object.assign(this, props);
     }
 
     setBgElement(element) {
