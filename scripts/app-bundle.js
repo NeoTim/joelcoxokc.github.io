@@ -1052,15 +1052,6 @@ define('core/view',["exports"], function (exports) {
         return View;
     }();
 });
-define('resources/index',["exports"], function (exports) {
-  "use strict";
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.configure = configure;
-  function configure(config) {}
-});
 define('modules/index',['exports'], function (exports) {
     'use strict';
 
@@ -1071,6 +1062,15 @@ define('modules/index',['exports'], function (exports) {
     function configure(config) {
         config.globalResources('./nav-section/nav-section', './nav-bar/nav-bar', './navigation/navigation', './icon/icon');
     }
+});
+define('resources/index',["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.configure = configure;
+  function configure(config) {}
 });
 define('modules/education/education',["exports"], function (exports) {
     "use strict";
@@ -1260,134 +1260,6 @@ define('modules/nav/nav',["exports"], function (exports) {
         return Nav;
     }();
 });
-define('modules/nav-section/nav-section',['exports', 'aurelia-framework', 'aurelia-event-aggregator'], function (exports, _aureliaFramework, _aureliaEventAggregator) {
-    'use strict';
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-    exports.NavSection = undefined;
-
-    function _initDefineProp(target, property, descriptor, context) {
-        if (!descriptor) return;
-        Object.defineProperty(target, property, {
-            enumerable: descriptor.enumerable,
-            configurable: descriptor.configurable,
-            writable: descriptor.writable,
-            value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
-        });
-    }
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
-        var desc = {};
-        Object['ke' + 'ys'](descriptor).forEach(function (key) {
-            desc[key] = descriptor[key];
-        });
-        desc.enumerable = !!desc.enumerable;
-        desc.configurable = !!desc.configurable;
-
-        if ('value' in desc || desc.initializer) {
-            desc.writable = true;
-        }
-
-        desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-            return decorator(target, property, desc) || desc;
-        }, desc);
-
-        if (context && desc.initializer !== void 0) {
-            desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-            desc.initializer = undefined;
-        }
-
-        if (desc.initializer === void 0) {
-            Object['define' + 'Property'](target, property, desc);
-            desc = null;
-        }
-
-        return desc;
-    }
-
-    function _initializerWarningHelper(descriptor, context) {
-        throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
-    }
-
-    var _dec, _dec2, _class, _desc, _value, _class2, _descriptor;
-
-    var NavSection = exports.NavSection = (_dec = (0, _aureliaFramework.customElement)('nav-section'), _dec2 = (0, _aureliaFramework.inject)(Element, _aureliaEventAggregator.EventAggregator), _dec(_class = _dec2(_class = (_class2 = function () {
-        function NavSection(element, eventAggregator) {
-            _classCallCheck(this, NavSection);
-
-            _initDefineProp(this, 'view', _descriptor, this);
-
-            this.header = null;
-            this.isActive = false;
-
-            this.element = element;
-            this.eventAggregator = eventAggregator;
-        }
-
-        NavSection.prototype.attached = function attached() {
-            if (this.element.classList.contains('first')) {
-                this.positionClass = 'first';
-            }
-            if (this.element.classList.contains('last')) {
-                this.positionClass = 'last';
-            }
-
-            this.element.parentElement.parentElement.appendChild(this.fixedheader);
-
-            if (this.view.bgElement) {
-                this.view.bgElement.style.height = this.element.clientHeight + 'px';
-            }
-
-            this.eventAggregator.publish('nav-section:attached', this);
-        };
-
-        NavSection.prototype.viewChanged = function viewChanged(view) {
-            if (view) {
-                view.setNavSection(this);
-            }
-        };
-
-        NavSection.prototype.headerClicked = function headerClicked(event) {
-            event.preventDefault();
-
-            this.eventAggregator.publish('state:set:view', this.view);
-        };
-
-        NavSection.prototype.toggleNavigation = function toggleNavigation(event) {
-            event.preventDefault();
-
-            this.eventAggregator.publish('state:navigation:toggle');
-        };
-
-        NavSection.prototype.navigateDirection = function navigateDirection(event) {
-            event.preventDefault();
-            if (this.view.isPeeking) {
-                this.eventAggregator.publish('state:scroll-to', {
-                    top: this.element.offsetTop
-                });
-            } else if (this.view.isScrolling) {
-                this.eventAggregator.publish('state:scroll-to', {
-                    top: this.element.previousElementSibling.offsetTop
-                });
-            }
-        };
-
-        return NavSection;
-    }(), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'view', [_aureliaFramework.bindable], {
-        enumerable: true,
-        initializer: function initializer() {
-            return null;
-        }
-    })), _class2)) || _class) || _class);
-});
 define('modules/nav-bar/nav-bar',['exports', 'aurelia-framework', 'aurelia-event-aggregator'], function (exports, _aureliaFramework, _aureliaEventAggregator) {
     'use strict';
 
@@ -1529,6 +1401,134 @@ define('modules/nav-bar/nav-bar',['exports', 'aurelia-framework', 'aurelia-event
 
         return NavBar;
     }(), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'state', [_aureliaFramework.bindable], {
+        enumerable: true,
+        initializer: function initializer() {
+            return null;
+        }
+    })), _class2)) || _class) || _class);
+});
+define('modules/nav-section/nav-section',['exports', 'aurelia-framework', 'aurelia-event-aggregator'], function (exports, _aureliaFramework, _aureliaEventAggregator) {
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    exports.NavSection = undefined;
+
+    function _initDefineProp(target, property, descriptor, context) {
+        if (!descriptor) return;
+        Object.defineProperty(target, property, {
+            enumerable: descriptor.enumerable,
+            configurable: descriptor.configurable,
+            writable: descriptor.writable,
+            value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
+        });
+    }
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+        var desc = {};
+        Object['ke' + 'ys'](descriptor).forEach(function (key) {
+            desc[key] = descriptor[key];
+        });
+        desc.enumerable = !!desc.enumerable;
+        desc.configurable = !!desc.configurable;
+
+        if ('value' in desc || desc.initializer) {
+            desc.writable = true;
+        }
+
+        desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+            return decorator(target, property, desc) || desc;
+        }, desc);
+
+        if (context && desc.initializer !== void 0) {
+            desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+            desc.initializer = undefined;
+        }
+
+        if (desc.initializer === void 0) {
+            Object['define' + 'Property'](target, property, desc);
+            desc = null;
+        }
+
+        return desc;
+    }
+
+    function _initializerWarningHelper(descriptor, context) {
+        throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
+    }
+
+    var _dec, _dec2, _class, _desc, _value, _class2, _descriptor;
+
+    var NavSection = exports.NavSection = (_dec = (0, _aureliaFramework.customElement)('nav-section'), _dec2 = (0, _aureliaFramework.inject)(Element, _aureliaEventAggregator.EventAggregator), _dec(_class = _dec2(_class = (_class2 = function () {
+        function NavSection(element, eventAggregator) {
+            _classCallCheck(this, NavSection);
+
+            _initDefineProp(this, 'view', _descriptor, this);
+
+            this.header = null;
+            this.isActive = false;
+
+            this.element = element;
+            this.eventAggregator = eventAggregator;
+        }
+
+        NavSection.prototype.attached = function attached() {
+            if (this.element.classList.contains('first')) {
+                this.positionClass = 'first';
+            }
+            if (this.element.classList.contains('last')) {
+                this.positionClass = 'last';
+            }
+
+            this.element.parentElement.parentElement.appendChild(this.fixedheader);
+
+            if (this.view.bgElement) {
+                this.view.bgElement.style.height = this.element.clientHeight + 'px';
+            }
+
+            this.eventAggregator.publish('nav-section:attached', this);
+        };
+
+        NavSection.prototype.viewChanged = function viewChanged(view) {
+            if (view) {
+                view.setNavSection(this);
+            }
+        };
+
+        NavSection.prototype.headerClicked = function headerClicked(event) {
+            event.preventDefault();
+
+            this.eventAggregator.publish('state:set:view', this.view);
+        };
+
+        NavSection.prototype.toggleNavigation = function toggleNavigation(event) {
+            event.preventDefault();
+
+            this.eventAggregator.publish('state:navigation:toggle');
+        };
+
+        NavSection.prototype.navigateDirection = function navigateDirection(event) {
+            event.preventDefault();
+            if (this.view.isPeeking) {
+                this.eventAggregator.publish('state:scroll-to', {
+                    top: this.element.offsetTop
+                });
+            } else if (this.view.isScrolling && this.element.previousElementSibling) {
+                this.eventAggregator.publish('state:scroll-to', {
+                    top: this.element.previousElementSibling.offsetTop
+                });
+            }
+        };
+
+        return NavSection;
+    }(), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'view', [_aureliaFramework.bindable], {
         enumerable: true,
         initializer: function initializer() {
             return null;
@@ -1757,8 +1757,8 @@ define('text!modules/footer/footer.html', ['module'], function(module) { module.
 define('text!modules/header/header.html', ['module'], function(module) { module.exports = "<template><nav><button><icon ico=home></icon></button><button click.delegate=\"setActiveTab('profile')\">Profile</button><button click.delegate=\"setActiveTab('projects')\">Projects</button><button click.delegate=\"setActiveTab('experience')\">Experience</button><button click.delegate=\"setActiveTab('educuation')\">Educuation</button></nav></template>"; });
 define('text!modules/nav/nav.html', ['module'], function(module) { module.exports = "<template><ul><li repeat.for=\"items of leftNav\" click.delegate=\"navigateToItem($event, item)\"><a>${item.name}</a></li></ul><button click.delegate=buttonClicked($event)></button><ul><li repeat.for=\"items of rightNav\" click.delegate=\"navigateToItem($event, item)\"><a>${item.name}</a></li></ul></template>"; });
 define('text!modules/nav-bar/nav-bar.html', ['module'], function(module) { module.exports = "<template><button class=static-button><span class=text>${currentTitle}</span></button><ul class=slider><li repeat.for=\"section of sections\"><span class=text>${section.heading}</span><span class=icon></span></li></ul></template>"; });
-define('text!modules/nav-section/nav-section.html', ['module'], function(module) { module.exports = "<template class=\"${view.isActive ? 'active' : ''} ${view.isScrolling ? 'scrolling' : ''} ${view.isPeeking ? 'peeking' : ''} ${view.isVisible ? 'visible' : ''}\"><section class=section-container><header ref=header click.delegate=headerClicked($event) class=\"${positionClass} nav-section-header ${view.isActive ? 'active' : ''} ${view.isScrolling ? 'scrolling' : ''} ${view.isPeeking ? 'peeking' : ''} ${view.isVisible ? 'visible' : ''}\"><icon class=direction-icon ico=arrow_back></icon><span class=header-title>${view.title}</span></header><compose containerless view-model.bind=view.viewModel></compose><header ref=fixedheader class=\"${positionClass} nav-section-header fixed app-${view.name}-header ${view.isActive ? 'active' : ''} ${view.isScrolling ? 'scrolling' : ''} ${view.isPeeking ? 'peeking' : ''} ${view.isVisible ? 'visible' : ''}\" click.delegate=navigateDirection($event)><icon class=menu-icon click.delegate=toggleNavigation($event) ico=menu></icon><icon if.bind=\"view.viewIndex > 0\" class=direction-icon ico=arrow_back></icon><span if.bind=\"view.viewIndex > 0\" class=header-title>${view.title}</span></header></section></template>"; });
 define('text!modules/navigation/navigation.html', ['module'], function(module) { module.exports = "<template><header></header><section><ul class=navigation-list><li repeat.for=\"view of views\" class=\"${view === State.view ? 'active' : ''}\" click.delegate=navigateToView(view)><icon ico.bind=view.icon></icon><span class=text>${view.title}</span></li></ul></section></template>"; });
+define('text!modules/nav-section/nav-section.html', ['module'], function(module) { module.exports = "<template class=\"${view.isActive ? 'active' : ''} ${view.isScrolling ? 'scrolling' : ''} ${view.isPeeking ? 'peeking' : ''} ${view.isVisible ? 'visible' : ''}\"><section class=section-container><header ref=header click.delegate=headerClicked($event) class=\"${positionClass} nav-section-header ${view.isActive ? 'active' : ''} ${view.isScrolling ? 'scrolling' : ''} ${view.isPeeking ? 'peeking' : ''} ${view.isVisible ? 'visible' : ''}\"><icon class=direction-icon ico=arrow_back></icon><span class=header-title>${view.title}</span></header><compose containerless view-model.bind=view.viewModel></compose><header ref=fixedheader class=\"${positionClass} nav-section-header fixed app-${view.name}-header ${view.isActive ? 'active' : ''} ${view.isScrolling ? 'scrolling' : ''} ${view.isPeeking ? 'peeking' : ''} ${view.isVisible ? 'visible' : ''}\" click.delegate=navigateDirection($event)><icon class=menu-icon click.delegate=toggleNavigation($event) ico=menu></icon><icon if.bind=\"view.viewIndex > 0\" class=direction-icon ico=arrow_back></icon><span if.bind=\"view.viewIndex > 0\" class=header-title>${view.title}</span></header></section></template>"; });
 define('text!modules/profile/profile.html', ['module'], function(module) { module.exports = "<template><style>@media screen and (max-width:1200px){.app-profile .row{flex-direction:column}.app-profile .row .profile-info{width:100%}.app-profile .row .profile-info ul{margin:24px}}</style><div class=row><div class=profile-image><img src=http://placehold.it/350x450 alt=\"\"></div><div class=profile-info><ul><li><label>Name</label><p>${props.name}</p></li><li><label>Birthday</label><p>${props.birthday}</p></li><li><label>Titles</label><p repeat.for=\"title of props.titles\">${title}</p></li><li><label>Locations</label><p repeat.for=\"loc of props.locations\">${loc}</p></li><li><label>Info</label><p>${props.info}</p></li></ul></div></div></template>"; });
 define('text!modules/projects/projects.html', ['module'], function(module) { module.exports = "<template><template repeat.for=\"project of props.projects\"><article><div class=card-image><img if.bind=project.image src.bind=project.image alt.bind=project.name></div><div class=card-content><div class=card-heading><div class=card-title>${project.name}</div><div class=card-date>${project.date}</div></div><ul class=card-details><li repeat.for=\"note of project.notes\"><icon ico=check_circle></icon><span class=text>${note}</span></li></ul><ul class=card-tags><li repeat.for=\"tech of project.tech\">${tech}</li></ul></div></article></template></template>"; });
 define('text!modules/technology/technology.html', ['module'], function(module) { module.exports = "<template><template repeat.for=\"tech of props.technologies\"><article><h1>${tech.title}</h1><ul><li repeat.for=\"item of tech.list\"><img src.bind=item.img alt.bind=item.name><span class=text>${item.title}</span></li></ul></article></template></template>"; });

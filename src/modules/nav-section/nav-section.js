@@ -56,7 +56,7 @@ export class NavSection {
                 top: this.element.offsetTop
             });
         }
-        else if (this.view.isScrolling) {
+        else if (this.view.isScrolling && this.element.previousElementSibling) {
             this.eventAggregator.publish('state:scroll-to', {
                 top: this.element.previousElementSibling.offsetTop
             });
