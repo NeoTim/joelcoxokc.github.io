@@ -4,9 +4,11 @@
         margin-bottom: 24px;
         border-bottom: 1px solid $outline;
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         align-items: flex-start;
         justify-content: flex-start;
+        padding: 0 12px;
+
 
         > .card-image {
             height: auto;
@@ -17,7 +19,7 @@
             background: white;
             border-radius: 100%;
             box-shadow: 0 2px 3px rgba(0,0,0,0.2);
-            margin: 24px;
+            margin: 24px auto;
             text-align: center;
 
             img {
@@ -41,18 +43,25 @@
             @include card-heading(
                 $outline: $outline
             );
+
+            flex-direction: column;
         }
 
         .card-title {
             @include card-title(
                 $text-tint: $title-tint
             );
+
+            font-size: 24px;
+            font-weight: bold;
         }
 
         .card-date {
             @include card-date(
                 $text-tint: $date-tint
             );
+
+            margin-left: 12px;
         }
 
         .card-details {
@@ -60,6 +69,30 @@
                 $text-tint: $text-tint,
                 $icon-fill: $text-tint
             );
+        }
+    }
+
+    @media screen and (min-width: 1200px) {
+        article {
+            padding: 0 56px;
+            flex-direction: row;
+
+            .card-image {
+                margin: 24px;
+            }
+
+            .card-heading {
+                flex-direction: row;
+            }
+
+            .card-title {
+                font-size: 36px;
+                font-weight: normal;
+            }
+
+            .card-date {
+                margin-left: auto;
+            }
         }
     }
 }
