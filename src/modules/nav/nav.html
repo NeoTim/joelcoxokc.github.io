@@ -1,0 +1,18 @@
+<template>
+    <ul>
+        <li repeat.for="items of leftNav" click.delegate="navigateToItem($event, item)">
+            <a>${item.name}</a>
+        </li>
+
+    </ul>
+    
+    <button click.delegate="buttonClicked($event)">
+
+    </button>
+
+    <ul>
+        <li repeat.for="items of rightNav" click.delegate="navigateToItem($event, item)">
+            <a>${item.name}</a>
+        </li>
+    </ul>
+</template>

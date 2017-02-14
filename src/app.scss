@@ -1,0 +1,461 @@
+@import 'core/_variables.scss';
+@import 'core/_mixin.scss';
+@import 'modules/nav-bar/_nav-bar.scss';
+@import 'modules/nav-section/_nav-section.scss';
+@import 'modules/navigation/_navigation.scss';
+
+*::-webkit-scrollbar {
+    display: none;
+}
+
+html {
+    width: 100vw;
+    height: 100vh;
+    color: $dark-grey;
+    font-family: sans-serif;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+button {
+    background: transparent;
+    border: none;
+    outline: none;
+    -webkit-webkit-appearance: none;
+    -moz-webkit-appearance: none;
+    -ms-webkit-appearance: none;
+    -o-webkit-appearance: none;
+    webkit-appearance: none;
+}
+
+
+.app-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    background-image: url(http://brodeurcampbellfence.com/wp-content/uploads/2013/03/gradient-background-more-white.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.app-section {
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+nav-section {
+    height: auto;
+    min-height: 100%;
+    flex: 1 0 auto;
+    min-width: 100%;
+}
+
+container {
+    display: block;
+    background: white;
+    margin: 100px;
+    box-shadow: 2px 3px 4px rgba(0, 0, 0, 0.1), -2px 0px 4px rgba(0, 0, 0, 0.1), 0 10px 20px -5px rgba(0,0,0,0.2);
+    border-radius: 12px;
+    z-index: 2;
+    position: relative;
+    max-height: calc(100% - 200px);
+    height: 100%;
+    overflow: hidden;
+}
+
+container > header {
+    position: absolute;
+    top: 0;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background-color: transparent;
+    z-index: 2;
+
+    button {
+        height: 50px;
+        color: white;
+        margin: 0 5px;
+        line-height: 36px;
+        padding: 0 16px;
+        cursor: pointer;
+        vertical-align: top;
+        cursor: pointer;
+
+        icon {
+            margin: 6px;
+        }
+        
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    }
+}
+
+container > main {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 2px;
+    height: 100%;
+    width: 100%;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* lets it scroll lazy */
+    > nav-section {
+        // z-index: 2;
+    }
+    
+    .nav-section-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        z-index: 4;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        min-height: 100%;
+        min-width: 100%;
+    }
+
+    .nav-background-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        min-height: 100%;
+        min-width: 100%;
+        z-index: 1;
+    }
+}
+
+
+.profile-background {
+    background-color: $profile-fill;
+}
+
+.technology-background {
+    background-color: $tech-fill;
+}
+
+.projects-background {
+    background-color: $projects-fill;
+}
+
+.experience-background {
+    background-color: $xp-fill;
+}
+
+.education-background {
+    background-color: $edu-fill;
+}
+
+.app-title {
+    background-color: $title-fill;
+
+    &-header {
+        background-color: $title-fill;
+    }
+}
+
+.app-profile {
+    background-color: $profile-fill;
+    
+    .profile-image {
+        flex: 1;
+        margin-right: 24px;
+        margin-left: 24px;
+        text-align: right;
+    }
+
+    .profile-title {}
+    .profile-content {}
+
+    .profile-info {
+        flex: 3;
+        margin-right: 24px;
+
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+
+            li {
+                margin-bottom: 12px;
+                border-bottom: 1px solid $dark-tint-primary;
+                padding-bottom: 5px;
+                
+                label {
+                    font-size: 12px;
+                    font-weight: normal;
+                    color: $dark-tint-primary;
+                    margin-bottom: 5px;
+                }
+
+                p {
+                    margin: 0;
+                    color: white;
+                    font-size: 18px;
+                    font-weight: normal;
+                    line-height: 1.3;
+                }
+            }
+        }
+    }
+
+    &-header {
+        background-color: $profile-fill;
+
+        icon {
+            color: $profile-tint;
+        }
+        
+        .header-title {
+            color: $profile-tint;
+        }
+    }
+
+    .header-title {
+        color: $profile-tint;
+    }
+}
+
+.app-technology {
+    background-color: $tech-fill;
+    
+    h1 {
+        font-size: 32px;
+        padding-left: 24px;
+    }
+
+    ul {
+        @include grid-card-list();
+
+        li {
+            @include grid-card();
+        }
+    }
+
+    &-header {
+        background-color: $tech-fill;
+    }
+}
+
+
+.app-projects {
+    background-color: $projects-fill;
+    @include card-element();
+
+    .project-image {
+        margin-left: 24px;
+
+        @include  picture-card(
+            $height: 100px,
+            $width : 100px
+        );
+    }
+
+    .project-heading {
+        @include card-heading(
+            $outline: $dark-tint-divider
+        );
+        
+        align-items: flex-end;
+    }
+
+    .project-title {
+        @include card-title(
+            $text-tint: $dark-tint-secondary
+        );
+    }
+
+    .project-date {
+        @include card-date(
+            $text-tint: $dark-tint-disabled
+        );
+    }
+
+    ul.project-details {
+        @include detail-point-list(
+            $text-tint : $projects-tint,
+            $icon-fill : $dark-tint-secondary
+        );
+    }
+
+    &-header {
+        background-color: $projects-fill;
+    }
+}
+
+.app-experience {
+    background-color: $xp-fill;
+
+    @include card-element();
+
+    .xp-heading {
+        @include card-heading(
+            $outline: $dark-tint-divider
+        );
+    }
+
+    .xp-title {
+        @include card-title(
+            $text-tint:  $dark-tint-secondary
+        );
+    }
+
+    .xp-date {
+        @include card-date(
+            $text-tint: $dark-tint-disabled
+        );
+    }
+
+    ul.xp-details {
+        @include detail-point-list(
+            $text-tint: $xp-tint,
+            $icon-fill: $dark-tint-secondary
+        );
+    }
+
+    ul.xp-tech {
+        @include inline-tag-list(
+            $text-tint: $blue
+        );
+    }
+
+    &-header {
+        background-color: $xp-fill;
+    }
+}
+
+.app-education {
+    background-color: $edu-fill;
+    @include card-element();
+    
+    .edu-image {
+       
+    }
+
+    .edu-heading {
+        @include card-heading(
+            $outline: $dark-tint-divider
+        );
+    }
+
+    .edu-title {
+        @include card-title(
+            $text-tint: $dark-tint-secondary
+        );
+    }
+
+    .edu-date {
+        @include card-date(
+            $text-tint: $dark-tint-disabled
+        );
+    }
+
+    ul.edu-details {
+        @include detail-point-list(
+            $text-tint: $edu-tint,
+            $icon-fill: $dark-tint-secondary
+        );
+    }
+
+    &-header {
+        background-color: $edu-fill;
+    }
+}
+
+container {
+    border-radius: 0;
+    max-height: 100%;
+    margin: 0;
+}
+
+@media screen and (max-width: 1200px) {
+
+    .platform-ios {
+        container {
+            navigation {
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.3s ease.0s;
+            }
+
+            &.offset-main-right {
+                navigation {
+                    opacity: 1;
+                    visibility: visible;
+                }
+            }
+
+            &.animate-main-right {
+                navigation {
+                    opacity: 1;
+                    visibility: visible;
+                }
+            }
+
+            &.animate-main-default {
+                navigation {
+                    opacity: 0;
+                    visibility: hidden;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    container {
+        border-radius: 12px;
+        max-height: calc(100vh - 200px);
+        margin: 100px;
+    }
+}
+
+@media screen and (min-width: 1440px) {
+    container {
+
+        icon.menu-icon {
+            display: none !important;
+        }
+
+        nav-section .section-container {
+            margin-left: 200px;
+        }
+
+        > header.nav-section-header {
+            margin-left: 200px;
+            border-top-left-radius: 0;
+
+            .header-title {
+                padding-left: 24px;
+            }
+        }
+    }
+}

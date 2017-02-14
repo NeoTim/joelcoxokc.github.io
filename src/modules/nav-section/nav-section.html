@@ -1,0 +1,43 @@
+<template class="
+            ${view.isActive ? 'active' : ''} 
+            ${view.isScrolling ? 'scrolling' : ''} 
+            ${view.isPeeking ? 'peeking' : ''} 
+            ${view.isVisible ? 'visible' : ''}">
+    
+    <section class="section-container">
+    
+        <header ref="header" 
+                click.delegate="headerClicked($event)" 
+                class="
+                    ${positionClass} 
+                    nav-section-header 
+                    ${view.isActive ? 'active' : ''} 
+                    ${view.isScrolling ? 'scrolling' : ''} 
+                    ${view.isPeeking ? 'peeking' : ''} 
+                    ${view.isVisible ? 'visible' : ''}" >
+
+            <icon class="direction-icon" ico="arrow_back"></icon>
+            <span class="header-title">${view.title}</span>
+        </header>
+
+        <compose containerless view-model.bind="view.viewModel"></compose>
+
+        
+
+        <header ref="fixedheader" 
+                class="
+                    ${positionClass} 
+                    nav-section-header 
+                    fixed 
+                    app-${view.name}-header 
+                    ${view.isActive ? 'active' : ''} 
+                    ${view.isScrolling ? 'scrolling' : ''} 
+                    ${view.isPeeking ? 'peeking' : ''} 
+                    ${view.isVisible ? 'visible' : ''}">
+
+            <icon class="menu-icon" click.delegate="toggleNavigation($event)" ico="menu"></icon>
+            <icon class="direction-icon" click.delegate="navigateDirection($event)" ico="arrow_back"></icon>
+            <span class="header-title">${view.title}</span>
+        </header>
+    </section>
+</template>

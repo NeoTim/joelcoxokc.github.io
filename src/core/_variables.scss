@@ -1,0 +1,72 @@
+$dark-tint-primary: rgba(0,0,0,0.87);
+$dark-tint-secondary: rgba(0,0,0,0.54);
+$dark-tint-disabled: rgba(0,0,0,0.54);
+$dark-tint-divider: rgba(0,0,0,0.12);
+
+$light-tint-primary: rgba(255,255,255,1);
+$light-tint-secondary: rgba(255,255,255,0.70);
+$light-tint-disabled: rgba(255,255,255,0.50);
+$light-tint-divider: rgba(255,255,255,0.12);
+
+
+$dark-grey: #323232;
+
+$amber: #ffC107;
+$amber700: #FFA000;
+
+$blue: #2196F3;
+$blue200: #90CAF9;
+$blue700: #1976d2;
+$blue900: #0D47A1;
+
+$cyan: #00BCD4;
+$cyan200: #80DEEA;
+$cyan700: #0097A7;
+$cyan200: #18FFFF;
+
+$green: #4CAF50;
+$green700: #388E3C;
+
+$grey: #9E9E9E;
+$grey700: #616161;
+
+$indigo: #3F51B5;
+$indigo700: #303F9F;
+
+$lime: #CDDC39;
+$lime200: #E6EE9C;
+$lime700: #AFB42B;
+$limeA400: #C6FF00;
+
+$orange: #FF9800;
+$orange700: #F57C00;
+
+$pink: #E91E63;
+$pinkA100: #FF80AB;
+$pink100: #F8BBD0;
+$pink200: #F48FB1;
+
+$purple: #673AB7;
+$purple300: #BA68C8;
+$purple700: #512DA8;
+
+$red: #F44336;
+
+$title-fill: white;
+$title-tint: $dark-tint-primary;
+
+$profile-fill: $red;
+$profile-tint: $light-tint-primary;
+
+$projects-fill: $blue;
+$projects-tint: $dark-tint-primary;
+
+$xp-fill: $green;
+$xp-tint: $dark-tint-primary;
+
+$edu-fill: $amber;
+$edu-tint: $dark-tint-primary;
+
+$tech-fill: $grey;
+$tech-tint: $dark-tint-primary;
+

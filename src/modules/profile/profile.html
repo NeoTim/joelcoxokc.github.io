@@ -1,0 +1,33 @@
+<template>
+    <div class="row">
+
+        <div class="profile-image">
+            <img src="http://placehold.it/350x450" alt="">
+        </div>
+
+        <div class="profile-info">
+            <ul>
+                <li>
+                    <label>Name</label>
+                    <p>${props.name}</p>
+                </li>
+                <li>
+                    <label>Birthday</label>
+                    <p>${props.birthday}</p>
+                </li>
+                <li>
+                    <label>Titles</label>
+                    <p repeat.for="title of props.titles">${title}</p>
+                </li>
+                <li>
+                    <label>Locations</label>
+                    <p repeat.for="loc of props.locations">${loc}</p>
+                </li>
+                <li>
+                    <label>Info</label>
+                    <p>${props.info}</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</template>

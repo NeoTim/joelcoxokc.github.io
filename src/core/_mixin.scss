@@ -1,0 +1,144 @@
+@mixin card-element() {
+    
+    article {
+        margin-bottom: 24px;
+    }
+}
+
+@mixin card-heading($outline: $dark-tint-divider) {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    border-top: 1px solid $outline;
+    margin-bottom: 12px;
+    padding-top: 12px;
+}
+
+@mixin card-title($text-tint: $dark-tint-secondary) {
+    flex: 1;
+    font-weight: normal;
+    font-size: 36px;
+    color: $text-tint;
+    padding-left: 24px;
+    padding-right: 12px;
+}
+
+@mixin card-date($text-tint: $dark-tint-disabled) {
+    margin-left: auto;
+    text-align: right;
+    font-size: 14px;
+    padding-right: 12px;
+    letter-spacing: 1.34px;
+    font-weight: bold;
+    color: $text-tint;
+    padding-right: 24px;
+    padding-left: 12px;
+}
+
+@mixin picture-card($width: 100px, $height: 100px) {
+    width: 100px;
+    height: 100px;
+    position: relative;
+    
+    flex: 0 0 auto;
+    height: 108px;
+    width: 108px;
+    background-color: white;
+    box-shadow: 0 4px 4px -3px rgba(0,0,0,0.1), 0 3px 4px rgba(0,0,0,0.2);
+    
+    img {
+        display: block;
+        max-height: 80px;
+        max-width: 80px;
+        margin: 10px auto;
+    }
+}
+
+@mixin grid-card-list() {
+    list-style: none;
+    margin: 0 12px;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    max-width: 100%;
+}
+
+@mixin grid-card() {
+    display: inline-block;
+    margin: 12px;
+    max-width: 100px;
+    min-width: 100px;
+    max-height: 136px;
+    min-height: 136px;
+    background-color: white;
+    box-shadow: 0 3px 4px -3px rgba(0,0,0,0.2), 0 3px 4px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.1);
+
+    img {
+        display: block;
+        width: inherit;
+        max-width: inherit;
+    }
+
+    span {
+        display: block;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        line-height: 24px;
+    }
+}
+
+@mixin detail-point-list($text-tint: $dark-text-primary, $icon-fill: $dark-text-secondary) {
+    & {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        li {
+            min-height: 36px;
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: flex-start;
+            padding-left: 24px;
+            padding-right: 24px;
+        }
+
+        icon {
+            color: $icon-fill;
+            flex: 0 0 auto;
+            margin: 6px;
+            font-size: 16px;
+        }
+
+        span.text {
+            flex: 0 1 auto;
+            padding-top: 4px;
+            line-height: 1.34;
+            font-size: 16px;
+            font-weight: normal;
+            color: $text-tint;
+        }
+    }
+}
+
+@mixin inline-tag-list($text-tint: $dark-text-secondary) {
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+    
+    li {
+        display: inline;
+        padding: 6px 12px;
+
+        font-size: 12px;
+        font-weight: normal;
+        color: $text-tint;
+        margin: 4px;
+    }
+}

@@ -1,0 +1,29 @@
+nav-bar {
+    position: fixed;
+    top: 50%;
+    right: 10%;
+    transform: translateY(-50%);
+    >button {
+        outline: none;
+        background: white;
+        border-radius: 2px;
+        border: none;
+        box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
+        height: 36px;
+        width: 120px;
+    }
+    >ul.slider {
+        width: 100%;
+        position: absolute;
+        height: auto;
+        top: 0;
+        left: 0;
+        background: red;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        >li {
+            height: 36px;
+        }
+    }
+}

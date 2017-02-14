@@ -1,0 +1,13 @@
+<template>
+    <header>
+
+    </header>
+    <section>
+        <ul class="navigation-list">
+            <li repeat.for="view of views" class="${view === State.view ? 'active' : ''}" click.delegate="navigateToView(view)">
+                <icon ico.bind="view.icon"></icon>
+                <span class="text">${view.title}</span>
+            </li>
+        </ul>
+    </section>
+</template>

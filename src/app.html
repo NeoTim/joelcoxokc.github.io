@@ -1,0 +1,22 @@
+<template>
+  <require from="./app.css"></require>
+  <div class="app-background"></div>
+  
+  <container ref="State.container" class="active-view-${State.view.name}">
+    <!--<header ref="State.header.element">
+      <compose containerless view-model.bind="State.header"></compose>
+    </header>
+    <nav-bar state.bind="State"></nav-bar>-->
+    <navigation></navigation>
+    
+    <main ref="State.scrollElement">
+      <template repeat.for="view of State.views">
+        <nav-section class="${$first ? 'first' : $last ? 'last' : ''} app-${view.name}" ref="view.element" view.bind="view"></nav-section>
+      </template>
+    </main>
+    
+    <footer ref="State.footer.element">
+      <compose view-model.bind="State.footer"></compose>
+    </footer>
+  </container>
+</template>

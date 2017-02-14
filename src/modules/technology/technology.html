@@ -1,0 +1,13 @@
+<template>
+    <template repeat.for="tech of props.technologies">
+        <article>
+            <h1>${tech.title}</h1>
+            <ul>
+                <li repeat.for="item of tech.list">
+                    <img src.bind="item.img" alt.bind="item.name"/>
+                    <span class="text">${item.title}</span>
+                </li>
+            </ul>
+        </article>
+    </template>
+</template>
