@@ -1,22 +1,24 @@
 <template>
     <template repeat.for="project of props.projects">
         <article>
-            <div class="project-heading">
-                <div class="project-image" if.bind="project.image">
-                    <img src.bind="project.image" alt.bind="project.name"/>
-                </div>
-                <div class="project-title">${project.name}</div>
-                <div class="project-date">${project.date}</div>
+            <div class="card-image">
+                <img if.bind="project.image" src.bind="project.image" alt.bind="project.name"/>
             </div>
-            <ul class="project-details">
-                <li repeat.for="note of project.notes">
-                    <icon ico="check_circle"></icon>
-                    <span class="text">${note}</span>
-                </li>
-            </ul>
-            <ul class="project-tech">
-                <li repeat.for="tech of project.tech">${tech}</li>
-            </ul>
+            <div class="card-content">
+                <div class="card-heading">
+                    <div class="card-title">${project.name}</div>
+                    <div class="card-date">${project.date}</div>
+                </div>
+                <ul class="card-details">
+                    <li repeat.for="note of project.notes">
+                        <icon ico="check_circle"></icon>
+                        <span class="text">${note}</span>
+                    </li>
+                </ul>
+                <ul class="card-tags">
+                    <li repeat.for="tech of project.tech">${tech}</li>
+                </ul>
+            </div>
         </article>
     </template>
 </template>

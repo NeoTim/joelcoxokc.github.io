@@ -33,10 +33,11 @@
                     ${view.isActive ? 'active' : ''} 
                     ${view.isScrolling ? 'scrolling' : ''} 
                     ${view.isPeeking ? 'peeking' : ''} 
-                    ${view.isVisible ? 'visible' : ''}">
+                    ${view.isVisible ? 'visible' : ''}"
+                    click.delegate="navigateDirection($event)">
 
             <icon class="menu-icon" click.delegate="toggleNavigation($event)" ico="menu"></icon>
-            <icon if.bind="view.viewIndex > 0" class="direction-icon" click.delegate="navigateDirection($event)" ico="arrow_back"></icon>
+            <icon if.bind="view.viewIndex > 0" class="direction-icon" ico="arrow_back"></icon>
             <span if.bind="view.viewIndex > 0" class="header-title">${view.title}</span>
         </header>
     </section>

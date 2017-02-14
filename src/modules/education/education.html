@@ -1,19 +1,21 @@
 <template>
     <template repeat.for="edu of props.educations">
         <article>
-            <div class="edu-image" if.bind="edu.image">
+            <div class="card-image" if.bind="edu.image">
                 <img src.bind="edu.image" alt.bind="edu.name"/>
             </div>
-            <div class="edu-heading">
-                <div class="edu-title">${edu.name}</div>
-                <div class="edu-date">${edu.date}</div>
+            <div class="card-content">
+                <div class="card-heading">
+                    <div class="card-title">${edu.name}</div>
+                    <div class="card-date">${edu.date}</div>
+                </div>
+                <ul class="card-details">
+                    <li repeat.for="note of edu.notes">
+                        <icon ico="check_circle"></icon>
+                        <span class="text">${note}</span>
+                    </li>
+                </ul>
             </div>
-            <ul class="edu-details">
-                <li repeat.for="note of edu.notes">
-                    <icon ico="check_circle"></icon>
-                    <span class="text">${note}</span>
-                </li>
-            </ul>
         </article>
     </template>
 </template>

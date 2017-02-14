@@ -1,7 +1,24 @@
 export class ProjectEnums {
+
+    DOMX = {
+        name: 'DOMX | in progress',
+        date: '2016-today',
+        image: '',
+        link: 'http://github.com/joelcoxokc/domx',
+        notes: []
+    }
+
+    AureliaHub = {
+        name: 'Aurelia Hub & Documentation',
+        date: '2015-2016',
+        link: 'http://aurelia.io/hub',
+        image: '/scripts/logos/aurelia-logo.png',
+        notes: []
+    }    
+    
     Aurelia = {
         name: 'Aurelia Interface',
-        date: '2015-Today',
+        date: '2014-2016',
         occupation: 'Lead UX Engineer',
         link: 'http://blog.durandal.io/2015/11/20/aurelia-beta-week-day-5-aurelia-interface/',
         image: '/scripts/logos/aurelia-logo.png',
@@ -61,7 +78,7 @@ export class ProjectEnums {
     }
 
     constructor() {
-        this.list = [this.Aurelia, this.uimaterialize, this.slushy, this.platfeful, this.tracom];
+        this.list = [this.DOMX, this.AureliaHub, this.Aurelia, this.uimaterialize, this.slushy, this.platfeful, this.tracom];
     }
 
 }

@@ -1,4 +1,31 @@
 export class ExperienceEnums {
+
+    mParticle = {
+        name: 'mParticle',
+        date: '2016-2017',
+        occupation: 'Lead UX/UI Architect',
+        link: 'http://mparticle.com',
+        notes: []
+    }
+
+    TheLiked = {
+        name: 'The Liked | Contract',
+        date: '2016',
+        occupation: 'Soul Developer',
+        link: 'http://theliked.com',
+        notes: [
+            'Migrated existing Angular 1.0 App to Aurelia',
+            'Merged Several Aurelia and React components to work on the same state engine',
+            'Built the site-map, including designs, using provided comps'
+        ]
+    }
+
+    WoltersKluwer = {
+        name: 'Wolters Kluwer | Contract',
+        date: '2016',
+        occupation: 'Senior Web Engineer | Senior Web Designer'
+    }
+
     Aurelia = {
         name: 'Aurelia',
         date: '2015-Today',
@@ -12,7 +39,7 @@ export class ExperienceEnums {
     }
 
     plusAmp = {
-        name: 'PlusAMP',
+        name: 'PlusAMP | Contract',
         date: '2015',
         occupation: 'Lead UX Engineer',
         notes: [
@@ -99,7 +126,7 @@ export class ExperienceEnums {
     }
 
     constructor() {
-        this.list = [this.Aurelia, this.plusAmp, this.secret, this.hackreactor, this.hourglass, this.his, this.graphics, this.dfwprint, this.photographer, this.hisService];
+        this.list = [this.mParticle, this.TheLiked, this.WoltersKluwer, this.Aurelia, this.plusAmp, this.secret, this.hackreactor, this.hourglass, this.his, this.graphics, this.dfwprint, this.photographer, this.hisService];
     }
 
 }

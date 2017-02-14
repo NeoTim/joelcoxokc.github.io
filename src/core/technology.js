@@ -1,11 +1,12 @@
 export class TechnologyEnums {
-    languages     = ['es6', 'javascript','html5',  'css3', 'apps-script', 'php'];
-    preprocessors = ['jade', 'coffeescript', 'sass', 'less', 'stylus', 'postcss'];
-    frameworks    = ['aurelia', 'angular2.0', 'angular', 'react', 'polymer', 'ionic', 'backbone', 'laravel'];
-    tools         = ['jspm', 'gulp', 'grunt', 'slush', 'yeoman'];
+    languages     = ['es6', 'javascript', 'typescript', 'html5',  'css3', 'apps-script', 'php', 'cypher', 'bash'];
+    preprocessors = ['flow', 'babel', 'jade', 'coffeescript', 'sass', 'less', 'stylus', 'postcss'];
+    frameworks    = ['aurelia', 'angular2.0', 'angular', 'react', 'polymer', 'ionic', 'backbone', 'laravel', 'express'];
+    tools         = ['node', 'jspm', 'gulp', 'webpack', 'aurelia-cli', 'grunt', 'slush', 'yeoman'];
     data          = ['redis', 'neo4j', 'mongo', 'sql'];
-    design        = ['ai'  , 'ps', 'sketch'];
-
+    design        = ['ai', 'ps', 'sketch', 'zeplin'];
+    rolanguages   = ['C#', '.Net', '.Net core', 'java']
+    
     constructor() {
         this.process();
     }
@@ -41,6 +42,11 @@ export class TechnologyEnums {
                 title: 'Design', 
                 name: 'design', 
                 list: this.design
+            },
+            {
+                title: 'Read Only Languages',
+                subtitle: 'Languages I can read and am willing to learn to write',
+                list: this.rolanguages
             }
         ]
         
