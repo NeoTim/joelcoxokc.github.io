@@ -347,39 +347,23 @@ container > main {
 
 .app-education {
     background-color: $edu-fill;
-    @include card-element();
     
-    .edu-image {
-       
-    }
+    @include card-element(
+        $outline: $light-tint-divider,
+        $text-tint: $edu-tint,
+        $title-tint: $light-tint-secondary,
+        $date-tint: $light-tint-disabled
+    );
 
-    .edu-heading {
-        @include card-heading(
-            $outline: $dark-tint-divider
-        );
+    header {
+        color: $edu-tint;
+        icon {color: $edu-tint}
     }
-
-    .edu-title {
-        @include card-title(
-            $text-tint: $dark-tint-secondary
-        );
-    }
-
-    .edu-date {
-        @include card-date(
-            $text-tint: $dark-tint-disabled
-        );
-    }
-
-    ul.edu-details {
-        @include detail-point-list(
-            $text-tint: $edu-tint,
-            $icon-fill: $dark-tint-secondary
-        );
-    }
-
+    
     &-header {
         background-color: $edu-fill;
+        color: $edu-tint;
+        icon {color: $edu-tint}
     }
 }
 
