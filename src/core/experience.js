@@ -5,7 +5,23 @@ export class ExperienceEnums {
         date: '2016-2017',
         occupation: 'Lead UX/UI Architect',
         link: 'http://mparticle.com',
-        notes: []
+        stack: [
+            'C#',
+            '.Net',
+            '.Net Core',
+            'Javascript',
+            'Aurelia',
+            'Less',
+            'HTML',
+            'Web Pack',
+            'Gulp'
+        ],
+        notes: [
+            'Spent countless nights completing issues before our first release',
+            'Re-architected the client side component structure',
+            'Built several features using provided design comps',
+            'Designed ux flow using provided flow descriptions'
+        ]
     }
 
     TheLiked = {
@@ -13,6 +29,17 @@ export class ExperienceEnums {
         date: '2016',
         occupation: 'Soul Developer',
         link: 'http://theliked.com',
+        stack: [
+            'Node',
+            'Mongo DB',
+            'Express',
+            'Javascript',
+            'Aurelia',
+            'React',
+            'HTML',
+            'Sass',
+            'CSS'
+        ],
         notes: [
             'Migrated existing Angular 1.0 App to Aurelia',
             'Merged Several Aurelia and React components to work on the same state engine',
@@ -23,14 +50,47 @@ export class ExperienceEnums {
     WoltersKluwer = {
         name: 'Wolters Kluwer | Contract',
         date: '2016',
-        occupation: 'Senior Web Engineer | Senior Web Designer'
+        occupation: 'Senior Web Engineer | Senior Web Designer',
+        link: 'http://wolterskluwer.com',
+        stack: [
+            'C#',
+            '.Net',
+            'Mongo',
+            'SQL',
+            'Redis',
+            'Javascript',
+            'Aurelia',
+            'Web Animations',
+            'jQuery',
+            'HTML',
+            'Sass',
+            'CSS'
+        ],
+        notes: [
+            'Re-scaled nine applications into one web application',
+            'Designed a rich interactive flow creation tool',
+            'Visually display flow data using HTML Canvas and D3',
+            'Collaborated with a small team using scrum methodologies',
+            'Design UI Component Library for internal use across Wolters Kluwer applications'
+        ]
     }
 
     Aurelia = {
         name: 'Aurelia',
-        date: '2015-Today',
+        date: '2014-2016',
         occupation: 'Lead UX Engineer for Aurelia Interface',
         link: 'http://aurelia.io',
+        stack: [
+            'Javascript',
+            'Aurelia',
+            'HTML',
+            'Sass',
+            'CSS',
+            'Web Animations',
+            'flow',
+            'jspm',
+            'aurelia-cli'
+        ],
         notes: [
             'Developing not only a cross-browser, but also a cross-platform UX framework call aurelia-interface',
             'Designed UX, Strictly following Google’s Material Design, Apple’s Humanize design, and Windows-guidelines.',
@@ -42,6 +102,18 @@ export class ExperienceEnums {
         name: 'PlusAMP | Contract',
         date: '2015',
         occupation: 'Lead UX Engineer',
+        stack: [
+            '.Net',
+            'Node',
+            'Express',
+            'Redis',
+            'Mongo DB',
+            'Javascript',
+            'Aurelia',
+            'HTML',
+            'Sass',
+            'CSS'
+        ],
         notes: [
             'Strategically crafted an open source platform similar to Github, for data-scientist to share Algorithms.',
             'Through inspiring visual effects, designed a way for consumers to visually and creatively create Algorithms.',
@@ -53,6 +125,13 @@ export class ExperienceEnums {
         name: 'Undisclosed',
         date: '2014-2015',
         occupation: 'Lead Javascript Engineer & Manager',
+        stack: [
+            'Javascript',
+            'Blue JS',
+            'HTML',
+            'Less',
+            'CSS'
+        ],
         notes: [
             'Optimized massive browser load time by 6 seconds.',
             'Engineered a build system that saved over $30 million in 6 years from improving programmer time.',

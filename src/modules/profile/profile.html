@@ -12,35 +12,55 @@
             }
         }
     </style>
-    <div class="row">
 
+    <article>
         <div class="profile-image">
-            <img src="http://placehold.it/350x450" alt="">
+            <img src="https://avatars0.githubusercontent.com/u/4668188?v=3&s=460" alt="">
         </div>
 
-        <div class="profile-info">
-            <ul>
+        <div class="profile-content">
+            <ul class="profile-detail">
                 <li>
                     <label>Name</label>
-                    <p>${props.name}</p>
+                    <div class="value">
+                        <p>${props.name}</p>
+                    </div>
                 </li>
                 <li>
                     <label>Birthday</label>
-                    <p>${props.birthday}</p>
+                    <div class="value">
+                        <p>${props.birthday}</p>
+                    </div>
                 </li>
                 <li>
                     <label>Titles</label>
-                    <p repeat.for="title of props.titles">${title}</p>
+                    <div class="value">
+                        <p repeat.for="title of props.titles">${title}</p>
+                    </div>
                 </li>
                 <li>
                     <label>Locations</label>
-                    <p repeat.for="loc of props.locations">${loc}</p>
+                    <div class="value">
+                        <p repeat.for="loc of props.locations">${loc}</p>
+                    </div>
                 </li>
                 <li>
                     <label>Info</label>
-                    <p>${props.info}</p>
+                    <div class="value">
+                        <p>${props.info}</p>
+                    </div>
                 </li>
             </ul>
         </div>
-    </div>
+    </article>
+    <!--<div class="row">
+
+        <div class="profile-image">
+        </div>
+
+        <div class="profile-detail">
+            <ul>
+            </ul>
+        </div>
+    </div>-->
 </template>

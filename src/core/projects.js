@@ -18,7 +18,7 @@ export class ProjectEnums {
     
     Aurelia = {
         name: 'Aurelia Interface',
-        date: '2014-2016',
+        date: '2015-2016',
         occupation: 'Lead UX Engineer',
         link: 'http://blog.durandal.io/2015/11/20/aurelia-beta-week-day-5-aurelia-interface/',
         image: '/scripts/logos/aurelia-logo.png',
