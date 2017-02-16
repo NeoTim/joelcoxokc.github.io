@@ -1,4 +1,4 @@
-define('app',['exports', 'aurelia-framework', 'modules/header/header', 'modules/footer/footer', 'modules/title/title', 'modules/profile/profile', 'modules/projects/projects', 'modules/technology/technology', 'modules/experience/experience', 'modules/education/education', 'core/enums', './state', 'core/view'], function (exports, _aureliaFramework, _header, _footer, _title, _profile, _projects, _technology, _experience, _education, _enums, _state, _view) {
+define('app',['exports', 'aurelia-framework', 'modules/header/header', 'modules/footer/footer', 'modules/title/title', 'modules/profile/profile', 'modules/projects/projects', 'modules/technology/technology', 'modules/experience/experience', 'modules/education/education', 'core/enums', './state', 'aurelia-event-aggregator', 'core/view'], function (exports, _aureliaFramework, _header, _footer, _title, _profile, _projects, _technology, _experience, _education, _enums, _state, _aureliaEventAggregator, _view) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -21,8 +21,8 @@ define('app',['exports', 'aurelia-framework', 'modules/header/header', 'modules/
         phone: '(405) 388-7691'
     };
 
-    var App = exports.App = (_dec = (0, _aureliaFramework.inject)(_state.State, _enums.Enums, _aureliaFramework.Factory.of(_header.Header), _aureliaFramework.Factory.of(_footer.Footer), _aureliaFramework.Factory.of(_title.Title), _aureliaFramework.Factory.of(_profile.Profile), _aureliaFramework.Factory.of(_technology.Technology), _aureliaFramework.Factory.of(_projects.Projects), _aureliaFramework.Factory.of(_experience.Experience), _aureliaFramework.Factory.of(_education.Education)), _dec(_class = function () {
-        function App(State, Enums, Header, Footer, Title, Profile, Technology, Projects, Experience, Education) {
+    var App = exports.App = (_dec = (0, _aureliaFramework.inject)(_state.State, _enums.Enums, _aureliaEventAggregator.EventAggregator, _aureliaFramework.Factory.of(_header.Header), _aureliaFramework.Factory.of(_footer.Footer), _aureliaFramework.Factory.of(_title.Title), _aureliaFramework.Factory.of(_profile.Profile), _aureliaFramework.Factory.of(_technology.Technology), _aureliaFramework.Factory.of(_projects.Projects), _aureliaFramework.Factory.of(_experience.Experience), _aureliaFramework.Factory.of(_education.Education)), _dec(_class = function () {
+        function App(State, Enums, EventAggregator, Header, Footer, Title, Profile, Technology, Projects, Experience, Education) {
             _classCallCheck(this, App);
 
             this.State = State;
@@ -31,8 +31,9 @@ define('app',['exports', 'aurelia-framework', 'modules/header/header', 'modules/
             this.State.header = Header(this.State);
             this.State.footer = Footer(this.State);
 
+            this.eventAggregator = EventAggregator;
+
             State.registerView(new _view.View({
-                title: 'Joel Cox',
                 name: 'title',
                 icon: 'home',
                 viewModel: Title({
@@ -80,10 +81,11 @@ define('app',['exports', 'aurelia-framework', 'modules/header/header', 'modules/
         App.prototype.attached = function attached() {
             var _this = this;
 
+            this.State.scrollElement = document.body;
             var container = document.querySelector('container');
             var sections = document.querySelectorAll('container > main > nav-section');
 
-            var target = this.State.scrollElement;
+            var target = this.State.scrollElement || document.body;
 
             var resetViewsAtIndex = function resetViewsAtIndex(index) {
                 var view = void 0;
@@ -95,136 +97,121 @@ define('app',['exports', 'aurelia-framework', 'modules/header/header', 'modules/
                 }
             };
 
-            target.onscroll = function (event) {
+            var updateView = function updateView(view, index, views) {
+                var top = document.body.scrollTop;
+                var height = document.body.clientHeight;
+                var bottom = top + height;
 
+                view.updatePosition({ top: top, height: height, bottom: bottom }, index, views);
+            };
+
+            var viewset = [];
+
+            window.onresize = function (event) {
+                _this.eventAggregator.publish('window:resize');
+            };
+
+            window.onscroll = function (event) {
+                var bodyHeight = target.clientHeight;
+                var halfBodyHeight = bodyHeight / 2;
                 var scrollBottom = target.scrollTop + target.clientHeight;
                 var scrollTop = Math.ceil(target.scrollTop);
                 var index = 0;
                 var view = void 0;
+                var prev = void 0;
                 var next = void 0;
+                var found = void 0;
+
+                var scroll = {
+                    top: scrollTop,
+                    height: bodyHeight,
+                    bottom: scrollBottom
+                };
+
+                var views = _this.State.views;
+                views.forEach(function (view, index) {
+                    view.updatePosition(scroll, index, views);
+                });
+
+                return;
 
                 if (scrollTop === 0) {
-                    view = _this.State.views[0];
-
-                    view.reset({
-                        isActive: true,
-                        isVisible: true,
-                        isScrolling: true
-                    });
-
-                    _this.State.view = view;
+                    found = _this.State.views[0];
 
                     next = _this.State.views[1];
-
-                    if (next) {
-                        next.reset({
-                            isPeeking: true
-                        });
-                    }
 
                     _this.State.views.slice(2).forEach(function (view) {
                         return view.reset();
                     });
-                    return;
-                }
+                } else {
+                    _this.State.views.slice(2).forEach(function (view) {
+                        return view.reset();
+                    });
 
-                _this.State.views.slice(2).forEach(function (view) {
-                    return view.reset();
-                });
+                    while (view = _this.State.views[index++]) {
 
-                while (view = _this.State.views[index++]) {
-                    next = _this.State.views[index];
+                        var viewTop = view.coords.top();
+                        var viewBottom = view.coords.bottom();
+                        var _props = {};
 
-                    var bottom = view.coords.bottom();
-                    var offset = view.coords.top() - scrollTop;
-                    var backset = view.coords.top() + view.element.clientHeight - scrollTop;
-
-                    if (scrollTop < bottom && scrollTop >= view.coords.top()) {
-                        view.reset({
-                            isScrolling: true,
-                            isVisible: true,
-                            isActive: true
-                        });
-
-                        _this.State.view = view;
-
-                        if (next && next.coords.top()) {
-                            next.reset({ isPeeking: true });
-
-                            if (next.coords.top() <= scrollTop + (target.clientHeight - 56)) {
-                                next.reset({
-                                    isVisible: true
-                                });
-                            }
-
-                            if (next.coords.top() <= scrollTop + target.clientHeight / 2) {
-                                next.reset({
-                                    isVisible: true,
-                                    isActive: true
-                                });
-                            }
-
-                            if (_this.State.views[index + 1]) {
-                                _this.State.views.slice(index + 1).forEach(function (view) {
-                                    return view.reset();
-                                });
-                            }
-                            break;
+                        if (found && !next) {
+                            next = view;
+                            continue;
                         }
 
-                        if (next) {
-                            if (next.coords.top() >= scrollTop) {
-                                next.isVisible = false;
-                                next.isPeeking = true;
-                                next.isActive = false;
-                                next.isScrolling = false;
-
-                                if (next.coords.top() <= scrollTop + (target.clientHeight - 56)) {
-                                    next.isPeeking = false;
-                                    next.isVisible = true;
-                                }
-
-                                if (next.coords.top() <= scrollTop + target.clientHeight / 2) {
-
-                                    next.isPeeking = false;
-                                    next.isVisible = true;
-                                    next.isActive = true;
-                                    next.isScrolling = false;
-
-                                    next = _this.State.views[index + 1];
-
-                                    if (next) {
-                                        next.isPeeking = true;
-                                        next.isActive = false;
-                                        next.isScrolling = false;
-                                        next.isVisible = false;
-                                        resetViewsAtIndex(index + 3);
-                                        break;
-                                    }
-                                }
-
-                                resetViewsAtIndex(index + 3);
-                                break;
-                            } else {
-                                next.isPeeking = true;
-                                next.isVisible = false;
-                                next.isActive = false;
-                                next.isScrolling = false;
-                            }
-
-                            resetViewsAtIndex(index + 2);
-                            break;
+                        if (viewTop >= scrollTop - 10 && viewTop <= scrollTop + 10) {
+                            found = view;
+                            continue;
                         }
-                    } else if (bottom < scrollTop) {
-                        view.reset({ isActive: true });
-                    } else {
-                        _this.State.views.slice(index).forEach(function (view) {
-                            return view.reset();
-                        });
+
+                        if (viewBottom < scrollTop) {
+                            view.reset();
+                            continue;
+                        }
+
+                        if (viewTop <= scrollTop && viewBottom >= scrollTop + 56) {
+                            found = view;
+                            continue;
+                        }
+                        if (!found && viewTop > scrollTop && viewTop < scrollBottom) {
+                            found = view;
+                            continue;
+                        }
+
                         view.reset();
                     }
                 }
+
+                if (found) {
+                    if (_this.viewClass) {
+                        document.documentElement.classList.remove(_this.viewClass);
+                    }
+                    _this.viewClass = found.name + '-view';
+                    document.documentElement.classList.add(_this.viewClass);
+                    _this.State.view = found;
+
+                    var _props2 = {
+                        isActive: true
+                    };
+
+                    if (found.coords.top() >= scrollTop - 10 && found.coords.top() <= scrollTop + 10) {} else {
+                        _props2.isTop = true;
+                        _props2.alignTitleLeft = true;
+                        _props2.showDirectionIcon = true;
+                    }
+                    found.reset(_props2);
+                }
+
+                if (next) {
+                    if (next.coords.top() <= scrollBottom - 56) {
+                        document.documentElement.classList.add('next-in-view');
+                    } else {
+                        document.documentElement.classList.remove('next-in-view');
+                    }
+                }
             };
+
+            this.State.views.forEach(updateView);
         };
 
         return App;
@@ -241,7 +228,7 @@ define('environment',["exports"], function (exports) {
     testing: true
   };
 });
-define('main',['exports', './environment'], function (exports, _environment) {
+define('main',['exports', './environment', 'core/element'], function (exports, _environment) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -372,9 +359,46 @@ define('state',['exports', 'aurelia-framework', 'aurelia-event-aggregator'], fun
                     _this.scrollElement.scrollTop = payload.top;
                 }
             });
+
+            this.eventAggregator.subscribe('state:scroll-to-view', function (view) {
+                if (view.coords.top() > document.body.scrollTop || view.coords.top() < document.body.scrollTop) {
+                    view.element.scrollIntoView();
+                } else {
+                    var index = _this.views.indexOf(view);
+                    if (_this.views[index - 1]) {
+                        _this.views[index - 1].element.scrollIntoView();
+                    }
+                }
+            });
         }
 
-        State.prototype.viewChanged = function viewChanged(view, lastView) {
+        State.prototype.viewChanged = function viewChanged(newView, lastView) {
+            var doc = document.documentElement;
+            var scrollTop = document.body.scrollTop;
+            var scrollHeight = document.body.clientHeight;
+            var scrollBottom = scrollTop + scrollHeight;
+            var headerHeight = 56;
+
+            if (lastView) {
+                if (lastView.coords.bottom() < scrollTop + headerHeight) {
+                    doc.classList.remove('view-' + lastView.name);
+                    lastView.isActive = false;
+                }
+            }
+
+            var index = this.views.indexOf(newView);
+
+            if (newView) {
+                newView.isActive = true;
+                if (index === 0) {
+                    newView.showTopbar = true;
+                    doc.classList.add('view-' + newView.name + '-active');
+                    doc.classList.add('view-' + newView.name + '-topbar');
+                }
+            }
+        };
+
+        State.prototype._viewChanged = function _viewChanged(view, lastView) {
             var _this2 = this;
 
             console.log(view);
@@ -524,6 +548,8 @@ define('core/education',['exports'], function (exports) {
 
         this.hackreactor = {
             name: 'Hack Reactor',
+            id: 'hack-reactor',
+            image: '/scripts/logos/hack-reactor-logo.png',
             site: 'http://hackreactor.com',
             date: '2014',
             location: 'San Francisco, California',
@@ -532,6 +558,8 @@ define('core/education',['exports'], function (exports) {
         };
         this.swbts = {
             name: 'College at SouthWestern',
+            id: 'southwestern',
+            image: '/scripts/logos/southwestern-logo.png',
             site: 'http://college.swbts.edu/',
             location: 'Fort Worth, Texas',
             date: '2010-2013',
@@ -549,6 +577,9 @@ define('core/education',['exports'], function (exports) {
 
         this.list = [this.hackreactor, this.swbts, this.uco];
     };
+});
+define('core/element',[], function () {
+  "use strict";
 });
 define('core/enums',['exports', 'aurelia-framework', './profile', './projects', './experience', './education', './technology'], function (exports, _aureliaFramework, _profile, _projects, _experience, _education, _technology) {
     'use strict';
@@ -702,13 +733,17 @@ define('core/experience',['exports'], function (exports) {
         this.mParticle = {
             name: 'mParticle',
             date: '2016-2017',
+            id: 'mparticle',
             occupation: 'Lead UX/UI Architect',
             link: 'http://mparticle.com',
+            image: '/scripts/logos/mparticle-logo.png',
+            className: 'mparticle-logo',
             stack: ['C#', '.Net', '.Net Core', 'Javascript', 'Aurelia', 'Less', 'HTML', 'Web Pack', 'Gulp'],
             notes: ['Spent countless nights completing issues before our first release', 'Re-architected the client side component structure', 'Built several features using provided design comps', 'Designed ux flow using provided flow descriptions']
         };
         this.TheLiked = {
             name: 'The Liked | Contract',
+            id: 'theliked',
             date: '2016',
             occupation: 'Soul Developer',
             link: 'http://theliked.com',
@@ -718,29 +753,37 @@ define('core/experience',['exports'], function (exports) {
         this.WoltersKluwer = {
             name: 'Wolters Kluwer | Contract',
             date: '2016',
+            id: 'wolters-kluwer',
             occupation: 'Senior Web Engineer | Senior Web Designer',
             link: 'http://wolterskluwer.com',
+            image: '/scripts/logos/wolters-kluwer-logo.png',
             stack: ['C#', '.Net', 'Mongo', 'SQL', 'Redis', 'Javascript', 'Aurelia', 'Web Animations', 'jQuery', 'HTML', 'Sass', 'CSS'],
             notes: ['Re-scaled nine applications into one web application', 'Designed a rich interactive flow creation tool', 'Visually display flow data using HTML Canvas and D3', 'Collaborated with a small team using scrum methodologies', 'Design UI Component Library for internal use across Wolters Kluwer applications']
         };
         this.Aurelia = {
             name: 'Aurelia',
+            id: 'aurelia',
             date: '2014-2016',
             occupation: 'Lead UX Engineer for Aurelia Interface',
             link: 'http://aurelia.io',
+            image: '/scripts/logos/aurelia-logo.png',
             stack: ['Javascript', 'Aurelia', 'HTML', 'Sass', 'CSS', 'Web Animations', 'flow', 'jspm', 'aurelia-cli'],
             notes: ['Developing not only a cross-browser, but also a cross-platform UX framework call aurelia-interface', 'Designed UX, Strictly following Google’s Material Design, Apple’s Humanize design, and Windows-guidelines.', 'Along with following standard design guidelines, I have created my own UI/UX Design standard.']
         };
         this.plusAmp = {
             name: 'PlusAMP | Contract',
             date: '2015',
+            id: 'plusamp',
             occupation: 'Lead UX Engineer',
+            image: '/scripts/logos/plusamp-logo.jpg',
+            className: 'plusamp-logo',
             stack: ['.Net', 'Node', 'Express', 'Redis', 'Mongo DB', 'Javascript', 'Aurelia', 'HTML', 'Sass', 'CSS'],
             notes: ['Strategically crafted an open source platform similar to Github, for data-scientist to share Algorithms.', 'Through inspiring visual effects, designed a way for consumers to visually and creatively create Algorithms.', 'Though this was a remote position, our team collaborated at a frequent rate, executing prime scrum methodologies.', 'Design a full featured UX/UI patterns/Sketch file as a guide for implementation in css.']
         };
         this.secret = {
             name: 'Undisclosed',
             date: '2014-2015',
+            id: 'undisclosed',
             occupation: 'Lead Javascript Engineer & Manager',
             stack: ['Javascript', 'Blue JS', 'HTML', 'Less', 'CSS'],
             notes: ['Optimized massive browser load time by 6 seconds.', 'Engineered a build system that saved over $30 million in 6 years from improving programmer time.', 'Developed and maintained a relational corporative team environment.']
@@ -748,44 +791,59 @@ define('core/experience',['exports'], function (exports) {
         this.hackreactor = {
             name: 'Hack Reactor',
             date: '2014-2015',
+            id: 'hack-reactor',
             occupation: 'Instructor',
             link: 'http://hackreactor.com',
+            image: '/scripts/logos/hack-reactor-logo.png',
+            className: 'hack-reactor-logo',
             notes: ['Engaged in the development of current HR students by being an available educational resource.', 'Took advantage of time, diving into several technologies that extend the possibilities of programming.', 'Honored to be a Hacker in Residence under three month contract with HR.']
         };
         this.hourglass = {
             name: 'Hourglass Events',
-            occupation: 'Senior Graphic Artist & Application Developer',
             date: '2013-Today',
+            id: 'hourglass',
+            occupation: 'Senior Graphic Artist & Application Developer',
+            image: '/scripts/hourglass-logo.png',
+            className: 'hourglass-logo',
             notes: ['Stimulated the FAAMA\'s Annual Conventions with extraordinary graphics.', 'Promoted convention Exhibitors thoughout each year, with continual email blasts, and mobile app ads.', 'Accelerated attendee envolvement with simple and intuative mobile application.', 'Engaged Exhibitors and FAAMA members with A-B Testing on event graphics and convention mobile app.', 'Assisted event managment team with graphics & mobile app.', 'Accompanied event team managment during each convention.']
         };
         this.his = {
             name: 'H-I-S Coatings',
             date: '2010-Today',
+            id: 'his',
             occupation: 'Developer & Designer',
+            image: '/scripts/logos/his-logo.png',
+            className: 'his-logo',
             notes: ['Custom-developed a real-time Customer Relations Platform with rich Enerprise Resource Planning integration for H-I-S Coatings company.', 'Implemented full featured OAuth system using Laravel and PHP backend with Angular and jQuery on front end.', 'Employed Google API’s for strategic delivery, routing and just-in-time order scheduling, and platform-wide notifications.', 'Integrated SQL database to communicate with SQL data store, structured by current Point-of-Sale system.', 'Engaged company employees with continual A-B testing to improve UX design.', 'Provided fequent application feedback sessions for overall application health.', 'TraCom is also used as the sole communications platform between Customer Relations and the Production Management team.']
         };
         this.graphics = {
             name: 'Graphic Artist',
             date: '2006-Today',
+            id: 'graphics',
             occupation: 'Contract & Freelance',
             notes: ['UI Design, PhotoGraphics, Illustrations, Vector Art, Logo\'s, Business Cards . . . And much more.', 'Artwork created using Adobe Photoshop, Adobe Illustrator, and Adobe Fireworks.']
         };
         this.dfwprint = {
             name: 'DFW Print',
             date: '2011-2013',
+            id: 'dfwprint',
             occupation: 'Senior Designer & Developer',
             notes: ['Improved customer sales and company reputation, by providing rich stationary designs.', 'Exposed Adobe\'s design software to the company, by teaching the team how to affectively use Photoshop, Illustrator & InDesign.', 'Discovered a true passion for engaging customer\'s, inorder to provide the design that would best fit their need.']
         };
         this.photographer = {
             name: 'Photographer',
             date: '2008-2013',
+            id: 'photographer',
             occupation: 'Contract & Freelance',
             notes: ['Business Events, Conventions, Parties, Weddings, Portraits . . . etc', 'Final Proofs created with Adobe Photoshop']
         };
         this.hisService = {
             name: 'H-I-S Coatings',
             date: '2001-2010',
+            id: 'his',
             occupation: 'Customer Service & Many other Hats',
+            image: '/scripts/logos/his-logo.png',
+            className: 'his-logo',
             notes: ['Established a firm understanding of customer relations, by working closely with serveral hundred customers.', 'Provided support between Customer Relations, the Delivery Team, and the Small Batch Production team.', 'Took the initiative to reorganize in house stocking system.', 'Explored several positions, wearing several hats, as my father requested.']
         };
 
@@ -834,20 +892,24 @@ define('core/projects',['exports'], function (exports) {
         this.DOMX = {
             name: 'DOMX | in progress',
             date: '2016-today',
+            id: 'domx',
             image: '',
             link: 'http://github.com/joelcoxokc/domx',
-            notes: []
+            className: 'domx-logo',
+            notes: ['Developing cross-browser cross-platform Vanilla Javascript Web Component Library', 'Built with everything I am current learning', 'Built with my knowledge of the web over the past several years']
         };
         this.AureliaHub = {
             name: 'Aurelia Hub & Documentation',
             date: '2015-2016',
+            id: 'aurelia-hub',
             link: 'http://aurelia.io/hub',
             image: '/scripts/logos/aurelia-logo.png',
-            notes: []
+            notes: ['Developed dynamic navigation conforming to Aurelia\'s generated documentation structure', 'Implemented cross-browser and cross-platform support', 'Pixel pushed my way to perfectly matching creative design comps', 'Used components developed for the Aurelia Interface UX library']
         };
         this.Aurelia = {
             name: 'Aurelia Interface',
             date: '2015-2016',
+            id: 'aurelia-interface',
             occupation: 'Lead UX Engineer',
             link: 'http://blog.durandal.io/2015/11/20/aurelia-beta-week-day-5-aurelia-interface/',
             image: '/scripts/logos/aurelia-logo.png',
@@ -856,13 +918,16 @@ define('core/projects',['exports'], function (exports) {
         this.uimaterialize = {
             name: 'UI-Materialize | depricated',
             date: '2014',
+            id: 'ui-materialize',
             occupation: 'Project Founder',
             link: 'http://ui-materialize.com',
+            className: 'ui-materialize-logo',
             notes: ['Designed UX/UI Library using Googl\'s Material Design guidelines', 'Leveraging Angular JS to create custom cross-browser Directives', 'Using Photoshop and Illustrator, developed Mockups of components before implementation', 'Project depricated due to Angular no longer supporting AngularJS version 1']
         };
         this.slushy = {
             name: 'Slush-y',
             date: '2014',
+            id: 'slush-y',
             occupation: 'Project Founder',
             link: 'http://www.npmjs.com/package/slush-y',
             image: '/scripts/logos/slushy-logo.png',
@@ -871,6 +936,7 @@ define('core/projects',['exports'], function (exports) {
         this.platfeful = {
             name: 'PlateFul | depricated',
             date: '2014-2015',
+            id: 'plateful',
             occupation: 'Co-Founder Lead UX Engineer',
             link: 'https://github.com/Plateful',
             image: '/scripts/logos/plateful-logo.png',
@@ -879,6 +945,7 @@ define('core/projects',['exports'], function (exports) {
         this.tracom = {
             name: 'TraCom | Private',
             date: '2010-Today',
+            id: 'tracom',
             occupation: 'Developer & Designer',
             image: '/scripts/logos/tracom-logo.png',
             notes: ['Custom-developed a real-time Customer Relations Platform with rich Enerprise Resource Planning integration for H-I-S Coatings company.', 'Implemented full featured OAuth system using Laravel and PHP backend with Angular and jQuery on front end.', 'Employed Google API’s for strategic delivery, routing and just-in-time order scheduling, and platform-wide notifications.', 'Integrated SQL database to communicate with SQL data store, structured by current Point-of-Sale system.', 'Engaged company employees with continual A-B testing to improve UX design.', 'Provided fequent application feedback sessions for overall application health.', 'TraCom is also used as the sole communications platform between Customer Relations and the Production Management team.']
@@ -961,8 +1028,8 @@ define('core/technology',['exports'], function (exports) {
         return TechnologyEnums;
     }();
 });
-define('core/view',["exports"], function (exports) {
-    "use strict";
+define('core/view',['exports'], function (exports) {
+    'use strict';
 
     Object.defineProperty(exports, "__esModule", {
         value: true
@@ -994,11 +1061,11 @@ define('core/view',["exports"], function (exports) {
 
     var View = exports.View = function () {
         _createClass(View, [{
-            key: "sectionHeight",
+            key: 'sectionHeight',
             get: function get() {
                 var defaultHeight = window.innerHeight - 200;
-                if (this.navSection) {
-                    return this.navSection.element.clientHeight || defaultHeight;
+                if (this.element) {
+                    return this.element.clientHeight || defaultHeight;
                 }
                 return defaultHeight;
             }
@@ -1013,6 +1080,16 @@ define('core/view',["exports"], function (exports) {
             this.title = null;
             this.isActive = false;
             this.isVisible = false;
+            this.isTop = false;
+            this.isMiddle = false;
+            this.isBottom = false;
+            this.alignIconLeft = false;
+            this.alignIconRight = false;
+            this.alignTitleLeft = false;
+            this.alignTitleCenter = false;
+            this.alignTitleRight = false;
+            this.showDirectionIcon = false;
+            this.showMenuIcon = false;
             this.isPeeking = false;
             this.isScrolling = false;
             this.viewModel = null;
@@ -1024,7 +1101,7 @@ define('core/view',["exports"], function (exports) {
             this.coords = {};
 
             this.coords.top = function () {
-                return _this.element.offsetTop;
+                return _this.element ? _this.element.offsetTop : 0;
             };
 
             this.coords.bottom = function () {
@@ -1032,12 +1109,33 @@ define('core/view',["exports"], function (exports) {
             };
         }
 
+        View.prototype.updateBounds = function updateBounds() {
+            var height = void 0;
+            if (this.element) {
+                height = this.element.clientHeight;
+            }
+
+            if (height && this.background) {
+                this.background.style.setProperty('min-height', height + 'px');
+            }
+        };
+
         View.prototype.reset = function reset(properties) {
             Object.assign(this, {
                 isVisible: false,
                 isScrolling: false,
                 isPeeking: false,
-                isActive: false
+                isActive: false,
+                isTop: false,
+                isMiddle: false,
+                isBottom: false,
+                alignIconLeft: false,
+                alignIconRight: false,
+                alignTitleCenter: false,
+                alignTitleLeft: false,
+                alignTitleRight: false,
+                showDirectionIcon: false,
+                showMenuIcon: false
             }, properties);
         };
 
@@ -1057,6 +1155,123 @@ define('core/view',["exports"], function (exports) {
             this.viewModel = viewModel;
         };
 
+        View.prototype.updatePosition = function updatePosition(scroll, viewIndex, views) {
+            var doc = document.documentElement;
+            var top = this.element.offsetTop;
+            var bottom = this.element.offsetTop + this.element.clientHeight;
+
+            if (top < scroll.top + scroll.height / 2) {
+                this.isActive = true;
+
+                if (top < scroll.top) {
+                    this.isScrolling = true;
+                    doc.classList.add('view-' + this.name + '-scrolling');
+                } else {
+                    this.isScrolling = false;
+                    doc.classList.remove('view-' + this.name + '-scrolling');
+                }
+
+                if (bottom < scroll.top + 56) {
+                    this.isScrolling = false;
+                }
+            } else if (top < scroll.bottom) {
+                this.showTitle = true;
+            } else {
+                this.isActive = false;
+                this.showTitle = false;
+                this.isScrolling = false;
+                this.showTopbar = false;
+            }
+
+            var scrollHalf = scroll.top + scroll.height / 2;
+
+            if (top < scroll.bottom - 56 && top >= scroll.top - 8) {
+                this.showTitle = true;
+            } else {
+                this.showTitle = false;
+            }
+
+            if (top < scrollHalf && bottom > scrollHalf) {
+                this.isActive = true;
+            } else {
+                this.isActive = false;
+            }
+
+            if (top <= scroll.top + 56 && bottom > scroll.top + 56) {
+                this.showTopbar = true;
+            } else {
+                this.showTopbar = false;
+            }
+
+            if (this.showTopbar && top > scroll.top - 8) {
+                this.hideHeaderTitle = true;
+            } else {
+                this.hideHeaderTitle = false;
+            }
+
+            if (bottom < scroll.top + scroll.height / 2) {
+                this.isActive = false;
+            }
+
+            if (bottom < scroll.top + 56) {
+                this.isScrolling = false;
+                this.isAboveScroll = true;
+                this.isBelowScroll = false;
+            } else if (top > scroll.bottom) {
+                this.isAboveScroll = false;
+                this.isBelowScroll = true;
+            } else {
+                this.isAboveScroll = false;
+                this.isBelowScroll = false;
+            }
+
+            if (this.isAboveScroll || this.isActive) {
+                doc.classList.remove('view-' + this.name + '-next');
+            }
+
+            if (this.isAboveScroll || this.isBelowScroll) {
+                this.isActive = false;
+                this.showTitle = false;
+                this.isScrolling = false;
+            }
+
+            if (top < scroll.top + 8 && bottom > scroll.bottom - 8) {
+                this.isgtvh = true;
+            } else {
+                this.isgtvh = false;
+                this.isScrolling = false;
+            }
+
+            if (this.isActive) {
+                doc.setAttribute('view-index', viewIndex);
+
+                if (this.isScrolling) {
+                    doc.setAttribute('scroll-index', viewIndex);
+                }
+
+                doc.removeAttribute('scroll-index');
+            }
+
+            doc.classList[this.showTopbar ? 'add' : 'remove']('view-' + this.name + '-topbar');
+            doc.classList[this.isgtvh ? 'add' : 'remove']('view-' + this.name + '-gtvh');
+            doc.classList[this.isScrolling ? 'add' : 'remove']('view-' + this.name + '-scrolling');
+            doc.classList[this.isActive ? 'add' : 'remove']('view-' + this.name + '-active');
+            doc.classList[this.showTitle ? 'add' : 'remove']('view-' + this.name + '-title');
+            doc.classList[this.hideHeaderTitle ? 'add' : 'remove']('view-' + this.name + '-no-header-title');
+
+            if (parseFloat(doc.getAttribute('scroll-index')) === viewIndex - 1) {
+                doc.classList.add('view-' + this.name + '-peek');
+            } else {
+                doc.classList.remove('view-' + this.name + '-peek');
+            }
+
+            if (parseFloat(doc.getAttribute('view-index')) === viewIndex - 1) {
+                doc.classList.add('view-' + this.name + '-next');
+            } else {
+                doc.classList.remove('view-' + this.name + '-next');
+            }
+        };
+
         return View;
     }();
 });
@@ -1071,14 +1286,16 @@ define('modules/index',['exports'], function (exports) {
         config.globalResources('./nav-section/nav-section', './nav-bar/nav-bar', './navigation/navigation', './icon/icon');
     }
 });
-define('resources/index',["exports"], function (exports) {
-  "use strict";
+define('resources/index',['exports'], function (exports) {
+  'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
   exports.configure = configure;
-  function configure(config) {}
+  function configure(config) {
+    config.globalResources(['./attributes/ripple']);
+  }
 });
 define('modules/education/education',["exports"], function (exports) {
     "use strict";
@@ -1101,6 +1318,23 @@ define('modules/education/education',["exports"], function (exports) {
         };
     };
 });
+define('modules/footer/footer',["exports"], function (exports) {
+    "use strict";
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var Footer = exports.Footer = function Footer() {
+        _classCallCheck(this, Footer);
+    };
+});
 define('modules/experience/experience',["exports"], function (exports) {
     "use strict";
 
@@ -1120,23 +1354,6 @@ define('modules/experience/experience',["exports"], function (exports) {
         this.props = {
             experiences: experiences.list
         };
-    };
-});
-define('modules/footer/footer',["exports"], function (exports) {
-    "use strict";
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    var Footer = exports.Footer = function Footer() {
-        _classCallCheck(this, Footer);
     };
 });
 define('modules/header/header',['exports', 'aurelia-framework', 'core/core'], function (exports, _aureliaFramework, _core) {
@@ -1488,6 +1705,10 @@ define('modules/nav-section/nav-section',['exports', 'aurelia-framework', 'aurel
         }
 
         NavSection.prototype.attached = function attached() {
+            var _this = this;
+
+            this.mainContainer = document.querySelector('container');
+
             if (this.element.classList.contains('first')) {
                 this.positionClass = 'first';
             }
@@ -1495,13 +1716,41 @@ define('modules/nav-section/nav-section',['exports', 'aurelia-framework', 'aurel
                 this.positionClass = 'last';
             }
 
-            this.element.parentElement.parentElement.appendChild(this.fixedheader);
+            if (this.fixedTopHeader) {
+                this.mainContainer.appendChild(this.fixedTopHeader);
+            }
+            if (this.fixedBottomHeader) {
+                this.mainContainer.appendChild(this.fixedBottomHeader);
+            }
 
             if (this.view.bgElement) {
                 this.view.bgElement.style.height = this.element.clientHeight + 'px';
             }
 
             this.eventAggregator.publish('nav-section:attached', this);
+
+            var bgContainer = document.querySelector('.background-container');
+            var height = this.element.clientHeight + 'px';
+            var clone = null;
+
+            if (bgContainer) {
+                this.clone = this.element.cloneNode();
+                Object.assign(this.clone.style, {
+                    height: height,
+                    minHeight: height,
+                    maxHeight: height
+                });
+                bgContainer.appendChild(this.clone);
+            }
+
+            this.eventAggregator.subscribe('window:resize', function () {
+                height = _this.element.clientHeight + 'px';
+                Object.assign(_this.clone.style, {
+                    height: height,
+                    minHeight: height,
+                    maxHeight: height
+                });
+            });
         };
 
         NavSection.prototype.viewChanged = function viewChanged(view) {
@@ -1512,27 +1761,17 @@ define('modules/nav-section/nav-section',['exports', 'aurelia-framework', 'aurel
 
         NavSection.prototype.headerClicked = function headerClicked(event) {
             event.preventDefault();
-
             this.eventAggregator.publish('state:set:view', this.view);
         };
 
         NavSection.prototype.toggleNavigation = function toggleNavigation(event) {
             event.preventDefault();
-
             this.eventAggregator.publish('state:navigation:toggle');
         };
 
         NavSection.prototype.navigateDirection = function navigateDirection(event) {
             event.preventDefault();
-            if (this.view.isPeeking) {
-                this.eventAggregator.publish('state:scroll-to', {
-                    top: this.element.offsetTop
-                });
-            } else if (this.view.isScrolling && this.element.previousElementSibling) {
-                this.eventAggregator.publish('state:scroll-to', {
-                    top: this.element.previousElementSibling.offsetTop
-                });
-            }
+            this.eventAggregator.publish('state:scroll-to-view', this.view);
         };
 
         return NavSection;
@@ -1625,6 +1864,7 @@ define('modules/navigation/navigation',['exports', 'aurelia-framework', 'state',
         };
 
         Navigation.prototype.visibilityChanged = function visibilityChanged(value) {
+            console.log(value);
             if (value) {
                 this.showNavigation();
             } else {
@@ -1639,29 +1879,64 @@ define('modules/navigation/navigation',['exports', 'aurelia-framework', 'state',
         };
 
         Navigation.prototype.showNavigation = function showNavigation() {
-            var _listener = void 0;
-            var element = this.State.container;
+            var _this2 = this;
 
-            element.addEventListener('animationend', _listener = function listener(event) {
-                element.classList.add('offset-main-right');
-                element.classList.remove('animate-main-right');
-                element.removeEventListener('animationend', _listener);
+            console.log('showing');
+            var _listener = void 0;
+            var container = document.querySelector('container');
+            var main = document.querySelector('main');
+
+            container.classList.remove('hide-navigation');
+            container.classList.remove('hiding-navigation');
+
+            container.addEventListener('animationend', _listener = function listener(event) {
+                container.classList.add('show-navigation');
+                container.classList.remove('showing-navigation');
+                container.removeEventListener('animationend', _listener);
+                console.log('animationend show');
+            });
+
+            container.classList.add('showing-navigation');
+
+            this.resizeListener = this.eventAggregator.subscribe('window:resize', function () {
+                _this2.visibility = false;
+            });
+
+            main.addEventListener('mousedown', this.clickListener = function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                _this2.visibility = false;
+                console.log('click');
             }, true);
 
-            element.classList.add('animate-main-right');
+            main.addEventListener('touchstart', this.touchListener = function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                _this2.visibility = false;
+                console.log('click');
+            }, true);
         };
 
         Navigation.prototype.hideNavigation = function hideNavigation() {
+            console.log('hiding');
             var _listener2 = void 0;
-            var element = this.State.container;
+            var container = document.querySelector('container');
+            var main = document.querySelector('main');
 
-            element.addEventListener('animationend', _listener2 = function listener(event) {
-                element.classList.remove('offset-main-right');
-                element.classList.remove('animate-main-default');
-                element.removeEventListener('animationend', _listener2);
-            }, true);
+            this.resizeListener.dispose();
+            main.removeEventListener('mousedown', this.clickListener, true);
+            main.removeEventListener('touchstart', this.touchListener, true);
 
-            element.classList.add('animate-main-default');
+            container.classList.remove('show-navigation');
+            container.classList.remove('showing-navigation');
+
+            container.addEventListener('animationend', _listener2 = function listener(event) {
+                container.classList.remove('hiding-navigation');
+                container.removeEventListener('animationend', _listener2);
+                console.log('animationend hide');
+            });
+
+            container.classList.add('hiding-navigation');
         };
 
         return Navigation;
@@ -1757,18 +2032,119 @@ define('modules/title/title',["exports"], function (exports) {
         this.summary = props.summary;
     };
 });
-define('text!app.html', ['module'], function(module) { module.exports = "<template><require from=./app.css></require><div class=app-background></div><container ref=State.container class=active-view-${State.view.name}><navigation></navigation><main ref=State.scrollElement><template repeat.for=\"view of State.views\"><nav-section class=\"${$first ? 'first' : $last ? 'last' : ''} app-${view.name}\" ref=view.element view.bind=view></nav-section></template></main><footer ref=State.footer.element><compose view-model.bind=State.footer></compose></footer></container></template>"; });
-define('text!modules/education/education.html', ['module'], function(module) { module.exports = "<template><template repeat.for=\"edu of props.educations\"><article><div class=card-image if.bind=edu.image><img src.bind=edu.image alt.bind=edu.name></div><div class=card-content><div class=card-heading><div class=card-title>${edu.name}</div><div class=card-date>${edu.date}</div></div><ul class=card-details><li repeat.for=\"note of edu.notes\"><icon ico=chevron_right></icon><span class=text>${note}</span></li></ul></div></article></template></template>"; });
-define('text!modules/experience/experience.html', ['module'], function(module) { module.exports = "<template><template repeat.for=\"xp of props.experiences\"><article><div class=card-image if.bind=xp.image><img src.bind=xp.image alt.bind=xp.name></div><div class=card-content><div class=card-heading><div class=card-title>${xp.name}</div><div class=card-date>${xp.date}</div></div><ul class=card-details><li repeat.for=\"note of xp.notes\"><icon ico=chevron_right></icon><span class=text>${note}</span></li></ul><ul class=card-tags><li repeat.for=\"stack of xp.stack\">${stack}</li></ul></div></article></template></template>"; });
-define('text!app.css', ['module'], function(module) { module.exports = "@import url(\"https://fonts.googleapis.com/css?family=Roboto\");\nnav-bar {\n  position: fixed;\n  top: 50%;\n  right: 10%;\n  transform: translateY(-50%); }\n  nav-bar > button {\n    outline: none;\n    background: white;\n    border-radius: 2px;\n    border: none;\n    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);\n    height: 36px;\n    width: 120px; }\n  nav-bar > ul.slider {\n    width: 100%;\n    position: absolute;\n    height: auto;\n    top: 0;\n    left: 0;\n    background: red;\n    margin: 0;\n    padding: 0;\n    list-style: none; }\n    nav-bar > ul.slider > li {\n      height: 36px; }\n\nnav-section {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  min-height: 100%;\n  position: relative; }\n  nav-section .row {\n    flex: 1 0 auto;\n    display: flex;\n    align-items: flex-start;\n    justify-content: flex-start;\n    flex-direction: row; }\n  nav-section .section-container {\n    flex: 1;\n    height: auto;\n    display: flex;\n    position: relative;\n    flex-direction: column;\n    align-items: flex-start;\n    justify-content: flex-start;\n    padding-top: 200px;\n    box-shadow: -3px 0 3px rgba(0, 0, 0, 0.3);\n    background-color: inherit;\n    z-index: 4; }\n  nav-section article {\n    margin-bottom: 24px;\n    display: flex;\n    flex-direction: column;\n    align-self: stretch; }\n\n.nav-section-header {\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  min-height: 56px;\n  display: flex;\n  flex-direction: row;\n  z-index: 5; }\n  .nav-section-header icon {\n    user-select: none;\n    height: 56px;\n    width: 56px;\n    line-height: 56px;\n    text-align: center;\n    cursor: pointer;\n    color: inherit; }\n    .nav-section-header icon:hover {\n      opacity: 0.5; }\n  .nav-section-header icon.menu-icon {\n    display: none; }\n  .nav-section-header .header-title {\n    pointer-events: none;\n    padding: 0 56px;\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n    text-align: left;\n    display: block;\n    font-size: 24px;\n    line-height: 56px;\n    font-weight: bold;\n    cursor: pointer;\n    user-select: none;\n    color: inherit; }\n  .nav-section-header.fixed {\n    opacity: 0;\n    visibility: hidden; }\n    .nav-section-header.fixed:hover .header-title {\n      opacity: 0.7; }\n  .nav-section-header.first {\n    opacity: 0;\n    visibility: hidden; }\n  .nav-section-header.visible:not(.scrolling) icon {\n    display: none; }\n  .nav-section-header.visible:not(.scrolling) .header-title {\n    text-align: center;\n    font-size: 56px;\n    transform: translate3d(0, 165%, 0); }\n  .nav-section-header.visible:not(.scrolling).fixed {\n    opacity: 0;\n    visibility: hidden; }\n  .nav-section-header.peeking {\n    border-top: 1px solid rgba(0, 0, 0, 0.12); }\n    .nav-section-header.peeking icon {\n      margin-left: auto;\n      transform: rotate(180deg); }\n    .nav-section-header.peeking .header-title {\n      text-align: right; }\n    .nav-section-header.peeking.fixed {\n      opacity: 1;\n      visibility: visible;\n      top: unset;\n      bottom: 0; }\n  .nav-section-header.active .header-title {\n    text-align: center;\n    font-size: 56px;\n    transform: translate3d(0, 165%, 0); }\n  .nav-section-header.active.scrolling {\n    border-bottom: 1px solid rgba(0, 0, 0, 0.12); }\n    .nav-section-header.active.scrolling icon.direction-icon {\n      margin-left: auto; }\n    .nav-section-header.active.scrolling icon.menu-icon {\n      display: block; }\n    .nav-section-header.active.scrolling.fixed {\n      opacity: 1;\n      visibility: visible; }\n      .nav-section-header.active.scrolling.fixed .header-title {\n        text-align: left;\n        font-size: 24px;\n        transform: translate3d(0, 0, 0); }\n\napp-section.view-active {\n  transform: translate3d(0, 0, 0); }\n\napp-section.view-down {\n  transform: translate3d(0, 100%, 0); }\n\napp-section.view-up {\n  transform: translate3d(0, -100%, 0); }\n\napp-section.animate-view-down-to-active {\n  animation-name: animate-view-down-to-active; }\n  app-section.animate-view-down-to-active header span.header-title {\n    animation-name: animate-header-down-to-active; }\n\napp-section.animate-view-active-to-up {\n  animation-name: animate-view-active-to-up; }\n\napp-section.animate-view-up-to-active {\n  animation-name: animate-view-up-to-active; }\n\napp-section.animate-view-active-to-down {\n  animation-name: animate-view-active-to-down; }\n\n@keyframes animate-view-down-to-active {\n  from {\n    transform: translate3d(0, 100%, 0); }\n  to {\n    transform: translate3d(0, 0, 0); } }\n\n@keyframes animate-view-active-to-up {\n  from {\n    transform: translate3d(0, 0, 0); }\n  to {\n    transform: translate3d(0, -100%, 0); } }\n\n@keyframes animate-view-up-to-active {\n  from {\n    transform: translate3d(0, -100%, 0); }\n  to {\n    transform: translate3d(0, 0, 0); } }\n\n@keyframes animate-view-active-to-down {\n  from {\n    transform: translate3d(0, 0, 0); }\n  to {\n    transform: translate3d(0, 100%, 0); } }\n\n@keyframes animate-header-down-to-active {\n  from {\n    right: 0;\n    text-align: right;\n    transform: translate3d(0, 0, 0); }\n  to {\n    right: unset;\n    text-align: center;\n    transform: translate3d(0, 100%, 0); } }\n\nnavigation {\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  min-height: 100%;\n  width: 200px;\n  z-index: 1;\n  pointer-events: none;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start; }\n  navigation > header {\n    display: block;\n    width: 100%;\n    background-color: rgba(255, 255, 255, 0.6);\n    height: 56px;\n    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2); }\n  navigation > section {\n    flex: 1;\n    display: block;\n    width: 100%;\n    background-color: rgba(255, 255, 255, 0.6); }\n  navigation > footer {\n    background-color: rgba(255, 255, 255, 0.6);\n    display: block;\n    width: 100%;\n    height: 56px;\n    box-shadow: 0 -3px 4px rgba(0, 0, 0, 0.2); }\n  navigation ul.navigation-list {\n    margin: 0;\n    padding: 0;\n    list-style: none;\n    display: flex;\n    flex-direction: column;\n    align-items: flex-start;\n    justify-content: flex-start; }\n    navigation ul.navigation-list li {\n      width: 100%;\n      pointer-events: auto;\n      display: flex;\n      flex-direction: row;\n      align-items: flex-start;\n      justify-content: flex-start;\n      min-height: 48px;\n      cursor: pointer; }\n      navigation ul.navigation-list li icon {\n        pointer-events: none;\n        margin: 12px; }\n      navigation ul.navigation-list li span.text {\n        pointer-events: none;\n        flex: 0 1 auto;\n        font-size: 16px;\n        font-weight: 500;\n        line-height: 48px;\n        letter-spacing: 1.34px;\n        user-select: none; }\n\n.active-view-title navigation ul.navigation-list li:hover {\n  background-color: rgba(255, 255, 255, 0.6); }\n\n.active-view-title navigation ul.navigation-list li.active {\n  background-color: white;\n  color: rgba(0, 0, 0, 0.87); }\n\n.active-view-profile navigation ul.navigation-list li:hover {\n  background-color: rgba(40, 75, 99, 0.6); }\n\n.active-view-profile navigation ul.navigation-list li.active {\n  background-color: #284B63;\n  color: white; }\n\n.active-view-projects navigation ul.navigation-list li:hover {\n  background-color: rgba(95, 136, 138, 0.6); }\n\n.active-view-projects navigation ul.navigation-list li.active {\n  background-color: #5F888A;\n  color: rgba(0, 0, 0, 0.87); }\n\n.active-view-experience navigation ul.navigation-list li:hover {\n  background-color: rgba(217, 217, 217, 0.6); }\n\n.active-view-experience navigation ul.navigation-list li.active {\n  background-color: #D9D9D9;\n  color: rgba(0, 0, 0, 0.87); }\n\n.active-view-education navigation ul.navigation-list li:hover {\n  background-color: rgba(53, 53, 53, 0.6); }\n\n.active-view-education navigation ul.navigation-list li.active {\n  background-color: #353535;\n  color: white; }\n\n.active-view-technology navigation ul.navigation-list li:hover {\n  background-color: rgba(255, 255, 255, 0.6); }\n\n.active-view-technology navigation ul.navigation-list li.active {\n  background-color: white;\n  color: rgba(0, 0, 0, 0.87); }\n\ncontainer > header.nav-section-header,\ncontainer .section-container {\n  animation-timing-function: ease;\n  animation-duration: 0.3s;\n  animation-fill-mode: forwards; }\n\ncontainer.offset-main-right > header.nav-section-header {\n  transform: translate3d(200px, 0, 0); }\n\ncontainer.offset-main-right .section-container {\n  transform: translate3d(200px, 0, 0); }\n\ncontainer.animate-main-right > header.nav-section-header {\n  animation-name: animate-main-right;\n  border-top-left-radius: 0; }\n\ncontainer.animate-main-right .section-container {\n  animation-name: animate-main-right; }\n\ncontainer.animate-main-default > header.nav-section-header {\n  animation-name: animate-main-default;\n  border-top-left-radius: 0; }\n\ncontainer.animate-main-default .section-container {\n  animation-name: animate-main-default; }\n\n@keyframes animate-main-right {\n  from {\n    transform: translate3d(0, 0, 0); }\n  to {\n    transform: translate3d(200px, 0, 0); } }\n\n@keyframes animate-main-default {\n  from {\n    transform: translate3d(200px, 0, 0); }\n  to {\n    transform: translate3d(0, 0, 0); } }\n\n*::-webkit-scrollbar {\n  display: none; }\n\nhtml {\n  width: 100vw;\n  height: 100vh;\n  color: #323232;\n  font-family: 'Roboto', sans-serif; }\n\nbody {\n  padding: 0;\n  margin: 0;\n  position: relative;\n  width: 100%;\n  height: 100%;\n  max-width: 100%;\n  overflow: hidden; }\n\nbutton {\n  background: transparent;\n  border: none;\n  outline: none;\n  -webkit-webkit-appearance: none;\n  -moz-webkit-appearance: none;\n  -ms-webkit-appearance: none;\n  -o-webkit-appearance: none;\n  webkit-appearance: none; }\n\n.app-background {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  z-index: 0;\n  background-image: url(http://brodeurcampbellfence.com/wp-content/uploads/2013/03/gradient-background-more-white.jpg);\n  background-repeat: no-repeat;\n  background-size: cover; }\n\n.app-section {\n  height: 100%;\n  width: 100%;\n  position: relative; }\n\nnav-section {\n  height: auto;\n  min-height: 100%;\n  flex: 1 0 auto;\n  min-width: 100%; }\n\ncontainer {\n  display: block;\n  background: white;\n  box-shadow: 2px 3px 4px rgba(0, 0, 0, 0.1), -2px 0px 4px rgba(0, 0, 0, 0.1), 0 10px 20px -5px rgba(0, 0, 0, 0.2);\n  z-index: 2;\n  position: relative;\n  height: 100%;\n  overflow: hidden; }\n\ncontainer > header {\n  position: absolute;\n  top: 0;\n  margin: 0 auto;\n  left: 0;\n  right: 0;\n  height: 56px;\n  background-color: transparent;\n  z-index: 2; }\n  container > header button {\n    height: 50px;\n    color: white;\n    margin: 0 5px;\n    line-height: 36px;\n    padding: 0 16px;\n    cursor: pointer;\n    vertical-align: top;\n    cursor: pointer; }\n    container > header button icon {\n      margin: 6px; }\n    container > header button:hover {\n      background-color: rgba(255, 255, 255, 0.1); }\n\ncontainer > main {\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  height: 100%;\n  width: 100%;\n  max-height: 100%;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  overflow-x: hidden;\n  overflow-y: auto;\n  -webkit-overflow-scrolling: touch;\n  /* lets it scroll lazy */ }\n  container > main .nav-section-container {\n    display: flex;\n    flex-direction: column;\n    align-items: flex-start;\n    justify-content: flex-start;\n    z-index: 4;\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n    min-height: 100%;\n    min-width: 100%; }\n  container > main .nav-background-container {\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n    min-height: 100%;\n    min-width: 100%;\n    z-index: 1; }\n\n.profile-background {\n  background-color: #284B63; }\n\n.technology-background {\n  background-color: white; }\n\n.projects-background {\n  background-color: #5F888A; }\n\n.experience-background {\n  background-color: #D9D9D9; }\n\n.education-background {\n  background-color: #353535; }\n\n.app-title {\n  background-color: white; }\n  .app-title-header {\n    background-color: white; }\n\n.app-profile {\n  background-color: #284B63; }\n  .app-profile article {\n    flex: 1 0 auto;\n    display: flex;\n    flex-direction: column;\n    align-items: stretch;\n    justify-content: flex-start; }\n  .app-profile .profile-image {\n    flex: 0 0 358px;\n    margin: 0 auto;\n    text-align: right; }\n    .app-profile .profile-image img {\n      height: 350px;\n      width: 350px;\n      border-radius: 100%;\n      border: 4px solid white;\n      box-shadow: 0 10px 10px -6px rgba(0, 0, 0, 0.2); }\n  .app-profile .profile-content {\n    flex: 1; }\n  .app-profile ul.profile-detail {\n    list-style: none;\n    margin: 24px 0;\n    padding: 0; }\n    .app-profile ul.profile-detail li {\n      min-height: 48px;\n      line-height: 48px;\n      font-size: 24px;\n      color: white;\n      margin-bottom: 12px;\n      display: flex;\n      flex-direction: row;\n      align-items: flex-start;\n      justify-content: flex-start;\n      padding-bottom: 12px;\n      padding-left: 56px;\n      padding-right: 56px; }\n      .app-profile ul.profile-detail li label {\n        font-size: 14px;\n        color: rgba(255, 255, 255, 0.7);\n        font-weight: bold;\n        margin: 0;\n        flex: 1;\n        text-align: right;\n        padding-right: 12px; }\n      .app-profile ul.profile-detail li .value {\n        flex: 1;\n        display: flex;\n        flex-direction: column;\n        align-items: stretch;\n        justify-content: flex-start;\n        font-size: inherit;\n        line-height: inherit;\n        color: inherit; }\n      .app-profile ul.profile-detail li p {\n        font-size: inherit;\n        line-height: inherit;\n        color: inherit;\n        text-align: left;\n        padding-left: 12px;\n        margin: 0;\n        border-left: 1px solid rgba(255, 255, 255, 0.12); }\n  .app-profile .profile-info {\n    flex: 3;\n    margin-right: 24px; }\n    .app-profile .profile-info ul {\n      margin: 0;\n      padding: 0;\n      list-style: none; }\n      .app-profile .profile-info ul li {\n        margin-bottom: 12px;\n        border-bottom: 1px solid rgba(0, 0, 0, 0.87);\n        padding-bottom: 5px; }\n        .app-profile .profile-info ul li label {\n          font-size: 12px;\n          font-weight: normal;\n          color: rgba(0, 0, 0, 0.87);\n          margin-bottom: 5px; }\n        .app-profile .profile-info ul li p {\n          margin: 0;\n          color: white;\n          font-size: 18px;\n          font-weight: normal;\n          line-height: 1.3; }\n  .app-profile-header {\n    background-color: #284B63; }\n    .app-profile-header icon {\n      color: white; }\n    .app-profile-header .header-title {\n      color: white; }\n  .app-profile .header-title {\n    color: white; }\n\n.app-technology {\n  background-color: white; }\n  .app-technology h1 {\n    font-size: 32px;\n    padding-left: 24px; }\n  .app-technology ul {\n    list-style: none;\n    margin: 0 12px;\n    padding: 0;\n    display: flex;\n    flex-wrap: wrap;\n    flex-direction: row;\n    align-items: flex-start;\n    justify-content: flex-start;\n    max-width: 100%; }\n    .app-technology ul li {\n      display: inline-block;\n      margin: 12px;\n      max-width: 100px;\n      min-width: 100px;\n      max-height: 136px;\n      min-height: 136px;\n      background-color: white;\n      box-shadow: 0 3px 4px -3px rgba(0, 0, 0, 0.2), 0 3px 4px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.1); }\n      .app-technology ul li img {\n        display: block;\n        width: inherit;\n        max-width: inherit; }\n      .app-technology ul li span {\n        display: block;\n        text-align: center;\n        font-size: 18px;\n        font-weight: bold;\n        line-height: 24px; }\n  .app-technology-header {\n    background-color: white; }\n\n.app-projects {\n  background-color: #5F888A; }\n  .app-projects article {\n    margin-bottom: 24px;\n    border-bottom: 1px solid rgba(0, 0, 0, 0.12);\n    display: flex;\n    flex-direction: column;\n    align-items: flex-start;\n    justify-content: flex-start;\n    padding: 0 12px; }\n    .app-projects article > .card-image {\n      height: auto;\n      max-width: 150px;\n      min-width: 150px;\n      height: 150px;\n      width: 150px;\n      background: white;\n      border-radius: 100%;\n      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);\n      margin: 24px auto;\n      text-align: center; }\n      .app-projects article > .card-image img {\n        max-width: 130px;\n        max-height: 130px;\n        margin: 10px; }\n    .app-projects article > .card-content {\n      flex: 1 1 auto;\n      padding-top: 20px;\n      height: auto;\n      display: flex;\n      flex-direction: column;\n      align-items: flex-start;\n      justify-content: flex-start; }\n    .app-projects article .card-heading {\n      display: flex;\n      flex-direction: row;\n      align-items: flex-start;\n      justify-content: flex-start;\n      margin-bottom: 12px;\n      padding-top: 12px;\n      width: 100%;\n      flex-direction: column; }\n    .app-projects article .card-title {\n      flex: 1;\n      font-weight: normal;\n      font-size: 36px;\n      color: rgba(0, 0, 0, 0.54);\n      padding-left: 24px;\n      padding-right: 12px;\n      font-size: 24px;\n      font-weight: bold; }\n    .app-projects article .card-date {\n      margin-left: auto;\n      text-align: right;\n      font-size: 14px;\n      padding-right: 12px;\n      letter-spacing: 1.34px;\n      font-weight: bold;\n      color: rgba(0, 0, 0, 0.54);\n      padding-right: 24px;\n      padding-left: 12px;\n      margin-left: 12px; }\n    .app-projects article .card-details {\n      list-style: none;\n      margin: 0;\n      padding: 0; }\n      .app-projects article .card-details li {\n        min-height: 36px;\n        display: flex;\n        flex-direction: row;\n        align-items: flex-start;\n        justify-content: flex-start;\n        padding-left: 24px;\n        padding-right: 24px; }\n      .app-projects article .card-details icon {\n        color: rgba(0, 0, 0, 0.87);\n        flex: 0 0 auto;\n        margin: 6px;\n        font-size: 16px; }\n      .app-projects article .card-details span.text {\n        flex: 0 1 auto;\n        padding-top: 4px;\n        line-height: 1.34;\n        font-size: 16px;\n        font-weight: normal;\n        color: rgba(0, 0, 0, 0.87); }\n    .app-projects article .card-tags {\n      margin: 0 0 24px 0;\n      padding: 0 12px;\n      list-style: none; }\n      .app-projects article .card-tags li {\n        display: inline;\n        padding: 6px 12px;\n        font-size: 12px;\n        font-weight: normal;\n        color: rgba(0, 0, 0, 0.87);\n        margin: 4px; }\n  @media screen and (min-width: 1200px) {\n    .app-projects article {\n      padding: 0 56px;\n      flex-direction: row; }\n      .app-projects article .card-image {\n        margin: 24px; }\n      .app-projects article .card-heading {\n        flex-direction: row; }\n      .app-projects article .card-title {\n        font-size: 36px;\n        font-weight: normal; }\n      .app-projects article .card-date {\n        margin-left: auto; } }\n  .app-projects .project-image {\n    margin-left: 24px;\n    width: 100px;\n    height: 100px;\n    position: relative;\n    flex: 0 0 auto;\n    height: 108px;\n    width: 108px;\n    background-color: white;\n    box-shadow: 0 4px 4px -3px rgba(0, 0, 0, 0.1), 0 3px 4px rgba(0, 0, 0, 0.2); }\n    .app-projects .project-image img {\n      display: block;\n      max-height: 80px;\n      max-width: 80px;\n      margin: 10px auto; }\n  .app-projects .project-heading {\n    display: flex;\n    flex-direction: row;\n    align-items: flex-start;\n    justify-content: flex-start;\n    margin-bottom: 12px;\n    padding-top: 12px;\n    width: 100%;\n    align-items: flex-end; }\n  .app-projects .project-title {\n    flex: 1;\n    font-weight: normal;\n    font-size: 36px;\n    color: rgba(0, 0, 0, 0.54);\n    padding-left: 24px;\n    padding-right: 12px; }\n  .app-projects .project-date {\n    margin-left: auto;\n    text-align: right;\n    font-size: 14px;\n    padding-right: 12px;\n    letter-spacing: 1.34px;\n    font-weight: bold;\n    color: rgba(0, 0, 0, 0.54);\n    padding-right: 24px;\n    padding-left: 12px; }\n  .app-projects ul.project-details {\n    list-style: none;\n    margin: 0;\n    padding: 0; }\n    .app-projects ul.project-details li {\n      min-height: 36px;\n      display: flex;\n      flex-direction: row;\n      align-items: flex-start;\n      justify-content: flex-start;\n      padding-left: 24px;\n      padding-right: 24px; }\n    .app-projects ul.project-details icon {\n      color: rgba(0, 0, 0, 0.54);\n      flex: 0 0 auto;\n      margin: 6px;\n      font-size: 16px; }\n    .app-projects ul.project-details span.text {\n      flex: 0 1 auto;\n      padding-top: 4px;\n      line-height: 1.34;\n      font-size: 16px;\n      font-weight: normal;\n      color: rgba(0, 0, 0, 0.87); }\n  .app-projects-header {\n    background-color: #5F888A; }\n\n.app-experience {\n  background-color: #D9D9D9; }\n  .app-experience article {\n    margin-bottom: 24px;\n    border-bottom: 1px solid rgba(0, 0, 0, 0.12);\n    display: flex;\n    flex-direction: column;\n    align-items: flex-start;\n    justify-content: flex-start;\n    padding: 0 12px; }\n    .app-experience article > .card-image {\n      height: auto;\n      max-width: 150px;\n      min-width: 150px;\n      height: 150px;\n      width: 150px;\n      background: white;\n      border-radius: 100%;\n      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);\n      margin: 24px auto;\n      text-align: center; }\n      .app-experience article > .card-image img {\n        max-width: 130px;\n        max-height: 130px;\n        margin: 10px; }\n    .app-experience article > .card-content {\n      flex: 1 1 auto;\n      padding-top: 20px;\n      height: auto;\n      display: flex;\n      flex-direction: column;\n      align-items: flex-start;\n      justify-content: flex-start; }\n    .app-experience article .card-heading {\n      display: flex;\n      flex-direction: row;\n      align-items: flex-start;\n      justify-content: flex-start;\n      margin-bottom: 12px;\n      padding-top: 12px;\n      width: 100%;\n      flex-direction: column; }\n    .app-experience article .card-title {\n      flex: 1;\n      font-weight: normal;\n      font-size: 36px;\n      color: rgba(0, 0, 0, 0.54);\n      padding-left: 24px;\n      padding-right: 12px;\n      font-size: 24px;\n      font-weight: bold; }\n    .app-experience article .card-date {\n      margin-left: auto;\n      text-align: right;\n      font-size: 14px;\n      padding-right: 12px;\n      letter-spacing: 1.34px;\n      font-weight: bold;\n      color: rgba(0, 0, 0, 0.54);\n      padding-right: 24px;\n      padding-left: 12px;\n      margin-left: 12px; }\n    .app-experience article .card-details {\n      list-style: none;\n      margin: 0;\n      padding: 0; }\n      .app-experience article .card-details li {\n        min-height: 36px;\n        display: flex;\n        flex-direction: row;\n        align-items: flex-start;\n        justify-content: flex-start;\n        padding-left: 24px;\n        padding-right: 24px; }\n      .app-experience article .card-details icon {\n        color: rgba(0, 0, 0, 0.87);\n        flex: 0 0 auto;\n        margin: 6px;\n        font-size: 16px; }\n      .app-experience article .card-details span.text {\n        flex: 0 1 auto;\n        padding-top: 4px;\n        line-height: 1.34;\n        font-size: 16px;\n        font-weight: normal;\n        color: rgba(0, 0, 0, 0.87); }\n    .app-experience article .card-tags {\n      margin: 0 0 24px 0;\n      padding: 0 12px;\n      list-style: none; }\n      .app-experience article .card-tags li {\n        display: inline;\n        padding: 6px 12px;\n        font-size: 12px;\n        font-weight: normal;\n        color: rgba(0, 0, 0, 0.87);\n        margin: 4px; }\n  @media screen and (min-width: 1200px) {\n    .app-experience article {\n      padding: 0 56px;\n      flex-direction: row; }\n      .app-experience article .card-image {\n        margin: 24px; }\n      .app-experience article .card-heading {\n        flex-direction: row; }\n      .app-experience article .card-title {\n        font-size: 36px;\n        font-weight: normal; }\n      .app-experience article .card-date {\n        margin-left: auto; } }\n  .app-experience .xp-heading {\n    display: flex;\n    flex-direction: row;\n    align-items: flex-start;\n    justify-content: flex-start;\n    margin-bottom: 12px;\n    padding-top: 12px;\n    width: 100%; }\n  .app-experience .xp-title {\n    flex: 1;\n    font-weight: normal;\n    font-size: 36px;\n    color: rgba(0, 0, 0, 0.54);\n    padding-left: 24px;\n    padding-right: 12px; }\n  .app-experience .xp-date {\n    margin-left: auto;\n    text-align: right;\n    font-size: 14px;\n    padding-right: 12px;\n    letter-spacing: 1.34px;\n    font-weight: bold;\n    color: rgba(0, 0, 0, 0.54);\n    padding-right: 24px;\n    padding-left: 12px; }\n  .app-experience ul.xp-details {\n    list-style: none;\n    margin: 0;\n    padding: 0; }\n    .app-experience ul.xp-details li {\n      min-height: 36px;\n      display: flex;\n      flex-direction: row;\n      align-items: flex-start;\n      justify-content: flex-start;\n      padding-left: 24px;\n      padding-right: 24px; }\n    .app-experience ul.xp-details icon {\n      color: rgba(0, 0, 0, 0.54);\n      flex: 0 0 auto;\n      margin: 6px;\n      font-size: 16px; }\n    .app-experience ul.xp-details span.text {\n      flex: 0 1 auto;\n      padding-top: 4px;\n      line-height: 1.34;\n      font-size: 16px;\n      font-weight: normal;\n      color: rgba(0, 0, 0, 0.87); }\n  .app-experience ul.xp-tech {\n    margin: 0 0 24px 0;\n    padding: 0 12px;\n    list-style: none; }\n    .app-experience ul.xp-tech li {\n      display: inline;\n      padding: 6px 12px;\n      font-size: 12px;\n      font-weight: normal;\n      color: #2196F3;\n      margin: 4px; }\n  .app-experience-header {\n    background-color: #D9D9D9; }\n\n.app-education {\n  background-color: #353535; }\n  .app-education article {\n    margin-bottom: 24px;\n    border-bottom: 1px solid rgba(255, 255, 255, 0.12);\n    display: flex;\n    flex-direction: column;\n    align-items: flex-start;\n    justify-content: flex-start;\n    padding: 0 12px; }\n    .app-education article > .card-image {\n      height: auto;\n      max-width: 150px;\n      min-width: 150px;\n      height: 150px;\n      width: 150px;\n      background: white;\n      border-radius: 100%;\n      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);\n      margin: 24px auto;\n      text-align: center; }\n      .app-education article > .card-image img {\n        max-width: 130px;\n        max-height: 130px;\n        margin: 10px; }\n    .app-education article > .card-content {\n      flex: 1 1 auto;\n      padding-top: 20px;\n      height: auto;\n      display: flex;\n      flex-direction: column;\n      align-items: flex-start;\n      justify-content: flex-start; }\n    .app-education article .card-heading {\n      display: flex;\n      flex-direction: row;\n      align-items: flex-start;\n      justify-content: flex-start;\n      margin-bottom: 12px;\n      padding-top: 12px;\n      width: 100%;\n      flex-direction: column; }\n    .app-education article .card-title {\n      flex: 1;\n      font-weight: normal;\n      font-size: 36px;\n      color: rgba(255, 255, 255, 0.7);\n      padding-left: 24px;\n      padding-right: 12px;\n      font-size: 24px;\n      font-weight: bold; }\n    .app-education article .card-date {\n      margin-left: auto;\n      text-align: right;\n      font-size: 14px;\n      padding-right: 12px;\n      letter-spacing: 1.34px;\n      font-weight: bold;\n      color: rgba(255, 255, 255, 0.5);\n      padding-right: 24px;\n      padding-left: 12px;\n      margin-left: 12px; }\n    .app-education article .card-details {\n      list-style: none;\n      margin: 0;\n      padding: 0; }\n      .app-education article .card-details li {\n        min-height: 36px;\n        display: flex;\n        flex-direction: row;\n        align-items: flex-start;\n        justify-content: flex-start;\n        padding-left: 24px;\n        padding-right: 24px; }\n      .app-education article .card-details icon {\n        color: white;\n        flex: 0 0 auto;\n        margin: 6px;\n        font-size: 16px; }\n      .app-education article .card-details span.text {\n        flex: 0 1 auto;\n        padding-top: 4px;\n        line-height: 1.34;\n        font-size: 16px;\n        font-weight: normal;\n        color: white; }\n    .app-education article .card-tags {\n      margin: 0 0 24px 0;\n      padding: 0 12px;\n      list-style: none; }\n      .app-education article .card-tags li {\n        display: inline;\n        padding: 6px 12px;\n        font-size: 12px;\n        font-weight: normal;\n        color: white;\n        margin: 4px; }\n  @media screen and (min-width: 1200px) {\n    .app-education article {\n      padding: 0 56px;\n      flex-direction: row; }\n      .app-education article .card-image {\n        margin: 24px; }\n      .app-education article .card-heading {\n        flex-direction: row; }\n      .app-education article .card-title {\n        font-size: 36px;\n        font-weight: normal; }\n      .app-education article .card-date {\n        margin-left: auto; } }\n  .app-education header {\n    color: white; }\n    .app-education header icon {\n      color: white; }\n  .app-education-header {\n    background-color: #353535;\n    color: white; }\n    .app-education-header icon {\n      color: white; }\n\ncontainer {\n  border-radius: 0;\n  max-height: 100%;\n  margin: 0; }\n\n@media screen and (max-width: 1200px) {\n  .platform-ios container navigation {\n    opacity: 0;\n    visibility: hidden;\n    transition: opacity 0.3s ease 0s; }\n  .platform-ios container.offset-main-right navigation {\n    opacity: 1;\n    visibility: visible; }\n  .platform-ios container.animate-main-right navigation {\n    opacity: 1;\n    visibility: visible; }\n  .platform-ios container.animate-main-default navigation {\n    opacity: 0;\n    visibility: hidden; } }\n\n@media screen and (min-width: 1440px) {\n  container icon.menu-icon {\n    display: none !important; }\n  container nav-section .section-container {\n    margin-left: 200px; }\n  container > header.nav-section-header {\n    margin-left: 200px;\n    border-top-left-radius: 0; }\n    container > header.nav-section-header .header-title {\n      padding-left: 24px; } }\n"; });
+define('resources/attributes/ripple',['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    exports.Ripple = undefined;
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var _dec, _dec2, _class;
+
+    var Ripple = exports.Ripple = (_dec = (0, _aureliaFramework.customAttribute)('ripple'), _dec2 = (0, _aureliaFramework.inject)(Element, _aureliaFramework.ElementEvents), _dec(_class = _dec2(_class = function () {
+        function Ripple(Element, ElementEvents) {
+            _classCallCheck(this, Ripple);
+
+            this.element = Element;
+            this.events = ElementEvents;
+        }
+
+        Ripple.prototype.bind = function bind() {
+            var _this = this;
+
+            this.eventName = 'mousedown';
+
+            if (document.documentElement.classList.contains('platform-ios')) {
+                this.eventName = 'touchstart';
+            }
+
+            this.events.subscribe(this.eventName, function (event) {
+                _this.ripple(event);
+            });
+        };
+
+        Ripple.prototype._getContainer = function _getContainer() {
+            return this.container ? this.container : this.container = document.createElement('ripple-container');
+        };
+
+        Ripple.prototype._getBackground = function _getBackground() {
+            this._computed = this._computed || window.getComputedStyle(this.element);
+            var background = this._computed.getPropertyValue('color');
+            return background;
+        };
+
+        Ripple.prototype._createRipple = function _createRipple() {
+            var ripple = document.createElement('ripple');
+            var _listener = null;
+            ripple.addEventListener('animationend', _listener = function listener(event) {
+                ripple.parentNode.removeChild(ripple);
+                ripple.removeEventListener('animationend', _listener);
+            });
+            return ripple;
+        };
+
+        Ripple.prototype.ripple = function ripple(event) {
+            var container = this._getContainer();
+            var background = this._getBackground();
+            var ripple = this._createRipple();
+            var height = this.element.clientHeight;
+            var width = this.element.clientWidth;
+            var size = height > width ? height : width;
+            var rect = this.element.getBoundingClientRect();
+
+            var clientX = event.clientX;
+            var clientY = event.clientY;
+
+            if (event.touches.length) {
+                clientX = event.touches[0].clientX;
+                clientY = event.touches[0].clientY;
+            }
+            var bounds = {
+                left: clientX - rect.left,
+                top: clientY - rect.top
+            };
+
+            var half = size / 2;
+
+            bounds.top = bounds.top - half;
+            bounds.left = bounds.left - half;
+
+            Object.assign(ripple.style, {
+                top: bounds.top + 'px',
+                left: bounds.left + 'px',
+                backgroundColor: background,
+                width: size + 'px',
+                height: size + 'px'
+            });
+
+            this.element.insertBefore(container, this.element.firstChild);
+            container.appendChild(ripple);
+
+            console.log(this.element);
+        };
+
+        return Ripple;
+    }()) || _class) || _class);
+});
+define('text!app.html', ['module'], function(module) { module.exports = "<template><require from=./app.css></require><div class=app-background></div><navigation></navigation><container><main><template repeat.for=\"view of State.views\"><nav-section class=\"${$first ? 'first' : $last ? 'last' : ''} app-${view.name}\" ref=view.element view.bind=view></nav-section></template></main></container><div class=background-container></div></template>"; });
+define('text!modules/education/education.html', ['module'], function(module) { module.exports = "<template><template repeat.for=\"edu of props.educations\"><article class=card-${edu.id}><div class=card-image if.bind=edu.image><span if.bind=\"edu.className && !edu.image\" class=${edu.className}></span><img src.bind=edu.image class=${edu.className} alt.bind=edu.name></div><div class=card-content><div class=card-heading><div class=card-title>${edu.name}</div><div class=card-date>${edu.date}</div></div><ul class=card-details><li repeat.for=\"note of edu.notes\"><icon ico=chevron_right></icon><span class=text>${note}</span></li></ul></div></article></template></template>"; });
+define('text!modules/experience/experience.html', ['module'], function(module) { module.exports = "<template><template repeat.for=\"xp of props.experiences\"><article class=card-${xp.id}><div class=card-image if.bind=xp.image><span if.bind=\"xp.className && !xp.image\" class=${xp.className}></span><img src.bind=xp.image class=${xp.className} alt.bind=xp.name></div><div class=card-content><div class=card-heading><div class=card-title>${xp.name}</div><div class=card-date>${xp.date}</div></div><ul class=card-details><li repeat.for=\"note of xp.notes\"><icon ico=chevron_right></icon><span class=text>${note}</span></li></ul><ul class=card-tags><li repeat.for=\"stack of xp.stack\">${stack}</li></ul></div></article></template></template>"; });
 define('text!modules/footer/footer.html', ['module'], function(module) { module.exports = "<template><nav></nav></template>"; });
+define('text!app.css', ['module'], function(module) { module.exports = "@import url(\"https://fonts.googleapis.com/css?family=Roboto\");\nnav-bar {\n  position: fixed;\n  top: 50%;\n  right: 10%;\n  transform: translateY(-50%); }\n  nav-bar > button {\n    outline: none;\n    background: white;\n    border-radius: 2px;\n    border: none;\n    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);\n    height: 36px;\n    width: 120px; }\n  nav-bar > ul.slider {\n    width: 100%;\n    position: absolute;\n    height: auto;\n    top: 0;\n    left: 0;\n    background: red;\n    margin: 0;\n    padding: 0;\n    list-style: none; }\n    nav-bar > ul.slider > li {\n      height: 36px; }\n\nnav-section {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  min-height: 100%;\n  position: relative; }\n  nav-section .row {\n    flex: 1 0 auto;\n    display: flex;\n    align-items: flex-start;\n    justify-content: flex-start;\n    flex-direction: row; }\n  nav-section .section-container {\n    flex: 1;\n    height: auto;\n    display: flex;\n    position: relative;\n    flex-direction: column;\n    align-items: stretch;\n    justify-content: flex-start;\n    padding-top: 200px;\n    box-shadow: -3px 0 3px rgba(0, 0, 0, 0.3);\n    background-color: inherit;\n    z-index: 4; }\n  nav-section article {\n    margin-bottom: 24px;\n    display: flex;\n    flex-direction: column;\n    align-self: stretch; }\n\n.nav-section-header {\n  opacity: 0;\n  visibility: hidden; }\n  .nav-section-header icon {\n    position: relative;\n    user-select: none;\n    height: 56px;\n    width: 56px;\n    line-height: 56px;\n    text-align: center;\n    cursor: pointer;\n    color: inherit; }\n  .nav-section-header icon.menu-icon {\n    display: none; }\n  .nav-section-header .header-title {\n    pointer-events: none;\n    padding: 0 56px;\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n    text-align: left;\n    display: block;\n    font-size: 24px;\n    line-height: 56px;\n    font-weight: bold;\n    cursor: pointer;\n    user-select: none;\n    color: inherit; }\n  .nav-section-header.fixed {\n    opacity: 0;\n    visibility: hidden; }\n    .nav-section-header.fixed:hover .header-title {\n      opacity: 0.7; }\n  .nav-section-header.first {\n    opacity: 0;\n    visibility: hidden; }\n\nnavigation {\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  min-height: 100%;\n  width: 200px;\n  z-index: 2;\n  pointer-events: none;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start; }\n  navigation > header {\n    display: block;\n    width: 100%;\n    background-color: rgba(255, 255, 255, 0.6);\n    height: 56px;\n    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2); }\n  navigation > section {\n    flex: 1;\n    display: block;\n    width: 100%;\n    background-color: rgba(255, 255, 255, 0.6); }\n  navigation > footer {\n    background-color: rgba(255, 255, 255, 0.6);\n    display: block;\n    width: 100%;\n    height: 56px;\n    box-shadow: 0 -3px 4px rgba(0, 0, 0, 0.2); }\n  navigation ul.navigation-list {\n    margin: 0;\n    padding: 0;\n    list-style: none;\n    display: flex;\n    flex-direction: column;\n    align-items: flex-start;\n    justify-content: flex-start; }\n    navigation ul.navigation-list li {\n      width: 100%;\n      pointer-events: auto;\n      display: flex;\n      flex-direction: row;\n      align-items: flex-start;\n      justify-content: flex-start;\n      min-height: 48px;\n      cursor: pointer; }\n      navigation ul.navigation-list li icon {\n        pointer-events: none;\n        margin: 12px; }\n      navigation ul.navigation-list li span.text {\n        pointer-events: none;\n        flex: 0 1 auto;\n        font-size: 16px;\n        font-weight: 500;\n        line-height: 48px;\n        letter-spacing: 1.34px;\n        user-select: none; }\n\n@keyframes animate-main-right {\n  from {\n    transform: translate3d(0, 0, 0); }\n  to {\n    transform: translate3d(200px, 0, 0); } }\n\n@keyframes animate-main-default {\n  from {\n    transform: translate3d(200px, 0, 0); }\n  to {\n    transform: translate3d(0, 0, 0); } }\n\nripple-container {\n  display: block;\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  min-height: 100%;\n  min-width: 100%;\n  overflow: hidden; }\n\nripple {\n  display: block;\n  position: absolute;\n  opacity: 0;\n  transform: scale(0);\n  top: 0;\n  left: 0;\n  border-radius: 100%;\n  animation-timing-function: ease-out;\n  animation-duration: 0.5s;\n  animation-fill-mode: forwards;\n  animation-name: show-ripple; }\n\n@keyframes show-ripple {\n  0% {\n    opacity: 0;\n    transform: scale(0); }\n  50% {\n    opacity: 1;\n    transform: scale(1); }\n  80% {\n    opacity: 0.8;\n    transform: scale(2); }\n  100% {\n    opacity: 0;\n    transform: scale(3); } }\n\n*::-webkit-scrollbar {\n  display: none; }\n\n* {\n  -webkit-tap-highlight-color: transparent; }\n\nhtml {\n  width: 100vw;\n  height: 100vh;\n  color: #323232;\n  font-family: 'Roboto', sans-serif;\n  max-width: 100%;\n  max-height: 100%;\n  overflow-x: hidden;\n  overflow-y: auto;\n  -webkit-overflow-scrolling: touch;\n  /* lets it scroll lazy */ }\n\nbody {\n  padding: 0;\n  margin: 0;\n  position: relative;\n  width: 100%;\n  height: 100%;\n  max-width: 100%; }\n\nbutton {\n  background: transparent;\n  border: none;\n  outline: none;\n  -webkit-webkit-appearance: none;\n  -moz-webkit-appearance: none;\n  -ms-webkit-appearance: none;\n  -o-webkit-appearance: none;\n  webkit-appearance: none; }\n\ncontainer {\n  position: relative;\n  display: block;\n  z-index: 3;\n  pointer-events: none; }\n  container > * {\n    pointer-events: auto; }\n\nmain {\n  display: flex;\n  flex-direction: column;\n  align-items: stretch;\n  justify-content: flex-start;\n  position: relative;\n  z-index: 5;\n  max-width: 100%;\n  overflow-x: hidden; }\n\nicon {\n  user-select: none; }\n\n.background-container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  min-height: 100%;\n  display: flex;\n  align-items: stretch;\n  flex-direction: column;\n  z-index: 1;\n  filter: blur(20px); }\n\n.app-background {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  z-index: 0;\n  background-image: url(http://brodeurcampbellfence.com/wp-content/uploads/2013/03/gradient-background-more-white.jpg);\n  background-repeat: no-repeat;\n  background-size: cover; }\n\nnav-section {\n  height: auto;\n  min-height: 100vh;\n  flex: 1 0 auto;\n  min-width: 100%; }\n\nheader.nav-section-header {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  min-height: 56px;\n  display: flex;\n  flex-direction: row;\n  height: 56px;\n  z-index: 5; }\n\nnav-section header.nav-section-header {\n  position: absolute; }\n\nheader.header-title {\n  background-color: white;\n  color: rgba(0, 0, 0, 0.87); }\n  header.header-title icon {\n    color: rgba(0, 0, 0, 0.87); }\n  header.header-title .header-title {\n    color: rgba(0, 0, 0, 0.87); }\n\n.view-title-active navigation ul.navigation-list li:hover {\n  background-color: rgba(255, 255, 255, 0.6); }\n\n.view-title-active navigation ul.navigation-list li.active {\n  background-color: white;\n  color: rgba(0, 0, 0, 0.87); }\n\n.view-title-no-header-title header.header-title .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-title-topbar header.header-title {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-title-topbar header.header-title icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-title-topbar header.header-title icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-title-topbar header.header-title icon.menu-icon {\n      display: none; } }\n  .view-title-topbar header.header-title .header-title {\n    text-align: left;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-title-topbar.view-title-no-header-title header.header-title .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-title-title:not(.view-title-topbar) header.header-title {\n  top: 0;\n  bottom: unset;\n  opacity: 0;\n  visibility: hidden; }\n  .view-title-title:not(.view-title-topbar) header.header-title icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-title-title:not(.view-title-topbar) header.header-title icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-title-title:not(.view-title-topbar) header.header-title icon.menu-icon {\n      display: none; } }\n  .view-title-title:not(.view-title-topbar) header.header-title .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n  .view-title-title:not(.view-title-topbar) header.header-title .header-title {\n    opacity: 0;\n    visibility: hidden; }\n\n.view-title-title nav-section.app-title header.nav-section-header {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-title-title nav-section.app-title header.nav-section-header icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-title-title nav-section.app-title header.nav-section-header icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-title-title nav-section.app-title header.nav-section-header icon.menu-icon {\n      display: none; } }\n  .view-title-title nav-section.app-title header.nav-section-header .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n\n.view-title-peek header.header-title {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-title-peek header.header-title icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-title-peek header.header-title .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-title-active.view-title-gtvh header.header-title + header {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-title-active.view-title-gtvh header.header-title + header icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-title-active.view-title-gtvh header.header-title + header .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\nheader.header-profile {\n  background-color: #284B63;\n  color: white; }\n  header.header-profile icon {\n    color: white; }\n  header.header-profile .header-title {\n    color: white; }\n\n.view-profile-active navigation ul.navigation-list li:hover {\n  background-color: rgba(40, 75, 99, 0.6); }\n\n.view-profile-active navigation ul.navigation-list li.active {\n  background-color: #284B63;\n  color: white; }\n\n.view-profile-no-header-title header.header-profile .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-profile-topbar header.header-profile {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-profile-topbar header.header-profile icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-profile-topbar header.header-profile icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-profile-topbar header.header-profile icon.menu-icon {\n      display: none; } }\n  .view-profile-topbar header.header-profile .header-title {\n    text-align: left;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-profile-topbar.view-profile-no-header-title header.header-profile .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-profile-title:not(.view-profile-topbar) header.header-profile {\n  top: 0;\n  bottom: unset;\n  opacity: 0;\n  visibility: hidden; }\n  .view-profile-title:not(.view-profile-topbar) header.header-profile icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-profile-title:not(.view-profile-topbar) header.header-profile icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-profile-title:not(.view-profile-topbar) header.header-profile icon.menu-icon {\n      display: none; } }\n  .view-profile-title:not(.view-profile-topbar) header.header-profile .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n  .view-profile-title:not(.view-profile-topbar) header.header-profile .header-title {\n    opacity: 0;\n    visibility: hidden; }\n\n.view-profile-title nav-section.app-profile header.nav-section-header {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-profile-title nav-section.app-profile header.nav-section-header icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-profile-title nav-section.app-profile header.nav-section-header icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-profile-title nav-section.app-profile header.nav-section-header icon.menu-icon {\n      display: none; } }\n  .view-profile-title nav-section.app-profile header.nav-section-header .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n\n.view-profile-peek header.header-profile {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-profile-peek header.header-profile icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-profile-peek header.header-profile .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-profile-active.view-profile-gtvh header.header-profile + header {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-profile-active.view-profile-gtvh header.header-profile + header icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-profile-active.view-profile-gtvh header.header-profile + header .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\nheader.header-projects {\n  background-color: #5F888A;\n  color: rgba(0, 0, 0, 0.87); }\n  header.header-projects icon {\n    color: rgba(0, 0, 0, 0.87); }\n  header.header-projects .header-title {\n    color: rgba(0, 0, 0, 0.87); }\n\n.view-projects-active navigation ul.navigation-list li:hover {\n  background-color: rgba(95, 136, 138, 0.6); }\n\n.view-projects-active navigation ul.navigation-list li.active {\n  background-color: #5F888A;\n  color: rgba(0, 0, 0, 0.87); }\n\n.view-projects-no-header-title header.header-projects .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-projects-topbar header.header-projects {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-projects-topbar header.header-projects icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-projects-topbar header.header-projects icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-projects-topbar header.header-projects icon.menu-icon {\n      display: none; } }\n  .view-projects-topbar header.header-projects .header-title {\n    text-align: left;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-projects-topbar.view-projects-no-header-title header.header-projects .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-projects-title:not(.view-projects-topbar) header.header-projects {\n  top: 0;\n  bottom: unset;\n  opacity: 0;\n  visibility: hidden; }\n  .view-projects-title:not(.view-projects-topbar) header.header-projects icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-projects-title:not(.view-projects-topbar) header.header-projects icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-projects-title:not(.view-projects-topbar) header.header-projects icon.menu-icon {\n      display: none; } }\n  .view-projects-title:not(.view-projects-topbar) header.header-projects .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n  .view-projects-title:not(.view-projects-topbar) header.header-projects .header-title {\n    opacity: 0;\n    visibility: hidden; }\n\n.view-projects-title nav-section.app-projects header.nav-section-header {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-projects-title nav-section.app-projects header.nav-section-header icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-projects-title nav-section.app-projects header.nav-section-header icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-projects-title nav-section.app-projects header.nav-section-header icon.menu-icon {\n      display: none; } }\n  .view-projects-title nav-section.app-projects header.nav-section-header .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n\n.view-projects-peek header.header-projects {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-projects-peek header.header-projects icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-projects-peek header.header-projects .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-projects-active.view-projects-gtvh header.header-projects + header {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-projects-active.view-projects-gtvh header.header-projects + header icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-projects-active.view-projects-gtvh header.header-projects + header .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\nheader.header-experience {\n  background-color: #D9D9D9;\n  color: rgba(0, 0, 0, 0.87); }\n  header.header-experience icon {\n    color: rgba(0, 0, 0, 0.87); }\n  header.header-experience .header-title {\n    color: rgba(0, 0, 0, 0.87); }\n\n.view-experience-active navigation ul.navigation-list li:hover {\n  background-color: rgba(217, 217, 217, 0.6); }\n\n.view-experience-active navigation ul.navigation-list li.active {\n  background-color: #D9D9D9;\n  color: rgba(0, 0, 0, 0.87); }\n\n.view-experience-no-header-title header.header-experience .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-experience-topbar header.header-experience {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-experience-topbar header.header-experience icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-experience-topbar header.header-experience icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-experience-topbar header.header-experience icon.menu-icon {\n      display: none; } }\n  .view-experience-topbar header.header-experience .header-title {\n    text-align: left;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-experience-topbar.view-experience-no-header-title header.header-experience .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-experience-title:not(.view-experience-topbar) header.header-experience {\n  top: 0;\n  bottom: unset;\n  opacity: 0;\n  visibility: hidden; }\n  .view-experience-title:not(.view-experience-topbar) header.header-experience icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-experience-title:not(.view-experience-topbar) header.header-experience icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-experience-title:not(.view-experience-topbar) header.header-experience icon.menu-icon {\n      display: none; } }\n  .view-experience-title:not(.view-experience-topbar) header.header-experience .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n  .view-experience-title:not(.view-experience-topbar) header.header-experience .header-title {\n    opacity: 0;\n    visibility: hidden; }\n\n.view-experience-title nav-section.app-experience header.nav-section-header {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-experience-title nav-section.app-experience header.nav-section-header icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-experience-title nav-section.app-experience header.nav-section-header icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-experience-title nav-section.app-experience header.nav-section-header icon.menu-icon {\n      display: none; } }\n  .view-experience-title nav-section.app-experience header.nav-section-header .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n\n.view-experience-peek header.header-experience {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-experience-peek header.header-experience icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-experience-peek header.header-experience .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-experience-active.view-experience-gtvh header.header-experience + header {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-experience-active.view-experience-gtvh header.header-experience + header icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-experience-active.view-experience-gtvh header.header-experience + header .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\nheader.header-education {\n  background-color: #353535;\n  color: white; }\n  header.header-education icon {\n    color: white; }\n  header.header-education .header-title {\n    color: white; }\n\n.view-education-active navigation ul.navigation-list li:hover {\n  background-color: rgba(53, 53, 53, 0.6); }\n\n.view-education-active navigation ul.navigation-list li.active {\n  background-color: #353535;\n  color: white; }\n\n.view-education-no-header-title header.header-education .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-education-topbar header.header-education {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-education-topbar header.header-education icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-education-topbar header.header-education icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-education-topbar header.header-education icon.menu-icon {\n      display: none; } }\n  .view-education-topbar header.header-education .header-title {\n    text-align: left;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-education-topbar.view-education-no-header-title header.header-education .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-education-title:not(.view-education-topbar) header.header-education {\n  top: 0;\n  bottom: unset;\n  opacity: 0;\n  visibility: hidden; }\n  .view-education-title:not(.view-education-topbar) header.header-education icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-education-title:not(.view-education-topbar) header.header-education icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-education-title:not(.view-education-topbar) header.header-education icon.menu-icon {\n      display: none; } }\n  .view-education-title:not(.view-education-topbar) header.header-education .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n  .view-education-title:not(.view-education-topbar) header.header-education .header-title {\n    opacity: 0;\n    visibility: hidden; }\n\n.view-education-title nav-section.app-education header.nav-section-header {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-education-title nav-section.app-education header.nav-section-header icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-education-title nav-section.app-education header.nav-section-header icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-education-title nav-section.app-education header.nav-section-header icon.menu-icon {\n      display: none; } }\n  .view-education-title nav-section.app-education header.nav-section-header .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n\n.view-education-peek header.header-education {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-education-peek header.header-education icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-education-peek header.header-education .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-education-active.view-education-gtvh header.header-education + header {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-education-active.view-education-gtvh header.header-education + header icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-education-active.view-education-gtvh header.header-education + header .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\nheader.header-technology {\n  background-color: white;\n  color: rgba(0, 0, 0, 0.87); }\n  header.header-technology icon {\n    color: rgba(0, 0, 0, 0.87); }\n  header.header-technology .header-title {\n    color: rgba(0, 0, 0, 0.87); }\n\n.view-technology-active navigation ul.navigation-list li:hover {\n  background-color: rgba(255, 255, 255, 0.6); }\n\n.view-technology-active navigation ul.navigation-list li.active {\n  background-color: white;\n  color: rgba(0, 0, 0, 0.87); }\n\n.view-technology-no-header-title header.header-technology .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-technology-topbar header.header-technology {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-technology-topbar header.header-technology icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-technology-topbar header.header-technology icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-technology-topbar header.header-technology icon.menu-icon {\n      display: none; } }\n  .view-technology-topbar header.header-technology .header-title {\n    text-align: left;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-technology-topbar.view-technology-no-header-title header.header-technology .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-technology-title:not(.view-technology-topbar) header.header-technology {\n  top: 0;\n  bottom: unset;\n  opacity: 0;\n  visibility: hidden; }\n  .view-technology-title:not(.view-technology-topbar) header.header-technology icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-technology-title:not(.view-technology-topbar) header.header-technology icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-technology-title:not(.view-technology-topbar) header.header-technology icon.menu-icon {\n      display: none; } }\n  .view-technology-title:not(.view-technology-topbar) header.header-technology .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n  .view-technology-title:not(.view-technology-topbar) header.header-technology .header-title {\n    opacity: 0;\n    visibility: hidden; }\n\n.view-technology-title nav-section.app-technology header.nav-section-header {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-technology-title nav-section.app-technology header.nav-section-header icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-technology-title nav-section.app-technology header.nav-section-header icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-technology-title nav-section.app-technology header.nav-section-header icon.menu-icon {\n      display: none; } }\n  .view-technology-title nav-section.app-technology header.nav-section-header .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n\n.view-technology-peek header.header-technology {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-technology-peek header.header-technology icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-technology-peek header.header-technology .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-technology-active.view-technology-gtvh header.header-technology + header {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-technology-active.view-technology-gtvh header.header-technology + header icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-technology-active.view-technology-gtvh header.header-technology + header .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n@media screen and (max-width: 1200px) {\n  container > header:first-of-type {\n    visibility: visible;\n    opacity: 1; }\n  container > main,\n  container > header {\n    animation-timing-function: ease-out;\n    animation-fill-mode: forwards;\n    animation-duration: 0.3s; }\n  container.showing-navigation > main,\n  container.showing-navigation > header {\n    animation-name: animate-main-right; }\n  container.show-navigation > main,\n  container.show-navigation > header {\n    transform: translate3d(200px, 0, 0); }\n  container.hiding-navigation > main,\n  container.hiding-navigation > header {\n    animation-name: animate-main-default; }\n  container.hide-navigatin > main,\n  container.hide-navigatin > header {\n    transform: translate3d(0, 0, 0); } }\n\n.profile-background {\n  background-color: #284B63; }\n\n.technology-background {\n  background-color: white; }\n\n.projects-background {\n  background-color: #5F888A; }\n\n.experience-background {\n  background-color: #D9D9D9; }\n\n.education-background {\n  background-color: #353535; }\n\n.app-title {\n  background-color: white; }\n  .app-title-header {\n    background-color: white; }\n\n.app-profile {\n  background-color: #284B63; }\n  .app-profile article {\n    flex: 1 0 auto;\n    display: flex;\n    flex-direction: column;\n    align-items: stretch;\n    justify-content: flex-start; }\n  .app-profile .profile-image {\n    flex: 0 0 358px;\n    margin: 0 auto;\n    text-align: right; }\n    .app-profile .profile-image img {\n      height: 350px;\n      width: 350px;\n      border-radius: 100%;\n      border: 4px solid white;\n      box-shadow: 0 10px 10px -6px rgba(0, 0, 0, 0.2); }\n  .app-profile .profile-content {\n    flex: 1; }\n  .app-profile ul.profile-detail {\n    list-style: none;\n    margin: 24px 0;\n    padding: 0; }\n    .app-profile ul.profile-detail li {\n      min-height: 48px;\n      line-height: 48px;\n      font-size: 24px;\n      color: white;\n      margin-bottom: 12px;\n      display: flex;\n      flex-direction: row;\n      align-items: flex-start;\n      justify-content: flex-start;\n      padding-bottom: 12px;\n      padding-left: 56px;\n      padding-right: 56px; }\n      .app-profile ul.profile-detail li label {\n        font-size: 14px;\n        color: rgba(255, 255, 255, 0.7);\n        font-weight: bold;\n        margin: 0;\n        flex: 1;\n        text-align: right;\n        padding-right: 12px; }\n      .app-profile ul.profile-detail li .value {\n        flex: 1;\n        display: flex;\n        flex-direction: column;\n        align-items: stretch;\n        justify-content: flex-start;\n        font-size: inherit;\n        line-height: inherit;\n        color: inherit; }\n      .app-profile ul.profile-detail li p {\n        font-size: inherit;\n        line-height: inherit;\n        color: inherit;\n        text-align: left;\n        padding-left: 12px;\n        margin: 0;\n        border-left: 1px solid rgba(255, 255, 255, 0.12); }\n  .app-profile .profile-info {\n    flex: 3;\n    margin-right: 24px; }\n    .app-profile .profile-info ul {\n      margin: 0;\n      padding: 0;\n      list-style: none; }\n      .app-profile .profile-info ul li {\n        margin-bottom: 12px;\n        border-bottom: 1px solid rgba(0, 0, 0, 0.87);\n        padding-bottom: 5px; }\n        .app-profile .profile-info ul li label {\n          font-size: 12px;\n          font-weight: normal;\n          color: rgba(0, 0, 0, 0.87);\n          margin-bottom: 5px; }\n        .app-profile .profile-info ul li p {\n          margin: 0;\n          color: white;\n          font-size: 18px;\n          font-weight: normal;\n          line-height: 1.3; }\n  .app-profile-header {\n    background-color: #284B63; }\n    .app-profile-header icon {\n      color: white; }\n    .app-profile-header .header-title {\n      color: white; }\n  .app-profile .header-title {\n    color: white; }\n\n.app-technology {\n  background-color: white; }\n  .app-technology h1 {\n    font-size: 32px;\n    padding-left: 24px; }\n  .app-technology ul {\n    list-style: none;\n    margin: 0 12px;\n    padding: 0;\n    display: flex;\n    flex-wrap: wrap;\n    flex-direction: row;\n    align-items: flex-start;\n    justify-content: flex-start;\n    max-width: 100%; }\n    .app-technology ul li {\n      display: inline-block;\n      margin: 12px;\n      max-width: 100px;\n      min-width: 100px;\n      max-height: 136px;\n      min-height: 136px;\n      background-color: white;\n      box-shadow: 0 3px 4px -3px rgba(0, 0, 0, 0.2), 0 3px 4px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.1); }\n      .app-technology ul li img {\n        display: block;\n        width: inherit;\n        max-width: inherit; }\n      .app-technology ul li span {\n        display: block;\n        text-align: center;\n        font-size: 18px;\n        font-weight: bold;\n        line-height: 24px; }\n  .app-technology-header {\n    background-color: white; }\n\n.app-projects {\n  background-color: #5F888A; }\n  .app-projects article {\n    margin-bottom: 24px;\n    border-bottom: 1px solid rgba(0, 0, 0, 0.12);\n    display: flex;\n    flex-direction: column;\n    align-items: flex-start;\n    justify-content: flex-start;\n    padding: 0 12px; }\n    .app-projects article > .card-image {\n      height: auto;\n      max-width: 150px;\n      min-width: 150px;\n      height: 150px;\n      width: 150px;\n      background: white;\n      border-radius: 100%;\n      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);\n      margin: 24px auto;\n      text-align: center; }\n      .app-projects article > .card-image img {\n        max-width: 130px;\n        max-height: 130px;\n        margin: 10px; }\n    .app-projects article > .card-content {\n      flex: 1 1 auto;\n      padding-top: 20px;\n      height: auto;\n      display: flex;\n      flex-direction: column;\n      align-items: flex-start;\n      justify-content: flex-start; }\n    .app-projects article .card-heading {\n      display: flex;\n      flex-direction: row;\n      align-items: flex-start;\n      justify-content: flex-start;\n      margin-bottom: 12px;\n      padding-top: 12px;\n      width: 100%;\n      flex-direction: column; }\n    .app-projects article .card-title {\n      flex: 1;\n      font-weight: normal;\n      font-size: 36px;\n      color: rgba(0, 0, 0, 0.54);\n      padding-left: 24px;\n      padding-right: 12px;\n      font-size: 24px;\n      font-weight: bold; }\n    .app-projects article .card-date {\n      margin-left: auto;\n      text-align: right;\n      font-size: 14px;\n      padding-right: 12px;\n      letter-spacing: 1.34px;\n      font-weight: bold;\n      color: rgba(0, 0, 0, 0.54);\n      padding-right: 24px;\n      padding-left: 12px;\n      margin-left: 12px; }\n    .app-projects article .card-details {\n      list-style: none;\n      margin: 0;\n      padding: 0; }\n      .app-projects article .card-details li {\n        min-height: 36px;\n        display: flex;\n        flex-direction: row;\n        align-items: flex-start;\n        justify-content: flex-start;\n        padding-left: 24px;\n        padding-right: 24px; }\n      .app-projects article .card-details icon {\n        color: rgba(0, 0, 0, 0.87);\n        flex: 0 0 auto;\n        margin: 6px;\n        font-size: 16px; }\n      .app-projects article .card-details span.text {\n        flex: 0 1 auto;\n        padding-top: 4px;\n        line-height: 1.34;\n        font-size: 16px;\n        font-weight: normal;\n        color: rgba(0, 0, 0, 0.87); }\n    .app-projects article .card-tags {\n      margin: 0 0 24px 0;\n      padding: 0 12px;\n      list-style: none; }\n      .app-projects article .card-tags li {\n        display: inline;\n        padding: 6px 12px;\n        font-size: 12px;\n        font-weight: normal;\n        color: rgba(0, 0, 0, 0.87);\n        margin: 4px; }\n  @media screen and (min-width: 1200px) {\n    .app-projects article {\n      padding: 0 56px;\n      flex-direction: row; }\n      .app-projects article .card-image {\n        margin: 24px; }\n      .app-projects article .card-heading {\n        flex-direction: row; }\n      .app-projects article .card-title {\n        font-size: 36px;\n        font-weight: normal; }\n      .app-projects article .card-date {\n        margin-left: auto; } }\n  .app-projects .project-image {\n    margin-left: 24px;\n    width: 100px;\n    height: 100px;\n    position: relative;\n    flex: 0 0 auto;\n    height: 108px;\n    width: 108px;\n    background-color: white;\n    box-shadow: 0 4px 4px -3px rgba(0, 0, 0, 0.1), 0 3px 4px rgba(0, 0, 0, 0.2); }\n    .app-projects .project-image img {\n      display: block;\n      max-height: 80px;\n      max-width: 80px;\n      margin: 10px auto; }\n  .app-projects .project-heading {\n    display: flex;\n    flex-direction: row;\n    align-items: flex-start;\n    justify-content: flex-start;\n    margin-bottom: 12px;\n    padding-top: 12px;\n    width: 100%;\n    align-items: flex-end; }\n  .app-projects .project-title {\n    flex: 1;\n    font-weight: normal;\n    font-size: 36px;\n    color: rgba(0, 0, 0, 0.54);\n    padding-left: 24px;\n    padding-right: 12px; }\n  .app-projects .project-date {\n    margin-left: auto;\n    text-align: right;\n    font-size: 14px;\n    padding-right: 12px;\n    letter-spacing: 1.34px;\n    font-weight: bold;\n    color: rgba(0, 0, 0, 0.54);\n    padding-right: 24px;\n    padding-left: 12px; }\n  .app-projects ul.project-details {\n    list-style: none;\n    margin: 0;\n    padding: 0; }\n    .app-projects ul.project-details li {\n      min-height: 36px;\n      display: flex;\n      flex-direction: row;\n      align-items: flex-start;\n      justify-content: flex-start;\n      padding-left: 24px;\n      padding-right: 24px; }\n    .app-projects ul.project-details icon {\n      color: rgba(0, 0, 0, 0.54);\n      flex: 0 0 auto;\n      margin: 6px;\n      font-size: 16px; }\n    .app-projects ul.project-details span.text {\n      flex: 0 1 auto;\n      padding-top: 4px;\n      line-height: 1.34;\n      font-size: 16px;\n      font-weight: normal;\n      color: rgba(0, 0, 0, 0.87); }\n  .app-projects-header {\n    background-color: #5F888A; }\n\n.app-experience {\n  background-color: #D9D9D9; }\n  .app-experience article {\n    margin-bottom: 24px;\n    border-bottom: 1px solid rgba(0, 0, 0, 0.12);\n    display: flex;\n    flex-direction: column;\n    align-items: flex-start;\n    justify-content: flex-start;\n    padding: 0 12px; }\n    .app-experience article > .card-image {\n      height: auto;\n      max-width: 150px;\n      min-width: 150px;\n      height: 150px;\n      width: 150px;\n      background: white;\n      border-radius: 100%;\n      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);\n      margin: 24px auto;\n      text-align: center; }\n      .app-experience article > .card-image img {\n        max-width: 130px;\n        max-height: 130px;\n        margin: 10px; }\n    .app-experience article > .card-content {\n      flex: 1 1 auto;\n      padding-top: 20px;\n      height: auto;\n      display: flex;\n      flex-direction: column;\n      align-items: flex-start;\n      justify-content: flex-start; }\n    .app-experience article .card-heading {\n      display: flex;\n      flex-direction: row;\n      align-items: flex-start;\n      justify-content: flex-start;\n      margin-bottom: 12px;\n      padding-top: 12px;\n      width: 100%;\n      flex-direction: column; }\n    .app-experience article .card-title {\n      flex: 1;\n      font-weight: normal;\n      font-size: 36px;\n      color: rgba(0, 0, 0, 0.54);\n      padding-left: 24px;\n      padding-right: 12px;\n      font-size: 24px;\n      font-weight: bold; }\n    .app-experience article .card-date {\n      margin-left: auto;\n      text-align: right;\n      font-size: 14px;\n      padding-right: 12px;\n      letter-spacing: 1.34px;\n      font-weight: bold;\n      color: rgba(0, 0, 0, 0.54);\n      padding-right: 24px;\n      padding-left: 12px;\n      margin-left: 12px; }\n    .app-experience article .card-details {\n      list-style: none;\n      margin: 0;\n      padding: 0; }\n      .app-experience article .card-details li {\n        min-height: 36px;\n        display: flex;\n        flex-direction: row;\n        align-items: flex-start;\n        justify-content: flex-start;\n        padding-left: 24px;\n        padding-right: 24px; }\n      .app-experience article .card-details icon {\n        color: rgba(0, 0, 0, 0.87);\n        flex: 0 0 auto;\n        margin: 6px;\n        font-size: 16px; }\n      .app-experience article .card-details span.text {\n        flex: 0 1 auto;\n        padding-top: 4px;\n        line-height: 1.34;\n        font-size: 16px;\n        font-weight: normal;\n        color: rgba(0, 0, 0, 0.87); }\n    .app-experience article .card-tags {\n      margin: 0 0 24px 0;\n      padding: 0 12px;\n      list-style: none; }\n      .app-experience article .card-tags li {\n        display: inline;\n        padding: 6px 12px;\n        font-size: 12px;\n        font-weight: normal;\n        color: rgba(0, 0, 0, 0.87);\n        margin: 4px; }\n  @media screen and (min-width: 1200px) {\n    .app-experience article {\n      padding: 0 56px;\n      flex-direction: row; }\n      .app-experience article .card-image {\n        margin: 24px; }\n      .app-experience article .card-heading {\n        flex-direction: row; }\n      .app-experience article .card-title {\n        font-size: 36px;\n        font-weight: normal; }\n      .app-experience article .card-date {\n        margin-left: auto; } }\n  .app-experience .xp-heading {\n    display: flex;\n    flex-direction: row;\n    align-items: flex-start;\n    justify-content: flex-start;\n    margin-bottom: 12px;\n    padding-top: 12px;\n    width: 100%; }\n  .app-experience .xp-title {\n    flex: 1;\n    font-weight: normal;\n    font-size: 36px;\n    color: rgba(0, 0, 0, 0.54);\n    padding-left: 24px;\n    padding-right: 12px; }\n  .app-experience .xp-date {\n    margin-left: auto;\n    text-align: right;\n    font-size: 14px;\n    padding-right: 12px;\n    letter-spacing: 1.34px;\n    font-weight: bold;\n    color: rgba(0, 0, 0, 0.54);\n    padding-right: 24px;\n    padding-left: 12px; }\n  .app-experience ul.xp-details {\n    list-style: none;\n    margin: 0;\n    padding: 0; }\n    .app-experience ul.xp-details li {\n      min-height: 36px;\n      display: flex;\n      flex-direction: row;\n      align-items: flex-start;\n      justify-content: flex-start;\n      padding-left: 24px;\n      padding-right: 24px; }\n    .app-experience ul.xp-details icon {\n      color: rgba(0, 0, 0, 0.54);\n      flex: 0 0 auto;\n      margin: 6px;\n      font-size: 16px; }\n    .app-experience ul.xp-details span.text {\n      flex: 0 1 auto;\n      padding-top: 4px;\n      line-height: 1.34;\n      font-size: 16px;\n      font-weight: normal;\n      color: rgba(0, 0, 0, 0.87); }\n  .app-experience ul.xp-tech {\n    margin: 0 0 24px 0;\n    padding: 0 12px;\n    list-style: none; }\n    .app-experience ul.xp-tech li {\n      display: inline;\n      padding: 6px 12px;\n      font-size: 12px;\n      font-weight: normal;\n      color: #2196F3;\n      margin: 4px; }\n  .app-experience-header {\n    background-color: #D9D9D9; }\n\n.app-education {\n  background-color: #353535; }\n  .app-education article {\n    margin-bottom: 24px;\n    border-bottom: 1px solid rgba(255, 255, 255, 0.12);\n    display: flex;\n    flex-direction: column;\n    align-items: flex-start;\n    justify-content: flex-start;\n    padding: 0 12px; }\n    .app-education article > .card-image {\n      height: auto;\n      max-width: 150px;\n      min-width: 150px;\n      height: 150px;\n      width: 150px;\n      background: white;\n      border-radius: 100%;\n      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);\n      margin: 24px auto;\n      text-align: center; }\n      .app-education article > .card-image img {\n        max-width: 130px;\n        max-height: 130px;\n        margin: 10px; }\n    .app-education article > .card-content {\n      flex: 1 1 auto;\n      padding-top: 20px;\n      height: auto;\n      display: flex;\n      flex-direction: column;\n      align-items: flex-start;\n      justify-content: flex-start; }\n    .app-education article .card-heading {\n      display: flex;\n      flex-direction: row;\n      align-items: flex-start;\n      justify-content: flex-start;\n      margin-bottom: 12px;\n      padding-top: 12px;\n      width: 100%;\n      flex-direction: column; }\n    .app-education article .card-title {\n      flex: 1;\n      font-weight: normal;\n      font-size: 36px;\n      color: rgba(255, 255, 255, 0.7);\n      padding-left: 24px;\n      padding-right: 12px;\n      font-size: 24px;\n      font-weight: bold; }\n    .app-education article .card-date {\n      margin-left: auto;\n      text-align: right;\n      font-size: 14px;\n      padding-right: 12px;\n      letter-spacing: 1.34px;\n      font-weight: bold;\n      color: rgba(255, 255, 255, 0.5);\n      padding-right: 24px;\n      padding-left: 12px;\n      margin-left: 12px; }\n    .app-education article .card-details {\n      list-style: none;\n      margin: 0;\n      padding: 0; }\n      .app-education article .card-details li {\n        min-height: 36px;\n        display: flex;\n        flex-direction: row;\n        align-items: flex-start;\n        justify-content: flex-start;\n        padding-left: 24px;\n        padding-right: 24px; }\n      .app-education article .card-details icon {\n        color: white;\n        flex: 0 0 auto;\n        margin: 6px;\n        font-size: 16px; }\n      .app-education article .card-details span.text {\n        flex: 0 1 auto;\n        padding-top: 4px;\n        line-height: 1.34;\n        font-size: 16px;\n        font-weight: normal;\n        color: white; }\n    .app-education article .card-tags {\n      margin: 0 0 24px 0;\n      padding: 0 12px;\n      list-style: none; }\n      .app-education article .card-tags li {\n        display: inline;\n        padding: 6px 12px;\n        font-size: 12px;\n        font-weight: normal;\n        color: white;\n        margin: 4px; }\n  @media screen and (min-width: 1200px) {\n    .app-education article {\n      padding: 0 56px;\n      flex-direction: row; }\n      .app-education article .card-image {\n        margin: 24px; }\n      .app-education article .card-heading {\n        flex-direction: row; }\n      .app-education article .card-title {\n        font-size: 36px;\n        font-weight: normal; }\n      .app-education article .card-date {\n        margin-left: auto; } }\n  .app-education header {\n    color: white; }\n    .app-education header icon {\n      color: white; }\n  .app-education-header {\n    background-color: #353535;\n    color: white; }\n    .app-education-header icon {\n      color: white; }\n\n@media screen and (max-width: 1200px) {\n  .platform-ios container navigation {\n    opacity: 0;\n    visibility: hidden;\n    transition: opacity 0.3s ease 0s; }\n  .platform-ios container.offset-main-right navigation {\n    opacity: 1;\n    visibility: visible; }\n  .platform-ios container.animate-main-right navigation {\n    opacity: 1;\n    visibility: visible; }\n  .platform-ios container.animate-main-default navigation {\n    opacity: 0;\n    visibility: hidden; } }\n\n@media screen and (min-width: 1201px) {\n  container {\n    margin-left: 200px; }\n    container > header {\n      margin-left: 200px; }\n    container .header-title {\n      padding-left: 24px; }\n    container icon.menu-icon {\n      display: none !important; } }\n\n.ui-materialize-logo {\n  height: 100%;\n  width: 100%;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center; }\n  .ui-materialize-logo:before {\n    content: \"ui\";\n    display: block;\n    color: deeppink;\n    font-weight: bold;\n    font-size: 16px;\n    line-height: 24px; }\n  .ui-materialize-logo:after {\n    content: \"Materialize\";\n    display: block;\n    color: dimgrey;\n    font-weight: normal;\n    font-size: 24px; }\n\n.domx-logo {\n  height: 100%;\n  width: 100%;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center; }\n  .domx-logo:before {\n    content: \"<\";\n    display: block;\n    color: darkorange;\n    font-weight: bold;\n    font-size: 36px;\n    line-height: 24px; }\n  .domx-logo:after {\n    content: \"dom-x\";\n    display: block;\n    color: indigo;\n    font-weight: normal;\n    font-size: 36px; }\n\narticle.card-mparticle .card-image img {\n  margin-top: 30px; }\n\narticle.card-plusamp .card-image img {\n  border-radius: 100%; }\n\narticle.card-his .card-image img {\n  margin-top: 54px; }\n\narticle.card-southwestern .card-image img {\n  margin-top: 30px; }\n"; });
 define('text!modules/header/header.html', ['module'], function(module) { module.exports = "<template><nav><button><icon ico=home></icon></button><button click.delegate=\"setActiveTab('profile')\">Profile</button><button click.delegate=\"setActiveTab('projects')\">Projects</button><button click.delegate=\"setActiveTab('experience')\">Experience</button><button click.delegate=\"setActiveTab('educuation')\">Educuation</button></nav></template>"; });
 define('text!modules/nav/nav.html', ['module'], function(module) { module.exports = "<template><ul><li repeat.for=\"items of leftNav\" click.delegate=\"navigateToItem($event, item)\"><a>${item.name}</a></li></ul><button click.delegate=buttonClicked($event)></button><ul><li repeat.for=\"items of rightNav\" click.delegate=\"navigateToItem($event, item)\"><a>${item.name}</a></li></ul></template>"; });
 define('text!modules/nav-bar/nav-bar.html', ['module'], function(module) { module.exports = "<template><button class=static-button><span class=text>${currentTitle}</span></button><ul class=slider><li repeat.for=\"section of sections\"><span class=text>${section.heading}</span><span class=icon></span></li></ul></template>"; });
-define('text!modules/nav-section/nav-section.html', ['module'], function(module) { module.exports = "<template class=\"${view.isActive ? 'active' : ''} ${view.isScrolling ? 'scrolling' : ''} ${view.isPeeking ? 'peeking' : ''} ${view.isVisible ? 'visible' : ''}\"><section class=section-container><header ref=header click.delegate=headerClicked($event) class=\"${positionClass} nav-section-header ${view.isActive ? 'active' : ''} ${view.isScrolling ? 'scrolling' : ''} ${view.isPeeking ? 'peeking' : ''} ${view.isVisible ? 'visible' : ''}\"><icon class=direction-icon ico=arrow_back></icon><span class=header-title>${view.title}</span></header><compose containerless view-model.bind=view.viewModel></compose><header ref=fixedheader class=\"${positionClass} nav-section-header fixed app-${view.name}-header ${view.isActive ? 'active' : ''} ${view.isScrolling ? 'scrolling' : ''} ${view.isPeeking ? 'peeking' : ''} ${view.isVisible ? 'visible' : ''}\" click.delegate=navigateDirection($event)><icon class=menu-icon click.delegate=toggleNavigation($event) ico=menu></icon><icon if.bind=\"view.viewIndex > 0\" class=direction-icon ico=arrow_back></icon><span if.bind=\"view.viewIndex > 0\" class=header-title>${view.title}</span></header></section></template>"; });
-define('text!modules/navigation/navigation.html', ['module'], function(module) { module.exports = "<template><header></header><section><ul class=navigation-list><li repeat.for=\"view of views\" class=\"${view === State.view ? 'active' : ''}\" click.delegate=navigateToView(view)><icon ico.bind=view.icon></icon><span class=text>${view.title}</span></li></ul></section></template>"; });
+define('text!modules/nav-section/nav-section.html', ['module'], function(module) { module.exports = "<template class=\"${view.isActive ? 'active' : ''} ${view.isScrolling ? 'scrolling' : ''} ${view.isPeeking ? 'peeking' : ''} ${view.isVisible ? 'visible' : ''}\"><section class=section-container><header ref=header show.bind=view.showTitle click.delegate=headerClicked($event) class=\"${positionClass} nav-section-header app-${view.name}-header absolute-top ${view.isVisible && view.isMiddle ? 'is-visible' : ''} ${view.alignTitleLeft ? 'align-title-left' : view.alignTitleRight ? 'align-title-right' : view.alignTitleCenter ? 'align-title-center' : ''} ${view.alignIconLeft ? 'align-icon-left' : view.alighIconRight ? 'align-icon-right' : ''} ${view.showDirectionIcon ? 'show-direction-icon' : 'hide-direction-icon'} ${view.isActive ? 'active' : ''} ${view.isScrolling ? 'scrolling' : ''} ${view.isPeeking ? 'peeking' : ''} ${view.isVisible ? 'visible' : ''}\"><icon if.bind=view.showDirectionIcon class=direction-icon ico=arrow_back></icon><span if.bind=view.title class=header-title>${view.title}</span></header><compose containerless view-model.bind=view.viewModel></compose><header ref=fixedBottomHeader class=\"nav-section-header header-${view.name}\"><icon ripple class=menu-icon click.delegate=toggleNavigation($event) ico=menu></icon><icon if.bind=\"view.viewIndex > 0\" click.delegate=navigateDirection($event) class=direction-icon ico=arrow_back></icon><span if.bind=view.title click.delegate=navigateDirection($event) class=header-title>${view.title}</span></header></section></template>"; });
+define('text!modules/navigation/navigation.html', ['module'], function(module) { module.exports = "<template><section><ul class=navigation-list><li repeat.for=\"view of views\" class=\"${view.isActive ? 'active' : ''}\" click.delegate=navigateToView(view)><icon ico.bind=view.icon></icon><span class=text>${view.title}</span></li></ul></section></template>"; });
 define('text!modules/profile/profile.html', ['module'], function(module) { module.exports = "<template><style>@media screen and (max-width:1200px){.app-profile .row{flex-direction:column}.app-profile .row .profile-info{width:100%}.app-profile .row .profile-info ul{margin:24px}}</style><article><div class=profile-image><img src=\"https://avatars0.githubusercontent.com/u/4668188?v=3&s=460\" alt=\"\"></div><div class=profile-content><ul class=profile-detail><li><label>Name</label><div class=value><p>${props.name}</p></div></li><li><label>Birthday</label><div class=value><p>${props.birthday}</p></div></li><li><label>Titles</label><div class=value><p repeat.for=\"title of props.titles\">${title}</p></div></li><li><label>Locations</label><div class=value><p repeat.for=\"loc of props.locations\">${loc}</p></div></li><li><label>Info</label><div class=value><p>${props.info}</p></div></li></ul></div></article></template>"; });
-define('text!modules/projects/projects.html', ['module'], function(module) { module.exports = "<template><template repeat.for=\"project of props.projects\"><article><div class=card-image><img if.bind=project.image src.bind=project.image alt.bind=project.name></div><div class=card-content><div class=card-heading><div class=card-title>${project.name}</div><div class=card-date>${project.date}</div></div><ul class=card-details><li repeat.for=\"note of project.notes\"><icon ico=chevron_right></icon><span class=text>${note}</span></li></ul><ul class=card-tags><li repeat.for=\"stack of project.stack\">${stack}</li></ul></div></article></template></template>"; });
-define('text!modules/technology/technology.html', ['module'], function(module) { module.exports = "<template><template repeat.for=\"tech of props.technologies\"><article><h1>${tech.title}</h1><ul><li repeat.for=\"item of tech.list\"><img src.bind=item.img alt.bind=item.name><span class=text>${item.title}</span></li></ul></article></template></template>"; });
+define('text!modules/projects/projects.html', ['module'], function(module) { module.exports = "<template><template repeat.for=\"project of props.projects\"><article class=card-${project.id}><div class=card-image><span if.bind=\"project.className && !project.image\" class=${project.className}></span><img if.bind=project.image class=${project.className} src.bind=project.image alt.bind=project.name></div><div class=card-content><div class=card-heading><div class=card-title>${project.name}</div><div class=card-date>${project.date}</div></div><ul class=card-details><li repeat.for=\"note of project.notes\"><icon ico=chevron_right></icon><span class=text>${note}</span></li></ul><ul class=card-tags><li repeat.for=\"stack of project.stack\">${stack}</li></ul></div></article></template></template>"; });
 define('text!modules/title/title.html', ['module'], function(module) { module.exports = "<template><style>.app-title .title-image{height:450px;width:350px;display:block;float:left;margin:75px 75px 0 75px}.app-title .title-text h1{margin-top:75px;margin-bottom:75px;text-align:center;font-size:56px}.app-title .title-text{display:block;width:100%;text-align:center}</style><div class=title-text><h1>${title}</h1><h3>${summary}</h3></div></template>"; });
+define('text!modules/technology/technology.html', ['module'], function(module) { module.exports = "<template><template repeat.for=\"tech of props.technologies\"><article><h1>${tech.title}</h1><ul><li repeat.for=\"item of tech.list\"><img src.bind=item.img alt.bind=item.name><span class=text>${item.title}</span></li></ul></article></template></template>"; });
 //# sourceMappingURL=app-bundle.js.map

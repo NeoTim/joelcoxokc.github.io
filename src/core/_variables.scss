@@ -1,3 +1,6 @@
+
+// COLOR
+
 $dark-tint-primary: rgba(0,0,0,0.87);
 $dark-tint-secondary: rgba(0,0,0,0.54);
 $dark-tint-disabled: rgba(0,0,0,0.54);
@@ -78,3 +81,45 @@ $edu-tint: $light-tint-primary;
 $tech-fill: $theme-white;
 $tech-tint: $dark-tint-primary;
 
+
+
+
+
+// SIZE
+
+$header-height: 56px;
+
+
+$headers: (title, profile, projects, experience, education, technology);
+$views: (
+    (
+        name: title,
+        fill: $title-fill,
+        tint: $title-tint
+    ),
+    (
+        name: profile,
+        fill: $profile-fill,
+        tint: $profile-tint
+    ),
+    (
+        name: projects,
+        fill: $projects-fill,
+        tint: $projects-tint
+    ),
+    (
+        name: experience,
+        fill: $xp-fill,
+        tint: $xp-tint
+    ),
+    (
+        name: education,
+        fill: $edu-fill,
+        tint: $edu-tint
+    ),
+    (
+        name: technology,
+        fill: $tech-fill,
+        tint: $tech-tint
+    )
+);

@@ -297,6 +297,41 @@
 }
 
 
+@mixin set-header($top:false, $bottom:false, $visible:false, $align-title: left, $align-icon: right) {
+    top: if($top, 0, unset);
+    bottom: if($bottom, 0, unset);
+    opacity: if($visible, 1, 0);
+    visibility: if($visible, visible, hidden);
+
+    icon.direction-icon {
+        margin-left: if($align-icon == right, auto, 0);
+        margin-right: if($align-icon == left, auto, 0);
+        
+        @if $align-icon == right and $bottom {
+            transform: rotate(180deg);
+        }
+    }
+
+    @if $top {
+        icon.menu-icon {
+            margin-right: auto;
+            display: block;
+        }
+
+        @media screen and (min-width: 1200px) {
+            icon.menu-icon {
+                display: none;
+            }
+        }
+    }
+
+    .header-title {
+        text-align: $align-title;
+        transform: if($align-title == center, translate3d(0, 150%, 0), translate3d(0,0,0));
+        font-size: if($align-title == center, 56px, 24px);
+    }
+}
+
 
 
 

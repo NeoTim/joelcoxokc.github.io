@@ -1,8 +1,9 @@
 <template>
     <template repeat.for="xp of props.experiences">
-        <article>
+        <article class="card-${xp.id}">
             <div class="card-image" if.bind="xp.image">
-                <img src.bind="xp.image" alt.bind="xp.name"/>
+                <span if.bind="xp.className && !xp.image" class="${xp.className}"></span>
+                <img src.bind="xp.image" class="${xp.className}" alt.bind="xp.name"/>
             </div>
             <div class="card-content">
                 <div class="card-heading">

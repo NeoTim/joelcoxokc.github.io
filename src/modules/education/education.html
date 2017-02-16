@@ -1,8 +1,9 @@
 <template>
     <template repeat.for="edu of props.educations">
-        <article>
+        <article class="card-${edu.id}">
             <div class="card-image" if.bind="edu.image">
-                <img src.bind="edu.image" alt.bind="edu.name"/>
+                <span if.bind="edu.className && !edu.image" class="${edu.className}"></span>
+                <img src.bind="edu.image" class="${edu.className}" alt.bind="edu.name"/>
             </div>
             <div class="card-content">
                 <div class="card-heading">

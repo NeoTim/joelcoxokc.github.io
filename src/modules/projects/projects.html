@@ -1,8 +1,9 @@
 <template>
     <template repeat.for="project of props.projects">
-        <article>
+        <article class="card-${project.id}">
             <div class="card-image">
-                <img if.bind="project.image" src.bind="project.image" alt.bind="project.name"/>
+                <span if.bind="project.className && !project.image" class="${project.className}"></span>
+                <img if.bind="project.image" class="${project.className}" src.bind="project.image" alt.bind="project.name"/>
             </div>
             <div class="card-content">
                 <div class="card-heading">

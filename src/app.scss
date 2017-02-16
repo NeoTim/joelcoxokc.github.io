@@ -4,9 +4,14 @@
 @import 'modules/nav-bar/_nav-bar.scss';
 @import 'modules/nav-section/_nav-section.scss';
 @import 'modules/navigation/_navigation.scss';
+@import 'resources/_ripple.scss';
 
 *::-webkit-scrollbar {
     display: none;
+}
+
+* {
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
 html {
@@ -14,6 +19,11 @@ html {
     height: 100vh;
     color: $dark-grey;
     font-family: 'Roboto', sans-serif;
+    max-width: 100%;
+    max-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* lets it scroll lazy */
 }
 
 body {
@@ -23,7 +33,6 @@ body {
     width: 100%;
     height: 100%;
     max-width: 100%;
-    overflow: hidden;
 }
 
 button {
@@ -37,6 +46,45 @@ button {
     webkit-appearance: none;
 }
 
+container {
+    position: relative;
+    display: block;
+    z-index: 3;
+    pointer-events: none;
+
+    > * {
+        pointer-events: auto;
+    }
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    position: relative;
+    z-index: 5;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+icon {
+    user-select: none;
+}
+
+.background-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    min-height: 100%;
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    z-index: 1;
+    filter: blur(20px);
+}
 
 .app-background {
     position: fixed;
@@ -50,100 +98,178 @@ button {
     background-size: cover;
 }
 
-.app-section {
-    height: 100%;
-    width: 100%;
-    position: relative;
-}
-
 nav-section {
     height: auto;
-    min-height: 100%;
+    min-height: 100vh;
     flex: 1 0 auto;
     min-width: 100%;
 }
 
-container {
-    display: block;
-    background: white;
-    box-shadow: 2px 3px 4px rgba(0, 0, 0, 0.1), -2px 0px 4px rgba(0, 0, 0, 0.1), 0 10px 20px -5px rgba(0,0,0,0.2);
-    z-index: 2;
-    position: relative;
-    height: 100%;
-    overflow: hidden;
-}
-
-container > header {
-    position: absolute;
-    top: 0;
-    margin: 0 auto;
-    left: 0;
-    right: 0;
-    height: 56px;
-    background-color: transparent;
-    z-index: 2;
-
-    button {
-        height: 50px;
-        color: white;
-        margin: 0 5px;
-        line-height: 36px;
-        padding: 0 16px;
-        cursor: pointer;
-        vertical-align: top;
-        cursor: pointer;
-
-        icon {
-            margin: 6px;
-        }
-        
-        &:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-    }
-}
-
-container > main {
-    position: absolute;
+header.nav-section-header {
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    bottom: 0;
-    height: 100%;
-    width: 100%;
-    max-height: 100%;
+    min-height: 56px;
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    height: $header-height;
+    z-index: 5;
+}
 
-    overflow-x: hidden;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch; /* lets it scroll lazy */
-    
-    .nav-section-container {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        justify-content: flex-start;
-        z-index: 4;
+nav-section {
+    header.nav-section-header {
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        min-height: 100%;
-        min-width: 100%;
+    }
+}
+
+@each $view in $views {
+
+    $name: map-get($view, name);
+    $fill: map-get($view, fill);
+    $tint: map-get($view, tint);
+
+    header.header-#{$name} {
+        background-color: $fill;
+        color: $tint;
+
+        icon {color: $tint}
+        .header-title {color: $tint}
     }
 
-    .nav-background-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        min-height: 100%;
-        min-width: 100%;
-        z-index: 1;
+    .view-#{$name} {
+        &-active {
+            @include navigation-list-state(
+                $fill: $fill,
+                $tint: $tint
+            );
+        }
+
+        &-no-header-title {
+            header.header-#{$name} {
+                .header-title {
+                    opacity: 0;
+                    visibility: hidden;
+                }
+            }
+        }
+
+        &-topbar {
+            header.header-#{$name} {
+                @include set-header(
+                    $top: true,
+                    $visible: true,
+                    $align-title: left,
+                    $align-icon: right
+                );
+            }
+
+            &.view-#{$name}-no-header-title {
+                header.header-#{$name} {
+                    .header-title {
+                        opacity: 0;
+                        visibility: hidden;
+                    }
+                }
+            }
+        }
+
+        &-scrolling {
+        }
+
+        &-title {
+            &:not(.view-#{$name}-topbar) {
+                header.header-#{$name} {
+                    @include set-header(
+                        $top: true,
+                        $visible: false,
+                        $align-title: center
+                    );
+
+                    .header-title {
+                        opacity: 0;
+                        visibility: hidden;
+                    }
+                }
+            }
+
+            nav-section.app-#{$name} {
+                header.nav-section-header {
+                    @include set-header(
+                        $top: true,
+                        $visible: true,
+                        $align-title: center
+                    );
+                }
+            }
+        }
+
+        &-peek {
+            header.header-#{$name} {
+                @include set-header(
+                    $bottom: true,
+                    $visible: true,
+                    $align-title: right,
+                    $align-icon: right
+                );
+            }
+        }
+    }
+
+    &.view-#{$name}-active.view-#{$name}-gtvh {
+        header.header-#{$name} + header {
+            @include set-header(
+                $bottom: true,
+                $visible: true,
+                $align-title: right,
+                $align-icon: right
+            );
+        }
+    }
+}
+
+@media screen and (max-width: 1200px) {
+
+    container > header:first-of-type {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    container {
+        > main,
+        > header {
+            animation-timing-function: ease-out;
+            animation-fill-mode: forwards;
+            animation-duration: 0.3s;
+        }
+    }
+
+    container.showing-navigation {
+        > main,
+        > header {
+            animation-name: animate-main-right;
+        }
+    }
+
+    container.show-navigation {
+        > main,
+        > header {
+            transform: translate3d(200px, 0, 0);
+        }
+    }
+
+    container.hiding-navigation {
+        > main,
+        > header {
+            animation-name: animate-main-default;
+        }
+    }
+
+    container.hide-navigatin {
+        > main,
+        > header {
+            transform: translate3d(0,0,0);
+        }
     }
 }
 
@@ -391,12 +517,6 @@ container > main {
     }
 }
 
-container {
-    border-radius: 0;
-    max-height: 100%;
-    margin: 0;
-}
-
 @media screen and (max-width: 1200px) {
 
     .platform-ios {
@@ -431,29 +551,110 @@ container {
     }
 }
 
-@media screen and (min-width: 1200px) {
+
+@media screen and (min-width: 1201px) {
     container {
+        margin-left: 200px;
+
+        > header {
+            margin-left: 200px;
+        }
+
+        .header-title {
+            padding-left: 24px;
+        }
+
+        icon.menu-icon {
+            display: none !important;
+        }
     }
 }
 
 @media screen and (min-width: 1440px) {
     container {
+    }
+}
 
-        icon.menu-icon {
-            display: none !important;
+.ui-materialize-logo {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    &:before {
+        content: "ui";
+        display: block;
+        color: deeppink;
+        font-weight: bold;
+        font-size: 16px;
+        line-height: 24px;
+    }
+
+    &:after {
+        content: "Materialize";
+        display: block;
+        color: dimgrey;
+        font-weight: normal;
+        font-size: 24px;
+    }
+}
+
+.domx-logo {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    &:before {
+        content: "<";
+        display: block;
+        color: darkorange;
+        font-weight: bold;
+        font-size: 36px;
+        line-height: 24px;
+    }
+
+    &:after {
+        content: "dom-x";
+        display: block;
+        color: indigo;
+        font-weight: normal;
+        font-size: 36px;
+    }
+}
+
+article.card-mparticle {
+    .card-image {
+        img {
+            margin-top: 30px;
         }
+    }
+}
 
-        nav-section .section-container {
-            margin-left: 200px;
+article.card-plusamp {
+    .card-image {
+        img {
+            border-radius: 100%;
         }
+    }
+}
 
-        > header.nav-section-header {
-            margin-left: 200px;
-            border-top-left-radius: 0;
+article.card-his {
+    .card-image {
+        img {
+            margin-top: 54px;
+        }
+    }
+}
 
-            .header-title {
-                padding-left: 24px;
-            }
+article.card-southwestern {
+    .card-image {
+        img {
+            margin-top: 30px;
         }
     }
 }

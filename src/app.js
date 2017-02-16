@@ -9,7 +9,7 @@ import { Experience } from 'modules/experience/experience';
 import { Education } from 'modules/education/education';
 import { Enums } from 'core/enums';
 import { State } from './state';
-
+import {EventAggregator} from 'aurelia-event-aggregator';
 import {View} from 'core/view';
 
 const props = {
@@ -22,6 +22,7 @@ const props = {
 @inject(
     State,
     Enums,
+    EventAggregator,
     Factory.of(Header),
     Factory.of(Footer),
     Factory.of(Title),
@@ -33,7 +34,7 @@ const props = {
 )
 export class App {
 
-    constructor(State, Enums, Header, Footer, Title, Profile, Technology, Projects, Experience, Education) {
+    constructor(State, Enums, EventAggregator, Header, Footer, Title, Profile, Technology, Projects, Experience, Education) {
 
         this.State = State;
         this.props = props;
@@ -41,9 +42,10 @@ export class App {
         this.State.header = Header(this.State);
         this.State.footer = Footer(this.State);
 
+        this.eventAggregator = EventAggregator;
+
         State.registerView(
             new View({
-                title: 'Joel Cox',
                 name: 'title',
                 icon: 'home',
                 viewModel: Title({
@@ -101,6 +103,7 @@ export class App {
     }
 
     attached() {
+        this.State.scrollElement = document.body;
         const container = document.querySelector('container');
         const sections = document.querySelectorAll('container > main > nav-section');
 
@@ -112,7 +115,7 @@ export class App {
         // }
 
         // this.State.views[0].isActive = true;
-        const target = this.State.scrollElement;
+        const target = this.State.scrollElement || document.body;
 
         let resetViewsAtIndex = (index)=> {
             let view;
@@ -124,136 +127,120 @@ export class App {
             }
         }
 
-        
-        target.onscroll = (event)=> {
+        let updateView = (view, index, views)=> {
+            let top = document.body.scrollTop;
+            let height = document.body.clientHeight;
+            let bottom = top + height;
 
+            view.updatePosition({top, height, bottom}, index, views);
+        }
+
+        let viewset = [];
+
+        window.onresize = (event)=> {
+            this.eventAggregator.publish('window:resize');
+        }
+
+        window.onscroll = (event)=> {
+            let bodyHeight = target.clientHeight;
+            let halfBodyHeight = bodyHeight / 2;
             let scrollBottom = target.scrollTop + target.clientHeight;
             let scrollTop = Math.ceil(target.scrollTop);
             let index = 0;
             let view;
+            let prev;
             let next;
+            let found;
 
+
+            let scroll = {
+                top    : scrollTop,
+                height : bodyHeight,
+                bottom : scrollBottom
+            };
+
+            let views = this.State.views;
+            views.forEach((view, index)=> {
+                view.updatePosition(scroll, index, views);
+            })
+
+            return;
+
+            // If scrolled to top, choose the first view
             if (scrollTop === 0) {
-                view = this.State.views[0];
+                found = this.State.views[0]; 
                 
-                view.reset({
-                    isActive: true,
-                    isVisible: true,
-                    isScrolling: true
-                });
-
-                this.State.view = view;
-
                 next = this.State.views[1];
 
-                if (next) {
-                    next.reset({
-                        isPeeking: true
-                    });
-                }
-
                 this.State.views.slice(2).forEach(view => view.reset());
-                return;
-            }
+            } else {
+                // reset all views
+                this.State.views.slice(2).forEach(view => view.reset());
 
-            this.State.views.slice(2).forEach(view => view.reset());
+                while(view = this.State.views[index++]) {
 
-            while(view = this.State.views[index++]) {
-                next = this.State.views[index];
-
-
-                let bottom = view.coords.bottom();
-                let offset = view.coords.top() - scrollTop;
-                let backset = (view.coords.top() + view.element.clientHeight) - scrollTop;
-
-
-                // Is View Scrolling
-                if (scrollTop < bottom && scrollTop >= view.coords.top()) {
-                    view.reset({
-                        isScrolling: true,
-                        isVisible: true,
-                        isActive: true
-                    });
-
-                    this.State.view = view;
-
-                    if (next && next.coords.top()) {
-                        next.reset({isPeeking: true});
-
-                        if (next.coords.top() <= (scrollTop + (target.clientHeight - 56))) {
-                            next.reset({
-                                isVisible: true
-                            });
-                        }
-
-                        if (next.coords.top() <= (scrollTop + (target.clientHeight / 2))) {
-                            next.reset({
-                                isVisible: true,
-                                isActive: true
-                            })
-                        }
-
-                        if (this.State.views[index+1]) {
-                            this.State.views.slice(index+1).forEach(view => view.reset());
-                        }
-                        break;
+                    let viewTop = view.coords.top();
+                    let viewBottom = view.coords.bottom();
+                    let props = {};
+                    
+                    if (found && !next) {
+                        next = view;
+                        continue;
                     }
 
-                    if (next) {
-                        if (next.coords.top() >= scrollTop) {
-                            next.isVisible   = false;
-                            next.isPeeking   = true;
-                            next.isActive    = false;
-                            next.isScrolling = false;
-
-                            if (next.coords.top() <= (scrollTop + (target.clientHeight - 56))) {
-                                next.isPeeking = false;
-                                next.isVisible = true;
-                            }
-
-                            if (next.coords.top() <= (scrollTop + (target.clientHeight / 2))) {
-
-                                next.isPeeking   = false;
-                                next.isVisible   = true;
-                                next.isActive    = true;
-                                next.isScrolling = false;
-
-                                next = this.State.views[index+1];
-                                
-                                if (next) {
-                                    next.isPeeking   = true;
-                                    next.isActive    = false;
-                                    next.isScrolling = false;
-                                    next.isVisible   = false;
-                                    resetViewsAtIndex(index+3);
-                                    break;
-                                }
-                            }
-
-                            resetViewsAtIndex(index+3);
-                            break;
-
-                        } else {
-                            next.isPeeking   = true;
-                            next.isVisible   = false;
-                            next.isActive    = false;
-                            next.isScrolling = false;
-                        }
-
-                        resetViewsAtIndex(index+2);
-                        break;
+                    if (viewTop >= (scrollTop - 10) && viewTop <= (scrollTop + 10)) {
+                        found = view;
+                        continue;
                     }
-                }
 
-                else if (bottom < scrollTop) {
-                    view.reset({isActive: true});
-                }
-                else {
-                    this.State.views.slice(index).forEach(view => view.reset());
+                    if (viewBottom < scrollTop) {
+                        view.reset();
+                        continue;
+                    }
+                    
+                    if (viewTop <= scrollTop && viewBottom >= (scrollTop + 56)) {
+                        found = view;
+                        continue;
+                    }
+                    if (!found && viewTop > scrollTop && viewTop < scrollBottom) {
+                        found = view;
+                        continue;
+                    }
+
                     view.reset();
                 }
             }
-        }
-    }
 
+            if (found) {
+                if (this.viewClass) {
+                    document.documentElement.classList.remove(this.viewClass);
+                }
+                this.viewClass = found.name + '-view';
+                document.documentElement.classList.add(this.viewClass)
+                this.State.view = found;
+                
+                let props = {
+                    isActive: true,
+                }
+                
+                if (found.coords.top() >= (scrollTop - 10) && found.coords.top() <= (scrollTop + 10)) {
+                } else {
+                    props.isTop = true;
+                    props.alignTitleLeft = true;
+                    props.showDirectionIcon = true;
+                }
+                found.reset(props);
+            }
+
+            if (next) {
+                if (next.coords.top() <= (scrollBottom - 56)) {
+                    document.documentElement.classList.add('next-in-view');
+                } else {
+                    document.documentElement.classList.remove('next-in-view');
+                }
+            }
+        }
+
+        this.State.views.forEach(updateView)
+    }
 }

@@ -1,4 +1,5 @@
 import environment from './environment';
+import 'core/element';
 
 //Configure Bluebird Promises.
 Promise.config({

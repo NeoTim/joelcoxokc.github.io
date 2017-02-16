@@ -6,39 +6,67 @@
     
     <section class="section-container">
     
-        <header ref="header" 
+        <header ref="header"
+                show.bind="view.showTitle"
                 click.delegate="headerClicked($event)" 
                 class="
                     ${positionClass} 
                     nav-section-header 
+                    app-${view.name}-header
+
+                    absolute-top
+
+                    ${view.isVisible && view.isMiddle ? 'is-visible' : ''}
+                    
+                    ${view.alignTitleLeft ? 'align-title-left' : view.alignTitleRight ? 'align-title-right' : view.alignTitleCenter ? 'align-title-center' : ''}
+                    ${view.alignIconLeft ? 'align-icon-left' : view.alighIconRight ? 'align-icon-right' : ''}
+                    
+                    ${view.showDirectionIcon ? 'show-direction-icon' : 'hide-direction-icon'}
+
                     ${view.isActive ? 'active' : ''} 
                     ${view.isScrolling ? 'scrolling' : ''} 
                     ${view.isPeeking ? 'peeking' : ''} 
                     ${view.isVisible ? 'visible' : ''}" >
 
-            <icon class="direction-icon" ico="arrow_back"></icon>
-            <span class="header-title">${view.title}</span>
+            <icon if.bind="view.showDirectionIcon" class="direction-icon" ico="arrow_back"></icon>
+            <span if.bind="view.title" class="header-title">${view.title}</span>
         </header>
 
         <compose containerless view-model.bind="view.viewModel"></compose>
 
-        
-
-        <header ref="fixedheader" 
+        <!--<header ref="fixedTopHeader"
+                show.bind="view.isTop && view.isVisible"
                 class="
-                    ${positionClass} 
-                    nav-section-header 
-                    fixed 
+                    nav-section-header
                     app-${view.name}-header 
-                    ${view.isActive ? 'active' : ''} 
-                    ${view.isScrolling ? 'scrolling' : ''} 
-                    ${view.isPeeking ? 'peeking' : ''} 
-                    ${view.isVisible ? 'visible' : ''}"
-                    click.delegate="navigateDirection($event)">
+                    fixed-top
+                    is-visible
 
-            <icon class="menu-icon" click.delegate="toggleNavigation($event)" ico="menu"></icon>
+                    ${view.alignTitleLeft ? 'align-title-left' : view.alignTitleRight ? 'align-title-right' : ''}
+                    ${view.alignIconLeft ? 'align-icon-left' : view.alignIconRight ? 'align-icon-right' : ''}
+                    ${view.showDirectionIcon ? 'show-direction-icon' : 'hide-direction-icon'}
+                    ${view.showMenuIcon ? 'show-menu-icon' : 'hide-menu-icon'}
+                    "
+                    
+                click.delegate="navigateDirection($event)">
+            
             <icon if.bind="view.viewIndex > 0" class="direction-icon" ico="arrow_back"></icon>
-            <span if.bind="view.viewIndex > 0" class="header-title">${view.title}</span>
+            <span if.bind="view.title" class="header-title">${view.title}</span>    
+        </header>-->
+
+        <header ref="fixedBottomHeader" 
+                class="
+                    nav-section-header 
+                    header-${view.name}">
+                    <!--
+                        ${view.isScrolling ? 'scrolling' : ''} 
+                    ${view.isPeeking ? 'peeking' : ''} 
+                    ${view.isVisible ? 'visible' : ''}
+                    -->
+
+            <icon ripple class="menu-icon" click.delegate="toggleNavigation($event)" ico="menu"></icon>
+            <icon if.bind="view.viewIndex > 0" click.delegate="navigateDirection($event)" class="direction-icon" ico="arrow_back"></icon>
+            <span if.bind="view.title" click.delegate="navigateDirection($event)" class="header-title">${view.title}</span>
         </header>
     </section>
 </template>

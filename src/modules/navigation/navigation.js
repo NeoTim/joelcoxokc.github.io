@@ -22,6 +22,7 @@ export class Navigation {
     }
 
     visibilityChanged(value) {
+        console.log(value)
         if (value) {
             this.showNavigation();
         } else {
@@ -36,28 +37,61 @@ export class Navigation {
     }
 
     showNavigation() {
+        console.log('showing');
         let listener;
-        let element = this.State.container;
+        let container = document.querySelector('container');
+        let main = document.querySelector('main');
 
-        element.addEventListener('animationend', listener = (event)=> {
-            element.classList.add('offset-main-right');
-            element.classList.remove('animate-main-right');
-            element.removeEventListener('animationend', listener);
+        container.classList.remove('hide-navigation');
+        container.classList.remove('hiding-navigation');
+        
+        container.addEventListener('animationend', listener = (event)=> {
+            container.classList.add('show-navigation');
+            container.classList.remove('showing-navigation');
+            container.removeEventListener('animationend', listener);
+            console.log('animationend show')
+        });
+
+        container.classList.add('showing-navigation');
+
+        this.resizeListener = this.eventAggregator.subscribe('window:resize', ()=> {
+            this.visibility = false;
+        });
+
+        main.addEventListener('mousedown', this.clickListener = (event)=> {
+            event.preventDefault();
+            event.stopPropagation();
+            this.visibility = false;
+            console.log('click')
         }, true);
 
-        element.classList.add('animate-main-right');
+        main.addEventListener('touchstart', this.touchListener = (event)=> {
+            event.preventDefault();
+            event.stopPropagation();
+            this.visibility = false;
+            console.log('click')
+        }, true);
     }
 
     hideNavigation() {
+        console.log('hiding');
         let listener;
-        let element = this.State.container;
+        let container = document.querySelector('container');
+        let main = document.querySelector('main');
 
-        element.addEventListener('animationend', listener = (event)=> {
-            element.classList.remove('offset-main-right');
-            element.classList.remove('animate-main-default');
-            element.removeEventListener('animationend', listener);
-        }, true);
+        this.resizeListener.dispose();
+        main.removeEventListener('mousedown', this.clickListener, true);
+        main.removeEventListener('touchstart', this.touchListener, true);
 
-        element.classList.add('animate-main-default');
+        container.classList.remove('show-navigation');
+        container.classList.remove('showing-navigation');
+
+        container.addEventListener('animationend', listener = (event)=> {
+            container.classList.remove('hiding-navigation');
+            container.removeEventListener('animationend', listener);
+            console.log('animationend hide')
+        });
+
+        container.classList.add('hiding-navigation');
     }
 }

@@ -1,13 +1,13 @@
 $ghost: rgba(255,255,255,0.6);
 
 navigation {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
-    right: 0;
+    bottom: 0;
     min-height: 100%;
     width: 200px;
-    z-index: 1;
+    z-index: 2;
     pointer-events: none;
     display: flex;
     flex-direction: column;
@@ -87,91 +87,6 @@ navigation {
                     color: $tint;
                 }
             }
-        }
-    }
-}
-
-.active-view-title {
-    @include navigation-list-state(
-        $fill: $title-fill,
-        $tint: $title-tint
-    );
-}
-
-.active-view-profile {
-    @include navigation-list-state(
-        $fill: $profile-fill,
-        $tint: $profile-tint
-    );
-}
-
-.active-view-projects {
-    @include navigation-list-state(
-        $fill: $projects-fill,
-        $tint: $projects-tint
-    );
-}
-
-.active-view-experience {
-    @include navigation-list-state(
-        $fill: $xp-fill,
-        $tint: $xp-tint
-    );
-}
-
-.active-view-education {
-    @include navigation-list-state(
-        $fill: $edu-fill,
-        $tint: $edu-tint
-    );
-}
-
-.active-view-technology {
-    @include navigation-list-state(
-        $fill: $tech-fill,
-        $tint: $tech-tint
-    );
-}
-
-container {
-    > header.nav-section-header,
-    .section-container {
-        animation-timing-function: ease;
-        animation-duration: 0.3s;
-        animation-fill-mode: forwards;
-    }
-
-    &.offset-main-right {
-        > header.nav-section-header {
-            transform: translate3d(200px, 0, 0);
-        }
-
-        .section-container {
-            transform: translate3d(200px, 0, 0);
-        }
-    }
-
-    &.animate-main-right {
-        
-        > header.nav-section-header {
-            animation-name: animate-main-right;
-            border-top-left-radius: 0;
-        }
-
-        .section-container {
-            animation-name: animate-main-right;
-        }
-    }
-
-    &.animate-main-default {
-        
-        > header.nav-section-header {
-            animation-name: animate-main-default;
-            border-top-left-radius: 0;
-        }
-
-        .section-container {
-            animation-name: animate-main-default;
         }
     }
 }

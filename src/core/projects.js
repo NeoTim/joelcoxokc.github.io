@@ -3,22 +3,35 @@ export class ProjectEnums {
     DOMX = {
         name: 'DOMX | in progress',
         date: '2016-today',
+        id: 'domx',
         image: '',
         link: 'http://github.com/joelcoxokc/domx',
-        notes: []
+        className: 'domx-logo',
+        notes: [
+            'Developing cross-browser cross-platform Vanilla Javascript Web Component Library',
+            'Built with everything I am current learning',
+            'Built with my knowledge of the web over the past several years'
+        ]
     }
 
     AureliaHub = {
         name: 'Aurelia Hub & Documentation',
         date: '2015-2016',
+        id: 'aurelia-hub',
         link: 'http://aurelia.io/hub',
         image: '/scripts/logos/aurelia-logo.png',
-        notes: []
+        notes: [
+            'Developed dynamic navigation conforming to Aurelia\'s generated documentation structure',
+            'Implemented cross-browser and cross-platform support',
+            'Pixel pushed my way to perfectly matching creative design comps',
+            'Used components developed for the Aurelia Interface UX library',
+        ]
     }    
     
     Aurelia = {
         name: 'Aurelia Interface',
         date: '2015-2016',
+        id: 'aurelia-interface',
         occupation: 'Lead UX Engineer',
         link: 'http://blog.durandal.io/2015/11/20/aurelia-beta-week-day-5-aurelia-interface/',
         image: '/scripts/logos/aurelia-logo.png',
@@ -33,8 +46,10 @@ export class ProjectEnums {
     uimaterialize = {
         name: 'UI-Materialize | depricated',
         date: '2014',
+        id: 'ui-materialize',
         occupation: 'Project Founder',
         link: 'http://ui-materialize.com',
+        className: 'ui-materialize-logo',
         notes: [
             'Designed UX/UI Library using Googl\'s Material Design guidelines',
             'Leveraging Angular JS to create custom cross-browser Directives',
@@ -45,6 +60,7 @@ export class ProjectEnums {
     slushy = {
         name: 'Slush-y',
         date: '2014',
+        id: 'slush-y',
         occupation: 'Project Founder',
         link: 'http://www.npmjs.com/package/slush-y',
         image: '/scripts/logos/slushy-logo.png',
@@ -59,6 +75,7 @@ export class ProjectEnums {
     platfeful = {
         name: 'PlateFul | depricated',
         date: '2014-2015',
+        id: 'plateful',
         occupation: 'Co-Founder Lead UX Engineer',
         link: 'https://github.com/Plateful',
         image: '/scripts/logos/plateful-logo.png',
@@ -70,6 +87,7 @@ export class ProjectEnums {
     tracom = {
         name: 'TraCom | Private',
         date: '2010-Today',
+        id: 'tracom',
         occupation: 'Developer & Designer',
         image: '/scripts/logos/tracom-logo.png',
         notes: [

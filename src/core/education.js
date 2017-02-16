@@ -1,6 +1,8 @@
 export class EducationEnums {
     hackreactor = {
         name: 'Hack Reactor',
+        id: 'hack-reactor',
+        image: '/scripts/logos/hack-reactor-logo.png',
         site: 'http://hackreactor.com',
         date: '2014',
         location: 'San Francisco, California',
@@ -13,6 +15,8 @@ export class EducationEnums {
 
     swbts = {
         name: 'College at SouthWestern',
+        id: 'southwestern',
+        image: '/scripts/logos/southwestern-logo.png',
         site: 'http://college.swbts.edu/',
         location: 'Fort Worth, Texas',
         date: '2010-2013',

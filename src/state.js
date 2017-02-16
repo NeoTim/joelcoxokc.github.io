@@ -27,9 +27,46 @@ export class State {
                 this.scrollElement.scrollTop = payload.top;
             }
         });
+
+        this.eventAggregator.subscribe('state:scroll-to-view', view => {
+            if (view.coords.top() > document.body.scrollTop || view.coords.top() < document.body.scrollTop) {
+                view.element.scrollIntoView();
+            } else {
+                let index = this.views.indexOf(view);
+                if (this.views[index-1]) {
+                    this.views[index-1].element.scrollIntoView();
+                }
+            }
+        })
     }
 
-    viewChanged(view, lastView) {
+    viewChanged(newView, lastView) {
+        const doc = document.documentElement;
+        const scrollTop = document.body.scrollTop;
+        const scrollHeight = document.body.clientHeight;
+        const scrollBottom = scrollTop + scrollHeight;
+        const headerHeight = 56;
+        
+        if (lastView) {
+            if (lastView.coords.bottom() < scrollTop + headerHeight) {
+                doc.classList.remove('view-' + lastView.name);
+                lastView.isActive = false;
+            }
+        }
+
+        let index = this.views.indexOf(newView);
+
+        if (newView) {
+            newView.isActive = true;
+            if (index === 0) {
+                newView.showTopbar = true;
+                doc.classList.add(`view-${newView.name}-active`);
+                doc.classList.add(`view-${newView.name}-topbar`);
+            }
+        }
+    }
+
+    _viewChanged(view, lastView) {
         console.log(view);
         if (view) {
             let position = view.position;
