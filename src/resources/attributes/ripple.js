@@ -43,6 +43,7 @@ export class Ripple {
     }
 
     ripple(event) {
+        this.element.style.position = 'relative';
         let container = this._getContainer();
         let background = this._getBackground();
         let ripple = this._createRipple();
@@ -54,7 +55,7 @@ export class Ripple {
         let clientX = event.clientX;
         let clientY = event.clientY;
 
-        if (event.touches.length) {
+        if (event.touches && event.touches.length) {
             clientX = event.touches[0].clientX;
             clientY = event.touches[0].clientY;
         }

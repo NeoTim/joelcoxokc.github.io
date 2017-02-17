@@ -49,8 +49,6 @@ export class State {
         
         if (lastView) {
             if (lastView.coords.bottom() < scrollTop + headerHeight) {
-                doc.classList.remove('view-' + lastView.name);
-                lastView.isActive = false;
             }
         }
 
@@ -58,11 +56,6 @@ export class State {
 
         if (newView) {
             newView.isActive = true;
-            if (index === 0) {
-                newView.showTopbar = true;
-                doc.classList.add(`view-${newView.name}-active`);
-                doc.classList.add(`view-${newView.name}-topbar`);
-            }
         }
     }
 

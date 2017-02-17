@@ -9,6 +9,14 @@ export class NavSection {
     header: Element = null;
     isActive: Boolean = false;
 
+    get winheight() {
+        return window.innerHeight;
+    }
+
+    get isWinChanging() {
+        return window.isResizing ? 'resizing' : 'stable';
+    }
+
     constructor(element, eventAggregator) {
         this.element = element;
         this.eventAggregator = eventAggregator;
@@ -52,13 +60,18 @@ export class NavSection {
             bgContainer.appendChild(this.clone);
         }
 
+        let clientHeight = this.element.clientHeight;
+        
         this.eventAggregator.subscribe('window:resize', ()=> {
-            height = this.element.clientHeight + 'px';
-            Object.assign(this.clone.style, {
-                height: height,
-                minHeight: height,
-                maxHeight: height
-            });
+            if (clientHeight !== this.element.clientHeight) {
+                clientHeight = this.element.clientHeight;
+                height = this.element.clientHeight + 'px';
+                Object.assign(this.clone.style, {
+                    height: height,
+                    minHeight: height,
+                    maxHeight: height
+                });
+            }
         });
     }
 

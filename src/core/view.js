@@ -108,52 +108,27 @@ export class View {
     }
 
     updatePosition(scroll, viewIndex, views) {
+        return;
         const doc = document.documentElement;
         const top = this.element.offsetTop;
         const bottom = this.element.offsetTop + this.element.clientHeight;
 
-        if (top < scroll.top + (scroll.height / 2)) {
-            this.isActive = true;
-            
-            if (top < scroll.top) {
-                this.isScrolling = true;
-                doc.classList.add(`view-${this.name}-scrolling`);
-            } else {
-                this.isScrolling = false;
-                doc.classList.remove(`view-${this.name}-scrolling`);
-            }
-
-            if (bottom < scroll.top + 56) {
-                this.isScrolling = false;
-            }
-        } else if (top < scroll.bottom) {
-            this.showTitle = true;
-        }
-        else {
-            this.isActive = false;
-            this.showTitle = false;
-            this.isScrolling = false;
-            this.showTopbar = false;
-        }
-
-        let scrollHalf = (scroll.top + (scroll.height / 2));
-
-        if (top < (scroll.bottom - 56) && top >= (scroll.top - 8)) {
+        if (top < scroll.bottom && top > (scroll.top - 8)) {
             this.showTitle = true;
         } else {
             this.showTitle = false;
         }
 
-        if (top < scrollHalf && bottom > scrollHalf) {
-            this.isActive = true;
-        } else {
-            this.isActive = false;
-        }
-
-        if (top <= (scroll.top + 56) && bottom > (scroll.top + 56)) {
+        if (top < (scroll.top + 8) && bottom > (scroll.top + 8)) {
             this.showTopbar = true;
         } else {
             this.showTopbar = false;
+        }
+
+        if (top < (scroll.top + (scroll.height / 2)) && bottom > (scroll.top + (scroll.height / 2)))  {
+            this.isActive = true;
+        } else {
+            this.isActive = false;
         }
 
         if (this.showTopbar && top > (scroll.top - 8)) {
@@ -162,8 +137,11 @@ export class View {
             this.hideHeaderTitle = false;
         }
 
-        if (bottom < scroll.top + (scroll.height / 2)) {
-            this.isActive = false;
+        if (top < (scroll.top + 8) && bottom > (scroll.bottom - 8)) {
+            this.isgtvh = true;
+        } else {
+            this.isgtvh = false;
+            this.isScrolling = false;
         }
 
         if (bottom < scroll.top + 56) {
@@ -188,13 +166,6 @@ export class View {
         if (this.isAboveScroll || this.isBelowScroll) {
             this.isActive = false;
             this.showTitle = false;
-            this.isScrolling = false;
-        }
-
-        if (top < (scroll.top + 8) && bottom > (scroll.bottom - 8)) {
-            this.isgtvh = true;
-        } else {
-            this.isgtvh = false;
             this.isScrolling = false;
         }
 
@@ -226,5 +197,14 @@ export class View {
         } else {
             doc.classList.remove(`view-${this.name}-next`);
         }
+    }
+
+    updateState() {
+        const doc = document.documentElement;
+        doc.classList[this.showTopbar ? 'add' : 'remove'](`view-${this.name}-topbar`);
+        doc.classList[this.isActive ? 'add' : 'remove'](`view-${this.name}-active`);
+        doc.classList[this.showTitle ? 'add' : 'remove'](`view-${this.name}-title`);
+        doc.classList[this.hideHeaderTitle ? 'add' : 'remove'](`view-${this.name}-no-header-title`);
+        doc.classList[this.isNext ? 'add' : 'remove'](`view-${this.name}-next`);
     }
 }

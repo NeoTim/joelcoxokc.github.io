@@ -46,10 +46,12 @@ export class Navigation {
         container.classList.remove('hiding-navigation');
         
         container.addEventListener('animationend', listener = (event)=> {
-            container.classList.add('show-navigation');
-            container.classList.remove('showing-navigation');
-            container.removeEventListener('animationend', listener);
-            console.log('animationend show')
+            if (event.target === container) {
+                container.classList.add('show-navigation');
+                container.classList.remove('showing-navigation');
+                container.removeEventListener('animationend', listener);
+                console.log('animationend show')
+            }
         });
 
         container.classList.add('showing-navigation');
@@ -87,9 +89,11 @@ export class Navigation {
         container.classList.remove('showing-navigation');
 
         container.addEventListener('animationend', listener = (event)=> {
-            container.classList.remove('hiding-navigation');
-            container.removeEventListener('animationend', listener);
-            console.log('animationend hide')
+            if (event.target === container) {
+                container.classList.remove('hiding-navigation');
+                container.removeEventListener('animationend', listener);
+                console.log('animationend hide')
+            }
         });
 
         container.classList.add('hiding-navigation');

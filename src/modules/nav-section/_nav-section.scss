@@ -36,6 +36,10 @@ nav-section {
     }
 }
 
+container > header.nav-section-header {
+    border-bottom: 1px solid $dark-tint-divider;
+}
+
 .nav-section-header {
     opacity: 0;
     visibility: hidden;

@@ -9,7 +9,7 @@ Promise.config({
 });
 
 export function configure(aurelia) {
-
+    document.addEventListener("touchstart", function(){}, true);
     const ua = window.navigator.userAgent;
     if (/ip(od|hone|ad)/.test(ua.toLowerCase())) {
         document.documentElement.classList.add('platform-ios');
