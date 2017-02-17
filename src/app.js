@@ -12,6 +12,8 @@ import { State } from './state';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {View} from 'core/view';
 import {Util} from 'core/util';
+import {Color} from 'core/color';
+
 const props = {
     fullName: 'Joel Cox',
     bday: '09/11/1990',
@@ -23,6 +25,7 @@ const props = {
     Util,
     State,
     Enums,
+    Color,
     EventAggregator,
     Factory.of(Header),
     Factory.of(Footer),
@@ -37,20 +40,28 @@ export class App {
 
     @observable view;
 
-    constructor(Util, State, Enums, EventAggregator, Header, Footer, Title, Profile, Technology, Projects, Experience, Education) {
+    constructor(Util, State, Enums, Color, EventAggregator, Header, Footer, Title, Profile, Technology, Projects, Experience, Education) {
 
         this.State = State;
         this.props = props;
         this.Util  = Util;
-        this.State.header = Header(this.State);
-        this.State.footer = Footer(this.State);
-
+        this.Color = Color;
         this.eventAggregator = EventAggregator;
+
+        State.registerNode(
+            this.header = Header()
+        );
+
+        State.registerNode(
+            this.footer = Footer()
+        );
 
         State.registerView(
             new View({
                 name: 'title',
                 icon: 'home',
+                fill: Color.tan,
+                shade: Color.dark,
                 viewModel: Title({
                     title: props.fullName,
                     summary: 'UI & UX Architect, Engineer & Designer'
@@ -63,6 +74,8 @@ export class App {
                 title: 'Profile',
                 name: 'profile',
                 icon: 'person',
+                fill: Color.blue,
+                shade: Color.light,
                 viewModel: Profile(Enums.Profile, State)
             })
         );
@@ -73,6 +86,8 @@ export class App {
                 title: 'Projects',
                 name: 'projects',
                 icon: 'screen_share',
+                fill: Color.teal,
+                shade: Color.dark,
                 viewModel: Projects(Enums.Projects, State)
             })
         );
@@ -82,6 +97,8 @@ export class App {
                 title: 'Experience',
                 name: 'experience',
                 icon: 'verified_user',
+                fill: Color.tan,
+                shade: Color.dark,
                 viewModel: Experience(Enums.Experience, State)
             })
         );
@@ -91,6 +108,8 @@ export class App {
                 title: 'Education',
                 name: 'education',
                 icon: 'school',
+                fill: Color.brown,
+                shade: Color.light,
                 viewModel: Education(Enums.Education, State)
             })
         );
@@ -100,25 +119,38 @@ export class App {
                 title: 'Technology',
                 name: 'technology',
                 icon: 'layers',
+                fill: Color.tan,
+                shade: Color.dark,
                 viewModel: Technology(Enums.Technology, State)
             })
         );
+    }
 
-        let first = State.views[0];
-        let next  = State.views[1];
+    bind() {
+        let first = this.State.views[0];
+        let next  = this.State.views[1];
         first.isActive = true;
         first.showTopbar = true;
         first.hideHeaderTitle = true;
         next.isNext = true;
 
-        first.updateState();
-        next.updateState();
+        this.header.setShade(first.fill, first.shade);
+        this.header.setTitleVisibility(!first.hideHeaderTitle);
+        this.header.setVisibility(true, first.name);
+
+        this.footer.setTitle(next.title);
+        this.footer.setShade(next.fill, next.shade);
+        this.footer.setVisibility(true);
+
+        this.eventAggregator.publish('state:view:set', first);
     }
 
     attached() {
         this.State.scrollElement = document.body;
         const container = document.querySelector('container');
         const sections = document.querySelectorAll('container > main > nav-section');
+
+        
 
         // let index = 0;
         // let section = null;
@@ -143,15 +175,20 @@ export class App {
         this.initialWindowHeight = window.innerHeight;
 
         window.onresize = (event)=> {
-            this.Util.onResizeComplete().then((complete)=> {
-                if (complete) {
-                    this.State.views.forEach(updateView);
-                    this.eventAggregator.publish('window:resize');
-                }
-            })
+            // this.Util.onResizeComplete().then((complete)=> {
+            //     if (complete) {
+            //         this.State.views.forEach(updateView);
+            //         this.eventAggregator.publish('window:resize');
+            //     }
+            // })
         }
 
         window.onscroll = (event)=> {
+
+            
+            this.eventAggregator.publish('window:scroll', event);
+            return;
+
             let bodyHeight = window.innerHeight;
             let halfBodyHeight = bodyHeight / 2;
             let scrollBottom = target.scrollTop + bodyHeight;

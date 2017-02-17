@@ -5,6 +5,8 @@
 @import 'modules/navigation/_navigation.scss';
 @import 'resources/_ripple.scss';
 @import 'modules/title/_title.scss';
+@import 'modules/header/_header.scss';
+@import 'modules/footer/_footer.scss';
 
 *::-webkit-scrollbar {
     display: none;
@@ -84,8 +86,8 @@ icon {
     align-items: stretch;
     flex-direction: column;
     z-index: 1;
-    filter: blur(20px);
-    transform: translate3d(-10%, 0, 0);
+    // filter: blur(20px);
+    transform: translate3d(-50px, 0, 0);
 }
 
 .app-background {
@@ -125,11 +127,27 @@ nav-section {
     }
 }
 
+$viewIndex: 0;
+$names: (title, profile, projects, experience, education, technology);
+
 @each $view in $views {
+    // $i: index($names, $name);
+    $i: index($views, $view);
+    // @warn $i + 1;
+    $next: false;
+
+    @if $i < length($views) {
+        $next: nth($views, $i + 1);
+    }
+
+    
+    // $next: map-get($views, title);
+
 
     $name: map-get($view, name);
     $fill: map-get($view, fill);
     $tint: map-get($view, tint);
+
 
     header.header-#{$name} {
         background-color: $fill;
@@ -138,6 +156,19 @@ nav-section {
         icon {color: $tint}
         .header-title {color: $tint}
     }
+
+    nav-section.app-#{$name} {
+        background-color: $fill;
+    }
+
+    @if $next {
+        .background-container {
+            nav-section.app-#{$name} + nav-section {
+                @include join-vertical-gradient($fill, map-get($next, fill));
+            }
+        }
+    }
+
 
     .view-#{$name} {
         &-active {
@@ -226,6 +257,14 @@ nav-section {
                     $align-icon: right
                 );
             }
+        }
+    }
+}
+
+.view-title-topbar {
+    header.app-header {
+        icon.direction-icon {
+            display: none;
         }
     }
 }

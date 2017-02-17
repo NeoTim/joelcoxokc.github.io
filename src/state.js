@@ -17,6 +17,8 @@ export class State {
 
     @observable view = null;
 
+    initial = true;
+
     views = [];
 
     activeViews = [];
@@ -24,7 +26,18 @@ export class State {
     constructor(eventAggregator) {
         this.eventAggregator = eventAggregator;
 
-        this.eventAggregator.subscribe('state:set:view', (view)=> {
+        this.isNavigationEvent = false;
+
+        this.eventAggregator.subscribe('state:view:back', ()=> {
+           this.handleNavigateBack();
+        });
+        
+        this.eventAggregator.subscribe('state:view:next', ()=> {
+           this.handleNavigateNext();
+        });
+
+        this.eventAggregator.subscribe('state:view:set', (view)=> {
+            this.isNavigationEvent = true;
             this.view = view;
         });
 
@@ -50,22 +63,58 @@ export class State {
         });
     }
 
-    viewChanged(newView, lastView) {
-        const doc = document.documentElement;
-        const scrollTop = document.body.scrollTop;
-        const scrollHeight = document.body.clientHeight;
-        const scrollBottom = scrollTop + scrollHeight;
-        const headerHeight = 56;
-        
-        if (lastView) {
-            if (lastView.coords.bottom() < scrollTop + headerHeight) {
-            }
+    registerView(view) {
+        view.position  = viewPosition.DOWN; 
+        view.isActive  = false;
+        view.viewIndex = this.views.length; 
+
+        this.views[view.name] = view;
+        this.views.push(view);
+
+        if (!this.view) {
+            this.view = view;
+            this.view.isVisible   = true;
+            this.view.isActive    = true;
+            this.view.isScrolling = true;
         }
 
-        let index = this.views.indexOf(newView);
+        if (this.view && this.views.length === 2) {
+            view.isPeeking = true;
+        }
+    }
 
-        if (newView) {
-            newView.isActive = true;
+    registerNode(options) {
+        this[options.name] = options;
+    }
+
+    viewChanged(newView, lastView) {
+        if (this.isNavigationEvent || this.initial) {
+            console.log(newView);
+            const doc = document.documentElement;
+            const scrollTop = document.body.scrollTop;
+            const scrollHeight = document.body.clientHeight;
+            const scrollBottom = scrollTop + scrollHeight;
+            const headerHeight = 56;
+
+            if (lastView) {
+                lastView.isActive = false;
+                doc.classList.remove(`view-${lastView.name}-active`);
+                if (lastView.coords.bottom() < scrollTop + headerHeight) {
+                }
+            }
+
+            
+            let index = this.views.indexOf(newView);
+
+            if (newView) {
+                newView.isActive = true;
+                doc.classList.add(`view-${newView.name}-active`);
+                if (newView.element) {
+                    newView.element.scrollIntoView();
+                }
+            }
+            this.initial = false;
+            this.isNavigationEvent = false;
         }
     }
 
@@ -78,11 +127,12 @@ export class State {
         view.isNext = false;
         view.hideHeaderTitle = false;
 
-        if (prev && prev.isActive && prev.showTopbar) {
+        if (prev && prev.isActive && prev.showTopbar && top > (scroll.bottom - 56)) {
             view.isNext = true;
         }
 
         if (bottom < (scroll.top + 8)) {
+            // console.log('step 1', view.name)
             view.isActive = false;
             view.showTopbar = false;
             view.showTitle = false;
@@ -90,6 +140,7 @@ export class State {
         }
 
         if (top > scroll.bottom) {
+            // console.log('step 2', view.name)
             view.isActive = false;
             view.showTopbar = false;
             view.showTitle = false;
@@ -97,6 +148,7 @@ export class State {
         }
 
         if (top > scroll.top + 8 && top < halfScroll) {
+            // console.log('step 3', view.name)
             view.isActive = true;
             view.showTitle = true;
             view.showTopbar = false;
@@ -110,8 +162,11 @@ export class State {
             view.hideHeaderTitle = true;
 
             if (top < scroll.top - 8) {
+                console.log('step 4.2', view.name)
                 view.hideHeaderTitle = false;
                 view.showTitle = false;
+            } else {
+                console.log('step 4', view.name)
             }
             return true;
         }
@@ -120,6 +175,7 @@ export class State {
             view.isActive = false;
             view.showTitle = false;
             view.showTopbar = true;
+            // console.log('step 5', view.name)
         }
 
         if (top > (scroll.top - 8) && top < (scroll.bottom - 56)) {
@@ -127,10 +183,12 @@ export class State {
             if (top > halfScroll) {
                 view.isActive = false;
                 view.showTopbar = false;
+                // console.log('step 6.2', view.name)
             } else {
                 view.isActive = true;
-                return true;
                 view.showTopbar = false;
+                // console.log('step 6', view.name)
+                return true;
             }
             return false;
         }
@@ -141,11 +199,14 @@ export class State {
             
             if (bottom < halfScroll) {
                 view.isActive = false;
+                // console.log('step 7.2', view.name)
             }
 
             if (top < scroll.top - 8) {
                 view.showTitle = false;
+                // console.log('step 7.3', view.name)
             } else {
+                // console.log('step 7', view.name)
                 view.showTitle = true;
             }
             return true;
@@ -182,45 +243,52 @@ export class State {
         }
 
         if (found && found.isActive && found.showTopbar) {
-            this.app.header.setBackground(found.getBackground());
-            this.app.header.setTitle(found.title);
-            this.app.header.setTitleVisibility(!found.hideHeaderTitle);
-            this.app.header.setVisibility(true);
+            this.header.setShade(found.fill, found.shade);
+            this.header.setTitle(found.title);
+            this.header.setTitleVisibility(!found.hideHeaderTitle);
+            this.header.setVisibility(true, found.name);
+            this.view = found;
         }
 
-        if (prev & prev.showTopbar) {
-            this.app.header.setBackground(prev.getBackground());
-            this.app.header.setTitle(prev.title);
-            this.app.header.setTitleVisibility(!found.hideHeaderTitle);
-            this.app.header.setVisibility(true);
+        if (prev && prev.showTopbar) {
+            this.header.setShade(prev.fill, prev.shade);
+            this.header.setTitle(prev.title);
+            this.header.setTitleVisibility(!prev.hideHeaderTitle);
+            this.header.setVisibility(true, prev.name);
         }
 
         if (next && next.isNext) {
-            this.app.footer.setTitle(next.title);
-            this.app.footer.setBackground(next.getBackground());
-            this.app.footer.setVisibility(true);
+            this.footer.setShade(next.fill, next.shade);
+            this.footer.setTitle(next.title);
+            this.footer.setVisibility(true);
         } else {
-            this.app.footer.setVisibility(false);
+            this.footer.setVisibility(false);
         }
     }
 
-    registerView(view) {
-        view.position  = viewPosition.DOWN; 
-        view.isActive  = false;
-        view.viewIndex = this.views.length; 
+    handleNavigateNext() {
+        this.isNavigationEvent = true;
 
-        this.views[view.name] = view;
-        this.views.push(view);
-
-        if (!this.view) {
-            this.view = view;
-            this.view.isVisible   = true;
-            this.view.isActive    = true;
-            this.view.isScrolling = true;
+        let index = this.views.indexOf(this.view);
+        let next = this.views[index + 1];
+        console.log(next)
+        if (next) {
+            this.view = next;
         }
+    }
+    handleNavigateBack() {
+        let top = this.view.coords.top();
+        let scrollTop = document.body.scrollTop;
 
-        if (this.view && this.views.length === 2) {
-            view.isPeeking = true;
+        this.isNavigationEvent = true;
+
+        if (top < (scrollTop + 8) || top > (scrollTop - 8)) {
+            let viewIndex = this.views.indexOf(this.view);
+            if (this.views[viewIndex-1]) {
+                this.view = this.views[viewIndex-1];
+            }
+        } else {
+            this.view.element.scrollIntoView();
         }
     }
 

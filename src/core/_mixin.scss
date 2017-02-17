@@ -9,6 +9,9 @@
         justify-content: flex-start;
         padding: 0 12px;
 
+        &:last-child {
+            border-bottom: none;
+        }
 
         > .card-image {
             height: auto;
@@ -227,17 +230,22 @@
 
 @mixin inline-tag-list($text-tint: $dark-text-secondary) {
     margin: 0 0 24px 0;
-    padding: 0 12px;
+    padding: 0 24px;
     list-style: none;
-    
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+
     li {
         display: inline;
         padding: 6px 12px;
-
+        white-space: nowrap;
         font-size: 12px;
         font-weight: normal;
         color: $text-tint;
-        margin: 4px;
+        margin: 0 8px 0 0;
     }
 }
 
@@ -349,6 +357,30 @@
 }
 
 
+@mixin join-vertical-gradient($start, $end) {
+    position: relative;
+    &:before {
+        content: " ";
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        min-height: 200px;
+        max-height: 200px;
+        width: 100%;
+        transform: translateY(-50%);
+        @include vertial-gradient($start, $end);
+    }
+}
+
+@mixin vertial-gradient($start, $end) {
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#{$start}+0,#{$end}+100 */
+    background: #{$start}; /* Old browsers */
+    background: -moz-linear-gradient(top,  #{$start} 0%, #{$end} 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  #{$start} 0%,#{$end} 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  #{$start} 0%,#{$end} 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#{$start}', endColorstr='#{$end}',GradientType=0 ); /* IE6-9 */
+}
 
 
 // https://coolors.co/292f36-4ecdc4-f7fff7-ff6b6b-ffe66d

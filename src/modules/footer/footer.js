@@ -1,9 +1,22 @@
-import {inject} from 'aurelia-framework';
+import {inject, useView, observable} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 
-
+@useView('modules/footer/footer.html')
 @inject(EventAggregator)
 export class Footer {
+
+    @observable element;
+
+    name = 'footer';
+    isVisible = false;
+    background = null;
+    isTitleVisisble = false;
+    nodes = {};
+
+    props = {
+        title: ''
+    };
+
     constructor(EventAggregator, State) {
         this.eventAggregator = EventAggregator;
         this.State = State;
@@ -13,19 +26,43 @@ export class Footer {
         });
     }
 
+    setElementProps(fn) {
+        this.pendingElementProps = this.pendingElementProps || [];
+        if (this.element) {
+            fn();
+        } else {
+            this.pendingElementProps.push(fn);
+        }
+    }
+
+    elementChanged(element) {
+        if (element && this.pendingElementProps) {
+            while(this.pendingElementProps.length) {
+                this.pendingElementProps.shift()();
+            }
+        }
+    }
+
+    navigateForward(event) {
+        event.preventDefault();
+        this.eventAggregator.publish('state:view:next');
+    }
+
     setTitle(text) {
-        this.title = text;
+        this.props.title = text;
     }
 
-    setBackground(background) {
-        this.element.style.backgroundColor = background;
-    }
-
-    setTitleVisibility(isVisible) {
-        this.nodes.title.style.setProperty('display', isVisible ? '' : 'none');
+    setShade(primary, shade) {
+        this.setElementProps(()=> {
+            this.element.style.color = shade.primary;
+            this.element.style.borderColor = shade.divider;
+            this.element.style.backgroundColor = primary;
+        })
     }
 
     setVisibility(isVisible) {
-        this.element.style.setProperty('display', isVisible ? '' : 'none');
+        this.setElementProps(()=> {
+            this.element.style.setProperty('display', isVisible ? '' : 'none');
+        })
     }
 }

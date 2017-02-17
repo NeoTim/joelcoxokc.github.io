@@ -1,4 +1,4 @@
-define('app',['exports', 'aurelia-framework', 'modules/header/header', 'modules/footer/footer', 'modules/title/title', 'modules/profile/profile', 'modules/projects/projects', 'modules/technology/technology', 'modules/experience/experience', 'modules/education/education', 'core/enums', './state', 'aurelia-event-aggregator', 'core/view', 'core/util'], function (exports, _aureliaFramework, _header, _footer, _title, _profile, _projects, _technology, _experience, _education, _enums, _state, _aureliaEventAggregator, _view, _util) {
+define('app',['exports', 'aurelia-framework', 'modules/header/header', 'modules/footer/footer', 'modules/title/title', 'modules/profile/profile', 'modules/projects/projects', 'modules/technology/technology', 'modules/experience/experience', 'modules/education/education', 'core/enums', './state', 'aurelia-event-aggregator', 'core/view', 'core/util', 'core/color'], function (exports, _aureliaFramework, _header, _footer, _title, _profile, _projects, _technology, _experience, _education, _enums, _state, _aureliaEventAggregator, _view, _util, _color) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -64,8 +64,8 @@ define('app',['exports', 'aurelia-framework', 'modules/header/header', 'modules/
         phone: '(405) 388-7691'
     };
 
-    var App = exports.App = (_dec = (0, _aureliaFramework.inject)(_util.Util, _state.State, _enums.Enums, _aureliaEventAggregator.EventAggregator, _aureliaFramework.Factory.of(_header.Header), _aureliaFramework.Factory.of(_footer.Footer), _aureliaFramework.Factory.of(_title.Title), _aureliaFramework.Factory.of(_profile.Profile), _aureliaFramework.Factory.of(_technology.Technology), _aureliaFramework.Factory.of(_projects.Projects), _aureliaFramework.Factory.of(_experience.Experience), _aureliaFramework.Factory.of(_education.Education)), _dec(_class = (_class2 = function () {
-        function App(Util, State, Enums, EventAggregator, Header, Footer, Title, Profile, Technology, Projects, Experience, Education) {
+    var App = exports.App = (_dec = (0, _aureliaFramework.inject)(_util.Util, _state.State, _enums.Enums, _color.Color, _aureliaEventAggregator.EventAggregator, _aureliaFramework.Factory.of(_header.Header), _aureliaFramework.Factory.of(_footer.Footer), _aureliaFramework.Factory.of(_title.Title), _aureliaFramework.Factory.of(_profile.Profile), _aureliaFramework.Factory.of(_technology.Technology), _aureliaFramework.Factory.of(_projects.Projects), _aureliaFramework.Factory.of(_experience.Experience), _aureliaFramework.Factory.of(_education.Education)), _dec(_class = (_class2 = function () {
+        function App(Util, State, Enums, Color, EventAggregator, Header, Footer, Title, Profile, Technology, Projects, Experience, Education) {
             _classCallCheck(this, App);
 
             _initDefineProp(this, 'view', _descriptor, this);
@@ -73,14 +73,18 @@ define('app',['exports', 'aurelia-framework', 'modules/header/header', 'modules/
             this.State = State;
             this.props = props;
             this.Util = Util;
-            this.State.header = Header(this.State);
-            this.State.footer = Footer(this.State);
-
+            this.Color = Color;
             this.eventAggregator = EventAggregator;
+
+            State.registerNode(this.header = Header());
+
+            State.registerNode(this.footer = Footer());
 
             State.registerView(new _view.View({
                 name: 'title',
                 icon: 'home',
+                fill: Color.tan,
+                shade: Color.dark,
                 viewModel: Title({
                     title: props.fullName,
                     summary: 'UI & UX Architect, Engineer & Designer'
@@ -91,6 +95,8 @@ define('app',['exports', 'aurelia-framework', 'modules/header/header', 'modules/
                 title: 'Profile',
                 name: 'profile',
                 icon: 'person',
+                fill: Color.blue,
+                shade: Color.light,
                 viewModel: Profile(Enums.Profile, State)
             }));
 
@@ -98,6 +104,8 @@ define('app',['exports', 'aurelia-framework', 'modules/header/header', 'modules/
                 title: 'Projects',
                 name: 'projects',
                 icon: 'screen_share',
+                fill: Color.teal,
+                shade: Color.dark,
                 viewModel: Projects(Enums.Projects, State)
             }));
 
@@ -105,6 +113,8 @@ define('app',['exports', 'aurelia-framework', 'modules/header/header', 'modules/
                 title: 'Experience',
                 name: 'experience',
                 icon: 'verified_user',
+                fill: Color.tan,
+                shade: Color.dark,
                 viewModel: Experience(Enums.Experience, State)
             }));
 
@@ -112,6 +122,8 @@ define('app',['exports', 'aurelia-framework', 'modules/header/header', 'modules/
                 title: 'Education',
                 name: 'education',
                 icon: 'school',
+                fill: Color.brown,
+                shade: Color.light,
                 viewModel: Education(Enums.Education, State)
             }));
 
@@ -119,19 +131,30 @@ define('app',['exports', 'aurelia-framework', 'modules/header/header', 'modules/
                 title: 'Technology',
                 name: 'technology',
                 icon: 'layers',
+                fill: Color.tan,
+                shade: Color.dark,
                 viewModel: Technology(Enums.Technology, State)
             }));
+        }
 
-            var first = State.views[0];
-            var next = State.views[1];
+        App.prototype.bind = function bind() {
+            var first = this.State.views[0];
+            var next = this.State.views[1];
             first.isActive = true;
             first.showTopbar = true;
             first.hideHeaderTitle = true;
             next.isNext = true;
 
-            first.updateState();
-            next.updateState();
-        }
+            this.header.setShade(first.fill, first.shade);
+            this.header.setTitleVisibility(!first.hideHeaderTitle);
+            this.header.setVisibility(true, first.name);
+
+            this.footer.setTitle(next.title);
+            this.footer.setShade(next.fill, next.shade);
+            this.footer.setVisibility(true);
+
+            this.eventAggregator.publish('state:view:set', first);
+        };
 
         App.prototype.attached = function attached() {
             var _this = this;
@@ -154,16 +177,13 @@ define('app',['exports', 'aurelia-framework', 'modules/header/header', 'modules/
 
             this.initialWindowHeight = window.innerHeight;
 
-            window.onresize = function (event) {
-                _this.Util.onResizeComplete().then(function (complete) {
-                    if (complete) {
-                        _this.State.views.forEach(updateView);
-                        _this.eventAggregator.publish('window:resize');
-                    }
-                });
-            };
+            window.onresize = function (event) {};
 
             window.onscroll = function (event) {
+
+                _this.eventAggregator.publish('window:scroll', event);
+                return;
+
                 var bodyHeight = window.innerHeight;
                 var halfBodyHeight = bodyHeight / 2;
                 var scrollBottom = target.scrollTop + bodyHeight;
@@ -426,12 +446,24 @@ define('state',['exports', 'aurelia-framework', 'aurelia-event-aggregator'], fun
 
             _initDefineProp(this, 'view', _descriptor, this);
 
+            this.initial = true;
             this.views = [];
             this.activeViews = [];
 
             this.eventAggregator = eventAggregator;
 
-            this.eventAggregator.subscribe('state:set:view', function (view) {
+            this.isNavigationEvent = false;
+
+            this.eventAggregator.subscribe('state:view:back', function () {
+                _this.handleNavigateBack();
+            });
+
+            this.eventAggregator.subscribe('state:view:next', function () {
+                _this.handleNavigateNext();
+            });
+
+            this.eventAggregator.subscribe('state:view:set', function (view) {
+                _this.isNavigationEvent = true;
                 _this.view = view;
             });
 
@@ -457,21 +489,56 @@ define('state',['exports', 'aurelia-framework', 'aurelia-event-aggregator'], fun
             });
         }
 
-        State.prototype.viewChanged = function viewChanged(newView, lastView) {
-            var doc = document.documentElement;
-            var scrollTop = document.body.scrollTop;
-            var scrollHeight = document.body.clientHeight;
-            var scrollBottom = scrollTop + scrollHeight;
-            var headerHeight = 56;
+        State.prototype.registerView = function registerView(view) {
+            view.position = viewPosition.DOWN;
+            view.isActive = false;
+            view.viewIndex = this.views.length;
 
-            if (lastView) {
-                if (lastView.coords.bottom() < scrollTop + headerHeight) {}
+            this.views[view.name] = view;
+            this.views.push(view);
+
+            if (!this.view) {
+                this.view = view;
+                this.view.isVisible = true;
+                this.view.isActive = true;
+                this.view.isScrolling = true;
             }
 
-            var index = this.views.indexOf(newView);
+            if (this.view && this.views.length === 2) {
+                view.isPeeking = true;
+            }
+        };
 
-            if (newView) {
-                newView.isActive = true;
+        State.prototype.registerNode = function registerNode(options) {
+            this[options.name] = options;
+        };
+
+        State.prototype.viewChanged = function viewChanged(newView, lastView) {
+            if (this.isNavigationEvent || this.initial) {
+                console.log(newView);
+                var doc = document.documentElement;
+                var scrollTop = document.body.scrollTop;
+                var scrollHeight = document.body.clientHeight;
+                var scrollBottom = scrollTop + scrollHeight;
+                var headerHeight = 56;
+
+                if (lastView) {
+                    lastView.isActive = false;
+                    doc.classList.remove('view-' + lastView.name + '-active');
+                    if (lastView.coords.bottom() < scrollTop + headerHeight) {}
+                }
+
+                var index = this.views.indexOf(newView);
+
+                if (newView) {
+                    newView.isActive = true;
+                    doc.classList.add('view-' + newView.name + '-active');
+                    if (newView.element) {
+                        newView.element.scrollIntoView();
+                    }
+                }
+                this.initial = false;
+                this.isNavigationEvent = false;
             }
         };
 
@@ -484,7 +551,7 @@ define('state',['exports', 'aurelia-framework', 'aurelia-event-aggregator'], fun
             view.isNext = false;
             view.hideHeaderTitle = false;
 
-            if (prev && prev.isActive && prev.showTopbar) {
+            if (prev && prev.isActive && prev.showTopbar && top > scroll.bottom - 56) {
                 view.isNext = true;
             }
 
@@ -516,8 +583,11 @@ define('state',['exports', 'aurelia-framework', 'aurelia-event-aggregator'], fun
                 view.hideHeaderTitle = true;
 
                 if (top < scroll.top - 8) {
+                    console.log('step 4.2', view.name);
                     view.hideHeaderTitle = false;
                     view.showTitle = false;
+                } else {
+                    console.log('step 4', view.name);
                 }
                 return true;
             }
@@ -535,8 +605,9 @@ define('state',['exports', 'aurelia-framework', 'aurelia-event-aggregator'], fun
                     view.showTopbar = false;
                 } else {
                     view.isActive = true;
-                    return true;
                     view.showTopbar = false;
+
+                    return true;
                 }
                 return false;
             }
@@ -588,45 +659,53 @@ define('state',['exports', 'aurelia-framework', 'aurelia-event-aggregator'], fun
             }
 
             if (found && found.isActive && found.showTopbar) {
-                this.app.header.setBackground(found.getBackground());
-                this.app.header.setTitle(found.title);
-                this.app.header.setTitleVisibility(!found.hideHeaderTitle);
-                this.app.header.setVisibility(true);
+                this.header.setShade(found.fill, found.shade);
+                this.header.setTitle(found.title);
+                this.header.setTitleVisibility(!found.hideHeaderTitle);
+                this.header.setVisibility(true, found.name);
+                this.view = found;
             }
 
-            if (prev & prev.showTopbar) {
-                this.app.header.setBackground(prev.getBackground());
-                this.app.header.setTitle(prev.title);
-                this.app.header.setTitleVisibility(!found.hideHeaderTitle);
-                this.app.header.setVisibility(true);
+            if (prev && prev.showTopbar) {
+                this.header.setShade(prev.fill, prev.shade);
+                this.header.setTitle(prev.title);
+                this.header.setTitleVisibility(!prev.hideHeaderTitle);
+                this.header.setVisibility(true, prev.name);
             }
 
             if (next && next.isNext) {
-                this.app.footer.setTitle(next.title);
-                this.app.footer.setBackground(next.getBackground());
-                this.app.footer.setVisibility(true);
+                this.footer.setShade(next.fill, next.shade);
+                this.footer.setTitle(next.title);
+                this.footer.setVisibility(true);
             } else {
-                this.app.footer.setVisibility(false);
+                this.footer.setVisibility(false);
             }
         };
 
-        State.prototype.registerView = function registerView(view) {
-            view.position = viewPosition.DOWN;
-            view.isActive = false;
-            view.viewIndex = this.views.length;
+        State.prototype.handleNavigateNext = function handleNavigateNext() {
+            this.isNavigationEvent = true;
 
-            this.views[view.name] = view;
-            this.views.push(view);
-
-            if (!this.view) {
-                this.view = view;
-                this.view.isVisible = true;
-                this.view.isActive = true;
-                this.view.isScrolling = true;
+            var index = this.views.indexOf(this.view);
+            var next = this.views[index + 1];
+            console.log(next);
+            if (next) {
+                this.view = next;
             }
+        };
 
-            if (this.view && this.views.length === 2) {
-                view.isPeeking = true;
+        State.prototype.handleNavigateBack = function handleNavigateBack() {
+            var top = this.view.coords.top();
+            var scrollTop = document.body.scrollTop;
+
+            this.isNavigationEvent = true;
+
+            if (top < scrollTop + 8 || top > scrollTop - 8) {
+                var viewIndex = this.views.indexOf(this.view);
+                if (this.views[viewIndex - 1]) {
+                    this.view = this.views[viewIndex - 1];
+                }
+            } else {
+                this.view.element.scrollIntoView();
             }
         };
 
@@ -656,18 +735,25 @@ define('core/color',['exports'], function (exports) {
     var Color = exports.Color = function Color() {
         _classCallCheck(this, Color);
 
-        this.blue = '#2196F3';
-        this.blue200 = '#90CAF9';
-        this.blue700 = '#1976d2';
-        this.blue900 = '#0D47A1';
-        this.cyan = '#00BCD4';
-        this.cyan200 = '#80DEEA';
-        this.cyan700 = '#0097A7';
-        this.cyana200 = '#18FFFF';
-        this.lime = '#CDDC39';
-        this.lime200 = '#E6EE9C';
-        this.lime700 = '#AFB42B';
-        this.limeA400 = '#C6FF00';
+        this.blue = '#284B63';
+        this.teal = '#77A0A2';
+        this.white = '#FFFFFF';
+        this.tan = '#D9D9D9';
+        this.brown = '#353535';
+        this.light = {
+            primary: 'rgba(255,255,255,1)',
+            secondary: 'rgba(255,255,255,0.70)',
+            disabled: 'rgba(255,255,255,0.50)',
+            divider: 'rgba(255,255,255, 0.12)',
+            key: 'light'
+        };
+        this.dark = {
+            primary: 'rgba(0,0,0,1)',
+            secondary: 'rgba(0,0,0,0.70)',
+            disabled: 'rgba(0,0,0,0.50)',
+            divider: 'rgba(0,0,0, 0.12)',
+            key: 'dark'
+        };
     };
 });
 define('core/core',[], function () {
@@ -1463,6 +1549,27 @@ define('resources/index',['exports'], function (exports) {
     config.globalResources(['./attributes/ripple']);
   }
 });
+define('modules/education/education',["exports"], function (exports) {
+    "use strict";
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var Education = exports.Education = function Education(educations) {
+        _classCallCheck(this, Education);
+
+        this.props = {
+            educations: educations.list
+        };
+    };
+});
 define('modules/experience/experience',["exports"], function (exports) {
     "use strict";
 
@@ -1492,19 +1599,73 @@ define('modules/footer/footer',['exports', 'aurelia-framework', 'aurelia-event-a
     });
     exports.Footer = undefined;
 
+    function _initDefineProp(target, property, descriptor, context) {
+        if (!descriptor) return;
+        Object.defineProperty(target, property, {
+            enumerable: descriptor.enumerable,
+            configurable: descriptor.configurable,
+            writable: descriptor.writable,
+            value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
+        });
+    }
+
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
             throw new TypeError("Cannot call a class as a function");
         }
     }
 
-    var _dec, _class;
+    function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+        var desc = {};
+        Object['ke' + 'ys'](descriptor).forEach(function (key) {
+            desc[key] = descriptor[key];
+        });
+        desc.enumerable = !!desc.enumerable;
+        desc.configurable = !!desc.configurable;
 
-    var Footer = exports.Footer = (_dec = (0, _aureliaFramework.inject)(_aureliaEventAggregator.EventAggregator), _dec(_class = function () {
+        if ('value' in desc || desc.initializer) {
+            desc.writable = true;
+        }
+
+        desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+            return decorator(target, property, desc) || desc;
+        }, desc);
+
+        if (context && desc.initializer !== void 0) {
+            desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+            desc.initializer = undefined;
+        }
+
+        if (desc.initializer === void 0) {
+            Object['define' + 'Property'](target, property, desc);
+            desc = null;
+        }
+
+        return desc;
+    }
+
+    function _initializerWarningHelper(descriptor, context) {
+        throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
+    }
+
+    var _dec, _dec2, _class, _desc, _value, _class2, _descriptor;
+
+    var Footer = exports.Footer = (_dec = (0, _aureliaFramework.useView)('modules/footer/footer.html'), _dec2 = (0, _aureliaFramework.inject)(_aureliaEventAggregator.EventAggregator), _dec(_class = _dec2(_class = (_class2 = function () {
         function Footer(EventAggregator, State) {
             var _this = this;
 
             _classCallCheck(this, Footer);
+
+            _initDefineProp(this, 'element', _descriptor, this);
+
+            this.name = 'footer';
+            this.isVisible = false;
+            this.background = null;
+            this.isTitleVisisble = false;
+            this.nodes = {};
+            this.props = {
+                title: ''
+            };
 
             this.eventAggregator = EventAggregator;
             this.State = State;
@@ -1514,47 +1675,57 @@ define('modules/footer/footer',['exports', 'aurelia-framework', 'aurelia-event-a
             });
         }
 
+        Footer.prototype.setElementProps = function setElementProps(fn) {
+            this.pendingElementProps = this.pendingElementProps || [];
+            if (this.element) {
+                fn();
+            } else {
+                this.pendingElementProps.push(fn);
+            }
+        };
+
+        Footer.prototype.elementChanged = function elementChanged(element) {
+            if (element && this.pendingElementProps) {
+                while (this.pendingElementProps.length) {
+                    this.pendingElementProps.shift()();
+                }
+            }
+        };
+
+        Footer.prototype.navigateForward = function navigateForward(event) {
+            event.preventDefault();
+            this.eventAggregator.publish('state:view:next');
+        };
+
         Footer.prototype.setTitle = function setTitle(text) {
-            this.title = text;
+            this.props.title = text;
         };
 
-        Footer.prototype.setBackground = function setBackground(background) {
-            this.element.style.backgroundColor = background;
-        };
+        Footer.prototype.setShade = function setShade(primary, shade) {
+            var _this2 = this;
 
-        Footer.prototype.setTitleVisibility = function setTitleVisibility(isVisible) {
-            this.nodes.title.style.setProperty('display', isVisible ? '' : 'none');
+            this.setElementProps(function () {
+                _this2.element.style.color = shade.primary;
+                _this2.element.style.borderColor = shade.divider;
+                _this2.element.style.backgroundColor = primary;
+            });
         };
 
         Footer.prototype.setVisibility = function setVisibility(isVisible) {
-            this.element.style.setProperty('display', isVisible ? '' : 'none');
+            var _this3 = this;
+
+            this.setElementProps(function () {
+                _this3.element.style.setProperty('display', isVisible ? '' : 'none');
+            });
         };
 
         return Footer;
-    }()) || _class);
+    }(), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'element', [_aureliaFramework.observable], {
+        enumerable: true,
+        initializer: null
+    })), _class2)) || _class) || _class);
 });
-define('modules/education/education',["exports"], function (exports) {
-    "use strict";
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    var Education = exports.Education = function Education(educations) {
-        _classCallCheck(this, Education);
-
-        this.props = {
-            educations: educations.list
-        };
-    };
-});
-define('modules/header/header',['exports', 'aurelia-framework', 'core/core'], function (exports, _aureliaFramework, _core) {
+define('modules/header/header',['exports', 'aurelia-framework', 'aurelia-event-aggregator'], function (exports, _aureliaFramework, _aureliaEventAggregator) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -1562,41 +1733,181 @@ define('modules/header/header',['exports', 'aurelia-framework', 'core/core'], fu
     });
     exports.Header = undefined;
 
+    function _initDefineProp(target, property, descriptor, context) {
+        if (!descriptor) return;
+        Object.defineProperty(target, property, {
+            enumerable: descriptor.enumerable,
+            configurable: descriptor.configurable,
+            writable: descriptor.writable,
+            value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
+        });
+    }
+
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
             throw new TypeError("Cannot call a class as a function");
         }
     }
 
-    var Header = exports.Header = function () {
-        function Header(State) {
+    function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+        var desc = {};
+        Object['ke' + 'ys'](descriptor).forEach(function (key) {
+            desc[key] = descriptor[key];
+        });
+        desc.enumerable = !!desc.enumerable;
+        desc.configurable = !!desc.configurable;
+
+        if ('value' in desc || desc.initializer) {
+            desc.writable = true;
+        }
+
+        desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+            return decorator(target, property, desc) || desc;
+        }, desc);
+
+        if (context && desc.initializer !== void 0) {
+            desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+            desc.initializer = undefined;
+        }
+
+        if (desc.initializer === void 0) {
+            Object['define' + 'Property'](target, property, desc);
+            desc = null;
+        }
+
+        return desc;
+    }
+
+    function _initializerWarningHelper(descriptor, context) {
+        throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
+    }
+
+    var _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2;
+
+    var Header = exports.Header = (_dec = (0, _aureliaFramework.useView)('modules/header/header.html'), _dec2 = (0, _aureliaFramework.inject)(_aureliaEventAggregator.EventAggregator), _dec(_class = _dec2(_class = (_class2 = function () {
+        function Header(EventAggregator) {
             _classCallCheck(this, Header);
 
-            this.nodes = {};
+            _initDefineProp(this, 'element', _descriptor, this);
 
-            this.State = State;
+            _initDefineProp(this, 'titleNode', _descriptor2, this);
+
+            this.nodes = {};
+            this.name = 'header';
+            this.isVisible = false;
+            this.background = null;
+            this.isTitleVisible = false;
+            this.props = {
+                title: ''
+            };
+
+            this.eventAggregator = EventAggregator;
         }
 
         Header.prototype.activate = function activate() {};
 
-        Header.prototype.setTitle = function setTitle(text) {
-            this.title = text;
+        Header.prototype.navigateBack = function navigateBack(event) {
+            event.preventDefault();
+            this.eventAggregator.publish('state:view:back');
         };
 
-        Header.prototype.setBackground = function setBackground(background) {
-            this.element.style.backgroundColor = background;
+        Header.prototype.toggleNavigation = function toggleNavigation(event) {
+            event.preventDefault();
+            this.eventAggregator.publish('navigation:toggle');
+        };
+
+        Header.prototype.setElementProps = function setElementProps(fn) {
+            this.pendingElementProps = this.pendingElementProps || [];
+            if (this.element) {
+                fn();
+            } else {
+                this.pendingElementProps.push(fn);
+            }
+        };
+
+        Header.prototype.setNodeProps = function setNodeProps(fn) {
+            this.pendingNodeProps = this.pendingNodeProps || [];
+            if (this.titleNode) {
+                fn();
+            } else {
+                this.pendingNodeProps.push(fn);
+            }
+        };
+
+        Header.prototype.elementChanged = function elementChanged(element) {
+            if (element && this.pendingElementProps) {
+                while (this.pendingElementProps.length) {
+                    this.pendingElementProps.shift()();
+                }
+            }
+        };
+
+        Header.prototype.titleNodeChanged = function titleNodeChanged(element) {
+            if (element && this.pendingNodeProps) {
+                while (this.pendingNodeProps.length) {
+                    this.pendingNodeProps.shift()();
+                }
+            }
+        };
+
+        Header.prototype.setTitle = function setTitle(text) {
+            this.props.title = text;
+        };
+
+        Header.prototype.setShade = function setShade(primary, shade) {
+            var _this = this;
+
+            this.setElementProps(function () {
+
+                _this.element.style.color = shade.primary;
+                _this.element.style.borderColor = shade.divider;
+                _this.element.style.backgroundColor = primary;
+
+                _this.eventAggregator.publish('navigation:props', {
+                    fill: primary,
+                    activeTint: shade.primary
+                });
+            });
         };
 
         Header.prototype.setTitleVisibility = function setTitleVisibility(isVisible) {
-            this.nodes.title.style.setProperty('display', isVisible ? '' : 'none');
+            var _this2 = this;
+
+            this.setNodeProps(function () {
+                _this2.titleNode.style.setProperty('display', isVisible ? '' : 'none');
+            });
         };
 
-        Header.prototype.setVisibility = function setVisibility(isVisible) {
-            this.element.style.setProperty('display', isVisible ? '' : 'none');
+        Header.prototype.setVisibility = function setVisibility(isVisible, name) {
+            var _this3 = this;
+
+            var doc = document.documentElement;
+
+            this.setElementProps(function () {
+                _this3.element.style.setProperty('display', isVisible ? '' : 'none');
+
+                if (doc.hasAttribute('topbar-name')) {
+                    var className = 'view-' + doc.getAttribute('topbar-name') + '-topbar';
+                    doc.removeAttribute('topbar-name');
+                    doc.classList.remove(className);
+                }
+
+                if (isVisible) {
+                    var _className = 'view-' + name + '-topbar';
+                    doc.setAttribute('topbar-name', name);
+                    doc.classList.add(_className);
+                }
+            });
         };
 
         return Header;
-    }();
+    }(), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'element', [_aureliaFramework.observable], {
+        enumerable: true,
+        initializer: null
+    }), _descriptor2 = _applyDecoratedDescriptor(_class2.prototype, 'titleNode', [_aureliaFramework.observable], {
+        enumerable: true,
+        initializer: null
+    })), _class2)) || _class) || _class);
 });
 define('modules/icon/icon',['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
     'use strict';
@@ -1696,6 +2007,256 @@ define('modules/nav/nav',["exports"], function (exports) {
 
         return Nav;
     }();
+});
+define('modules/navigation/navigation',['exports', 'aurelia-framework', 'state', 'aurelia-event-aggregator'], function (exports, _aureliaFramework, _state, _aureliaEventAggregator) {
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    exports.Navigation = undefined;
+
+    function _initDefineProp(target, property, descriptor, context) {
+        if (!descriptor) return;
+        Object.defineProperty(target, property, {
+            enumerable: descriptor.enumerable,
+            configurable: descriptor.configurable,
+            writable: descriptor.writable,
+            value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
+        });
+    }
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+        var desc = {};
+        Object['ke' + 'ys'](descriptor).forEach(function (key) {
+            desc[key] = descriptor[key];
+        });
+        desc.enumerable = !!desc.enumerable;
+        desc.configurable = !!desc.configurable;
+
+        if ('value' in desc || desc.initializer) {
+            desc.writable = true;
+        }
+
+        desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+            return decorator(target, property, desc) || desc;
+        }, desc);
+
+        if (context && desc.initializer !== void 0) {
+            desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+            desc.initializer = undefined;
+        }
+
+        if (desc.initializer === void 0) {
+            Object['define' + 'Property'](target, property, desc);
+            desc = null;
+        }
+
+        return desc;
+    }
+
+    function _initializerWarningHelper(descriptor, context) {
+        throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
+    }
+
+    var _dec, _dec2, _class, _desc, _value, _class2, _descriptor;
+
+    var Navigation = exports.Navigation = (_dec = (0, _aureliaFramework.customElement)('navigation'), _dec2 = (0, _aureliaFramework.inject)(Element, _aureliaEventAggregator.EventAggregator, _state.State), _dec(_class = _dec2(_class = (_class2 = function () {
+        function Navigation(Element, EventAggregator, State) {
+            var _this = this;
+
+            _classCallCheck(this, Navigation);
+
+            _initDefineProp(this, 'visibility', _descriptor, this);
+
+            this.props = {
+                fill: '#FFFFFF',
+                activeTint: ''
+            };
+            this.currentFill = null;
+            this.currentTint = '';
+
+            this.element = Element;
+            this.eventAggregator = EventAggregator;
+            this.State = State;
+
+            this.eventAggregator.subscribe('navigation:props', function (props) {
+                Object.assign(_this.props, props);
+                _this.currentFill = _this.props.fill;
+                _this.currentTint = _this.props.activeTint;
+            });
+        }
+
+        Navigation.prototype.bind = function bind() {
+            var _this2 = this;
+
+            this.eventAggregator.subscribe('navigation:toggle', function () {
+                _this2.visibility = !_this2.visibility;
+            });
+
+            this.views = this.State.views.filter(function (view) {
+                return view.hasOwnProperty('title');
+            });
+        };
+
+        Navigation.prototype.visibilityChanged = function visibilityChanged(value) {
+            console.log(value);
+            if (value) {
+                this.showNavigation();
+            } else {
+                this.hideNavigation();
+            }
+        };
+
+        Navigation.prototype.navigateToView = function navigateToView(view) {
+            this.eventAggregator.publish('state:scroll-to', {
+                top: view.navSection.element.offsetTop + 1
+            });
+        };
+
+        Navigation.prototype.showNavigation = function showNavigation() {
+            var _this3 = this;
+
+            console.log('showing');
+            var _listener = void 0;
+            var container = document.querySelector('container');
+            var main = document.querySelector('main');
+
+            container.classList.remove('hide-navigation');
+            container.classList.remove('hiding-navigation');
+
+            container.addEventListener('animationend', _listener = function listener(event) {
+                if (event.target === container) {
+                    container.classList.add('show-navigation');
+                    container.classList.remove('showing-navigation');
+                    container.removeEventListener('animationend', _listener);
+                    console.log('animationend show');
+                }
+            });
+
+            container.classList.add('showing-navigation');
+
+            this.resizeListener = this.eventAggregator.subscribe('window:resize', function () {
+                _this3.visibility = false;
+            });
+
+            main.addEventListener('mousedown', this.clickListener = function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                _this3.visibility = false;
+                console.log('click');
+            }, true);
+
+            main.addEventListener('touchstart', this.touchListener = function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                _this3.visibility = false;
+                console.log('click');
+            }, true);
+        };
+
+        Navigation.prototype.hideNavigation = function hideNavigation() {
+            console.log('hiding');
+            var _listener2 = void 0;
+            var container = document.querySelector('container');
+            var main = document.querySelector('main');
+
+            this.resizeListener.dispose();
+            main.removeEventListener('mousedown', this.clickListener, true);
+            main.removeEventListener('touchstart', this.touchListener, true);
+
+            container.classList.remove('show-navigation');
+            container.classList.remove('showing-navigation');
+
+            container.addEventListener('animationend', _listener2 = function listener(event) {
+                if (event.target === container) {
+                    container.classList.remove('hiding-navigation');
+                    container.removeEventListener('animationend', _listener2);
+                    console.log('animationend hide');
+                }
+            });
+
+            container.classList.add('hiding-navigation');
+        };
+
+        return Navigation;
+    }(), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'visibility', [_aureliaFramework.bindable], {
+        enumerable: true,
+        initializer: function initializer() {
+            return false;
+        }
+    })), _class2)) || _class) || _class);
+});
+define('modules/profile/profile',["exports"], function (exports) {
+    "use strict";
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var Profile = exports.Profile = function Profile(props) {
+        _classCallCheck(this, Profile);
+
+        this.props = props;
+    };
+});
+define('modules/projects/projects',['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    exports.Projects = undefined;
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var Projects = exports.Projects = function Projects(projects) {
+        _classCallCheck(this, Projects);
+
+        this.props = {
+            projects: projects.list
+        };
+        console.log(this.props.projects);
+    };
+});
+define('modules/technology/technology',["exports"], function (exports) {
+    "use strict";
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var Technology = exports.Technology = function Technology(technologies) {
+        _classCallCheck(this, Technology);
+
+        this.props = {
+            technologies: technologies.list
+        };
+
+        console.log(this.props.technologies);
+    };
 });
 define('modules/nav-section/nav-section',['exports', 'aurelia-framework', 'aurelia-event-aggregator'], function (exports, _aureliaFramework, _aureliaEventAggregator) {
     'use strict';
@@ -1800,7 +2361,6 @@ define('modules/nav-section/nav-section',['exports', 'aurelia-framework', 'aurel
         }
 
         NavSection.prototype.attached = function attached() {
-            var _this = this;
 
             this.mainContainer = document.querySelector('container');
 
@@ -1811,46 +2371,7 @@ define('modules/nav-section/nav-section',['exports', 'aurelia-framework', 'aurel
                 this.positionClass = 'last';
             }
 
-            if (this.fixedTopHeader) {
-                this.mainContainer.appendChild(this.fixedTopHeader);
-            }
-            if (this.fixedBottomHeader) {
-                this.mainContainer.appendChild(this.fixedBottomHeader);
-            }
-
-            if (this.view.bgElement) {
-                this.view.bgElement.style.height = this.element.clientHeight + 'px';
-            }
-
             this.eventAggregator.publish('nav-section:attached', this);
-
-            var bgContainer = document.querySelector('.background-container');
-            var height = this.element.clientHeight + 'px';
-            var clone = null;
-
-            if (bgContainer) {
-                this.clone = this.element.cloneNode();
-                Object.assign(this.clone.style, {
-                    height: height,
-                    minHeight: height,
-                    maxHeight: height
-                });
-                bgContainer.appendChild(this.clone);
-            }
-
-            var clientHeight = this.element.clientHeight;
-
-            this.eventAggregator.subscribe('window:resize', function () {
-                if (clientHeight !== _this.element.clientHeight) {
-                    clientHeight = _this.element.clientHeight;
-                    height = _this.element.clientHeight + 'px';
-                    Object.assign(_this.clone.style, {
-                        height: height,
-                        minHeight: height,
-                        maxHeight: height
-                    });
-                }
-            });
         };
 
         NavSection.prototype.viewChanged = function viewChanged(view) {
@@ -1881,240 +2402,6 @@ define('modules/nav-section/nav-section',['exports', 'aurelia-framework', 'aurel
             return null;
         }
     })), _class2)) || _class) || _class);
-});
-define('modules/navigation/navigation',['exports', 'aurelia-framework', 'state', 'aurelia-event-aggregator'], function (exports, _aureliaFramework, _state, _aureliaEventAggregator) {
-    'use strict';
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-    exports.Navigation = undefined;
-
-    function _initDefineProp(target, property, descriptor, context) {
-        if (!descriptor) return;
-        Object.defineProperty(target, property, {
-            enumerable: descriptor.enumerable,
-            configurable: descriptor.configurable,
-            writable: descriptor.writable,
-            value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
-        });
-    }
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
-        var desc = {};
-        Object['ke' + 'ys'](descriptor).forEach(function (key) {
-            desc[key] = descriptor[key];
-        });
-        desc.enumerable = !!desc.enumerable;
-        desc.configurable = !!desc.configurable;
-
-        if ('value' in desc || desc.initializer) {
-            desc.writable = true;
-        }
-
-        desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-            return decorator(target, property, desc) || desc;
-        }, desc);
-
-        if (context && desc.initializer !== void 0) {
-            desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-            desc.initializer = undefined;
-        }
-
-        if (desc.initializer === void 0) {
-            Object['define' + 'Property'](target, property, desc);
-            desc = null;
-        }
-
-        return desc;
-    }
-
-    function _initializerWarningHelper(descriptor, context) {
-        throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
-    }
-
-    var _dec, _dec2, _class, _desc, _value, _class2, _descriptor;
-
-    var Navigation = exports.Navigation = (_dec = (0, _aureliaFramework.customElement)('navigation'), _dec2 = (0, _aureliaFramework.inject)(Element, _aureliaEventAggregator.EventAggregator, _state.State), _dec(_class = _dec2(_class = (_class2 = function () {
-        function Navigation(Element, EventAggregator, State) {
-            _classCallCheck(this, Navigation);
-
-            _initDefineProp(this, 'visibility', _descriptor, this);
-
-            this.element = Element;
-            this.eventAggregator = EventAggregator;
-            this.State = State;
-        }
-
-        Navigation.prototype.bind = function bind() {
-            var _this = this;
-
-            this.eventAggregator.subscribe('state:navigation:toggle', function () {
-                _this.visibility = !_this.visibility;
-            });
-            this.views = this.State.views.filter(function (view) {
-                return view.hasOwnProperty('title');
-            });
-        };
-
-        Navigation.prototype.visibilityChanged = function visibilityChanged(value) {
-            console.log(value);
-            if (value) {
-                this.showNavigation();
-            } else {
-                this.hideNavigation();
-            }
-        };
-
-        Navigation.prototype.navigateToView = function navigateToView(view) {
-            this.eventAggregator.publish('state:scroll-to', {
-                top: view.navSection.element.offsetTop + 1
-            });
-        };
-
-        Navigation.prototype.showNavigation = function showNavigation() {
-            var _this2 = this;
-
-            console.log('showing');
-            var _listener = void 0;
-            var container = document.querySelector('container');
-            var main = document.querySelector('main');
-
-            container.classList.remove('hide-navigation');
-            container.classList.remove('hiding-navigation');
-
-            container.addEventListener('animationend', _listener = function listener(event) {
-                if (event.target === container) {
-                    container.classList.add('show-navigation');
-                    container.classList.remove('showing-navigation');
-                    container.removeEventListener('animationend', _listener);
-                    console.log('animationend show');
-                }
-            });
-
-            container.classList.add('showing-navigation');
-
-            this.resizeListener = this.eventAggregator.subscribe('window:resize', function () {
-                _this2.visibility = false;
-            });
-
-            main.addEventListener('mousedown', this.clickListener = function (event) {
-                event.preventDefault();
-                event.stopPropagation();
-                _this2.visibility = false;
-                console.log('click');
-            }, true);
-
-            main.addEventListener('touchstart', this.touchListener = function (event) {
-                event.preventDefault();
-                event.stopPropagation();
-                _this2.visibility = false;
-                console.log('click');
-            }, true);
-        };
-
-        Navigation.prototype.hideNavigation = function hideNavigation() {
-            console.log('hiding');
-            var _listener2 = void 0;
-            var container = document.querySelector('container');
-            var main = document.querySelector('main');
-
-            this.resizeListener.dispose();
-            main.removeEventListener('mousedown', this.clickListener, true);
-            main.removeEventListener('touchstart', this.touchListener, true);
-
-            container.classList.remove('show-navigation');
-            container.classList.remove('showing-navigation');
-
-            container.addEventListener('animationend', _listener2 = function listener(event) {
-                if (event.target === container) {
-                    container.classList.remove('hiding-navigation');
-                    container.removeEventListener('animationend', _listener2);
-                    console.log('animationend hide');
-                }
-            });
-
-            container.classList.add('hiding-navigation');
-        };
-
-        return Navigation;
-    }(), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'visibility', [_aureliaFramework.bindable], {
-        enumerable: true,
-        initializer: function initializer() {
-            return false;
-        }
-    })), _class2)) || _class) || _class);
-});
-define('modules/profile/profile',["exports"], function (exports) {
-    "use strict";
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    var Profile = exports.Profile = function Profile(props) {
-        _classCallCheck(this, Profile);
-
-        this.props = props;
-    };
-});
-define('modules/projects/projects',['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
-    'use strict';
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-    exports.Projects = undefined;
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    var Projects = exports.Projects = function Projects(projects) {
-        _classCallCheck(this, Projects);
-
-        this.props = {
-            projects: projects.list
-        };
-        console.log(this.props.projects);
-    };
-});
-define('modules/technology/technology',["exports"], function (exports) {
-    "use strict";
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    var Technology = exports.Technology = function Technology(technologies) {
-        _classCallCheck(this, Technology);
-
-        this.props = {
-            technologies: technologies.list
-        };
-
-        console.log(this.props.technologies);
-    };
 });
 define('modules/title/title',['exports'], function (exports) {
     'use strict';
@@ -2256,6 +2543,9 @@ define('resources/attributes/ripple',['exports', 'aurelia-framework'], function 
         };
 
         Ripple.prototype._getBackground = function _getBackground() {
+            if (this.element.dataset.useFill) {
+                return this.element.dataset.useFill;
+            }
             this._computed = this._computed || window.getComputedStyle(this.element);
             var background = this._computed.getPropertyValue('color');
             return background;
@@ -2316,15 +2606,15 @@ define('resources/attributes/ripple',['exports', 'aurelia-framework'], function 
         return Ripple;
     }()) || _class) || _class);
 });
-define('text!app.html', ['module'], function(module) { module.exports = "<template><require from=./app.css></require><div class=app-background></div><navigation></navigation><container><main><template repeat.for=\"view of State.views\"><nav-section class=\"${$first ? 'first' : $last ? 'last' : ''} app-${view.name}\" ref=view.element view.bind=view></nav-section></template></main></container><div class=background-container></div></template>"; });
+define('text!app.html', ['module'], function(module) { module.exports = "<template><require from=./app.css></require><div class=app-background></div><navigation></navigation><container><compose containerless view-model.bind=header></compose><main><template repeat.for=\"view of State.views\"><nav-section class=\"${$first ? 'first' : $last ? 'last' : ''} app-${view.name}\" ref=view.element view.bind=view></nav-section></template></main><compose containerless view-model.bind=footer></compose></container><div class=background-container></div></template>"; });
 define('text!modules/education/education.html', ['module'], function(module) { module.exports = "<template><template repeat.for=\"edu of props.educations\"><article class=card-${edu.id}><div class=card-image if.bind=edu.image><span if.bind=\"edu.className && !edu.image\" class=${edu.className}></span><img src.bind=edu.image class=${edu.className} alt.bind=edu.name></div><div class=card-content><div class=card-heading><div class=card-title>${edu.name}</div><div class=card-date>${edu.date}</div></div><ul class=card-details><li repeat.for=\"note of edu.notes\"><icon ico=chevron_right></icon><span class=text>${note}</span></li></ul></div></article></template></template>"; });
 define('text!modules/experience/experience.html', ['module'], function(module) { module.exports = "<template><template repeat.for=\"xp of props.experiences\"><article class=card-${xp.id}><div class=card-image if.bind=xp.image><span if.bind=\"xp.className && !xp.image\" class=${xp.className}></span><img src.bind=xp.image class=${xp.className} alt.bind=xp.name></div><div class=card-content><div class=card-heading><div class=card-title>${xp.name}</div><div class=card-date>${xp.date}</div></div><ul class=card-details><li repeat.for=\"note of xp.notes\"><icon ico=chevron_right></icon><span class=text>${note}</span></li></ul><ul class=card-tags><li repeat.for=\"stack of xp.stack\">${stack}</li></ul></div></article></template></template>"; });
-define('text!modules/footer/footer.html', ['module'], function(module) { module.exports = "<template><nav class=left-nav><icon ico=menu class=menu-icon></icon></nav><nav class=center-nav><span ref=nodes.title class=header-title>${props.title}</span></nav><nav class=right-nav><icon ico=arrow_forward class=direction-icon></icon></nav></template>"; });
-define('text!app.css', ['module'], function(module) { module.exports = "@import url(\"https://fonts.googleapis.com/css?family=Roboto\");\nnav-section {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  min-height: 100%;\n  position: relative; }\n  nav-section .row {\n    flex: 1 0 auto;\n    display: flex;\n    align-items: flex-start;\n    justify-content: flex-start;\n    flex-direction: row; }\n  nav-section .section-container {\n    flex: 1;\n    height: auto;\n    display: flex;\n    position: relative;\n    flex-direction: column;\n    align-items: stretch;\n    justify-content: flex-start;\n    padding-top: 200px;\n    box-shadow: -3px 0 3px rgba(0, 0, 0, 0.3);\n    background-color: inherit;\n    z-index: 4; }\n  nav-section article {\n    margin-bottom: 24px;\n    display: flex;\n    flex-direction: column;\n    align-self: stretch; }\n\ncontainer > header.nav-section-header {\n  border-bottom: 1px solid rgba(0, 0, 0, 0.12); }\n\n.nav-section-header {\n  opacity: 0;\n  visibility: hidden; }\n  .nav-section-header icon {\n    position: relative;\n    user-select: none;\n    height: 56px;\n    width: 56px;\n    line-height: 56px;\n    text-align: center;\n    cursor: pointer;\n    color: inherit; }\n  .nav-section-header icon.menu-icon {\n    display: none; }\n  .nav-section-header .header-title {\n    user-select: none;\n    padding: 0 56px;\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n    text-align: left;\n    display: block;\n    font-size: 24px;\n    line-height: 56px;\n    font-weight: bold;\n    cursor: pointer;\n    user-select: none;\n    color: inherit; }\n  .nav-section-header.fixed {\n    opacity: 0;\n    visibility: hidden; }\n    .nav-section-header.fixed:hover .header-title {\n      opacity: 0.7; }\n  .nav-section-header.first {\n    opacity: 0;\n    visibility: hidden; }\n\nnavigation {\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  min-height: 100vh;\n  max-height: 100vh;\n  width: 200px;\n  z-index: 2;\n  pointer-events: none;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start; }\n  navigation > header {\n    display: block;\n    width: 100%;\n    background-color: rgba(255, 255, 255, 0.6);\n    height: 56px;\n    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2); }\n  navigation > section {\n    padding-top: 56px;\n    flex: 1;\n    display: block;\n    width: 100%;\n    background-color: rgba(255, 255, 255, 0.6); }\n  navigation > footer {\n    background-color: rgba(255, 255, 255, 0.6);\n    display: block;\n    width: 100%;\n    height: 56px;\n    box-shadow: 0 -3px 4px rgba(0, 0, 0, 0.2); }\n  navigation ul.navigation-list {\n    margin: 0;\n    padding: 0;\n    list-style: none;\n    display: flex;\n    flex-direction: column;\n    align-items: flex-start;\n    justify-content: flex-start; }\n    navigation ul.navigation-list li {\n      width: 100%;\n      pointer-events: auto;\n      display: flex;\n      flex-direction: row;\n      align-items: flex-start;\n      justify-content: flex-start;\n      min-height: 48px;\n      cursor: pointer; }\n      navigation ul.navigation-list li icon {\n        pointer-events: none;\n        margin: 12px; }\n      navigation ul.navigation-list li span.text {\n        pointer-events: none;\n        flex: 0 1 auto;\n        font-size: 16px;\n        font-weight: 500;\n        line-height: 48px;\n        letter-spacing: 1.34px;\n        user-select: none; }\n\n@keyframes animate-main-right {\n  from {\n    transform: translate3d(0, 0, 0); }\n  to {\n    transform: translate3d(200px, 0, 0); } }\n\n@keyframes animate-main-default {\n  from {\n    transform: translate3d(200px, 0, 0); }\n  to {\n    transform: translate3d(0, 0, 0); } }\n\nripple-container {\n  display: block;\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  min-height: 100%;\n  min-width: 100%;\n  overflow: hidden;\n  opacity: 0.8; }\n\nripple {\n  display: block;\n  position: absolute;\n  opacity: 0;\n  transform: scale(0);\n  top: 0;\n  left: 0;\n  border-radius: 100%;\n  animation-timing-function: linear;\n  animation-duration: 0.5s;\n  animation-fill-mode: forwards;\n  animation-name: show-ripple; }\n\n@keyframes show-ripple {\n  0% {\n    opacity: 0;\n    transform: scale(0); }\n  50% {\n    opacity: 1;\n    transform: scale(1); }\n  100% {\n    opacity: 0;\n    transform: scale(3); } }\n\n.app-title .ux-animation {\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center;\n  width: 320px;\n  margin: 0 auto;\n  animation-duration: 1s;\n  animation-timing-function: ease;\n  animation-fill-mode: forwards;\n  opacity: 0; }\n  .app-title .ux-animation span {\n    height: 28px;\n    line-height: 28px; }\n  .app-title .ux-animation span.u {\n    flex: 0 1 auto; }\n  .app-title .ux-animation span.ix {\n    position: relative;\n    flex: 0 0 auto;\n    display: flex;\n    flex-direction: row;\n    align-items: center;\n    justify-content: flex-start; }\n    .app-title .ux-animation span.ix span.i,\n    .app-title .ux-animation span.ix span.x {\n      animation-timing-function: linear;\n      animation-fill-mode: forwards;\n      animation-duration: 0.25s;\n      position: absolute;\n      display: block;\n      width: 10px;\n      top: 0;\n      left: 0; }\n    .app-title .ux-animation span.ix span.i {\n      animation-delay: 2.3s; }\n    .app-title .ux-animation span.ix span.x {\n      animation-delay: 2.5s;\n      transform: rotate(-180deg);\n      opacity: 0; }\n  .app-title .ux-animation span.type {\n    margin-left: 30px;\n    text-align: left;\n    display: inline-block;\n    flex: 0 0 auto; }\n  .app-title .ux-animation.animate {\n    animation-name: show-ux; }\n    .app-title .ux-animation.animate span.i {\n      animation-delay: 2.3s;\n      animation-name: start-spin-i; }\n    .app-title .ux-animation.animate span.x {\n      animation-delay: 2.5s;\n      transform: rotate(-180deg);\n      opacity: 0;\n      animation-name: start-spin-x; }\n  .app-title .ux-animation.split-ix span.ix span.i {\n    animation-name: start-split-i; }\n  .app-title .ux-animation.split-ix span.ix span.x {\n    transform: rotate(0deg);\n    animation-name: start-split-x; }\n  .app-title .ux-animation.animate-out {\n    animation-name: hide-ux; }\n\n@keyframes show-ux {\n  from {\n    opacity: 0; }\n  to {\n    opacity: 1; } }\n\n@keyframes hide-ux {\n  from {\n    opacity: 1; }\n  to {\n    opacity: 0; } }\n\n@keyframes start-spin-i {\n  from {\n    opacity: 1;\n    transform: rotate(0deg); }\n  to {\n    opacity: 0;\n    transform: rotate(180deg); } }\n\n@keyframes start-spin-x {\n  from {\n    opacity: 0;\n    transform: rotate(-180deg); }\n  to {\n    opacity: 1;\n    transform: rotate(0deg); } }\n\n@keyframes start-split-i {\n  0% {\n    opacity: 0;\n    transform: rotate(180deg); }\n  2% {\n    opacity: 0;\n    transform: rotate(0deg); }\n  100% {\n    opacity: 1;\n    transform: rotate(0deg); } }\n\n@keyframes start-split-x {\n  from {\n    opacity: 1;\n    transform: translate(0, 0); }\n  to {\n    opacity: 1;\n    transform: translate(100%, 0); } }\n\n*::-webkit-scrollbar {\n  display: none; }\n\n* {\n  -webkit-tap-highlight-color: transparent; }\n\nhtml {\n  width: 100vw;\n  height: 100vh;\n  color: #323232;\n  font-family: 'Roboto', sans-serif;\n  max-width: 100%;\n  max-height: 100vh;\n  min-height: 100vh;\n  overflow-x: hidden;\n  overflow-y: auto;\n  -webkit-overflow-scrolling: touch;\n  /* lets it scroll lazy */ }\n\nbody {\n  padding: 0;\n  margin: 0;\n  position: relative;\n  width: 100%;\n  max-width: 100%; }\n\nbutton {\n  background: transparent;\n  border: none;\n  outline: none;\n  -webkit-webkit-appearance: none;\n  -moz-webkit-appearance: none;\n  -ms-webkit-appearance: none;\n  -o-webkit-appearance: none;\n  webkit-appearance: none; }\n\ncontainer {\n  position: relative;\n  display: block;\n  z-index: 3;\n  pointer-events: none;\n  box-shadow: -2px 0 4px rgba(0, 0, 0, 0.2); }\n  container > * {\n    pointer-events: auto; }\n\nmain {\n  display: flex;\n  flex-direction: column;\n  align-items: stretch;\n  justify-content: flex-start;\n  position: relative;\n  z-index: 5;\n  max-width: 100%;\n  overflow-x: hidden; }\n\nicon {\n  user-select: none; }\n\n.background-container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  min-height: 100%;\n  display: flex;\n  align-items: stretch;\n  flex-direction: column;\n  z-index: 1;\n  filter: blur(20px);\n  transform: translate3d(-10%, 0, 0); }\n\n.app-background {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  z-index: 0;\n  background-image: url(http://brodeurcampbellfence.com/wp-content/uploads/2013/03/gradient-background-more-white.jpg);\n  background-repeat: no-repeat;\n  background-size: cover; }\n\nnav-section {\n  height: auto;\n  min-height: 100vh;\n  flex: 1 0 auto;\n  min-width: 100%; }\n\nheader.nav-section-header {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  min-height: 56px;\n  display: flex;\n  flex-direction: row;\n  height: 56px;\n  z-index: 5; }\n\nnav-section header.nav-section-header {\n  position: absolute; }\n\nheader.header-title {\n  background-color: #D9D9D9;\n  color: rgba(0, 0, 0, 0.87); }\n  header.header-title icon {\n    color: rgba(0, 0, 0, 0.87); }\n  header.header-title .header-title {\n    color: rgba(0, 0, 0, 0.87); }\n\n.view-title-active navigation ul.navigation-list li:hover {\n  background-color: rgba(217, 217, 217, 0.6); }\n\n.view-title-active navigation ul.navigation-list li.active {\n  background-color: #D9D9D9;\n  color: rgba(0, 0, 0, 0.87); }\n\n.view-title-no-header-title header.header-title .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-title-topbar header.header-title {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-title-topbar header.header-title icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-title-topbar header.header-title icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-title-topbar header.header-title icon.menu-icon {\n      display: none; } }\n  .view-title-topbar header.header-title .header-title {\n    text-align: left;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-title-topbar.view-title-no-header-title header.header-title .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-title-title:not(.view-title-topbar) header.header-title {\n  top: 0;\n  bottom: unset;\n  opacity: 0;\n  visibility: hidden; }\n  .view-title-title:not(.view-title-topbar) header.header-title icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-title-title:not(.view-title-topbar) header.header-title icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-title-title:not(.view-title-topbar) header.header-title icon.menu-icon {\n      display: none; } }\n  .view-title-title:not(.view-title-topbar) header.header-title .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n  .view-title-title:not(.view-title-topbar) header.header-title .header-title {\n    opacity: 0;\n    visibility: hidden; }\n\n.view-title-title nav-section.app-title header.nav-section-header {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-title-title nav-section.app-title header.nav-section-header icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-title-title nav-section.app-title header.nav-section-header icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-title-title nav-section.app-title header.nav-section-header icon.menu-icon {\n      display: none; } }\n  .view-title-title nav-section.app-title header.nav-section-header .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n\n.view-title-peek header.header-title {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-title-peek header.header-title icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-title-peek header.header-title .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-title-next header.header-title {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-title-next header.header-title icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-title-next header.header-title .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\nheader.header-profile {\n  background-color: #284B63;\n  color: white; }\n  header.header-profile icon {\n    color: white; }\n  header.header-profile .header-title {\n    color: white; }\n\n.view-profile-active navigation ul.navigation-list li:hover {\n  background-color: rgba(40, 75, 99, 0.6); }\n\n.view-profile-active navigation ul.navigation-list li.active {\n  background-color: #284B63;\n  color: white; }\n\n.view-profile-no-header-title header.header-profile .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-profile-topbar header.header-profile {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-profile-topbar header.header-profile icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-profile-topbar header.header-profile icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-profile-topbar header.header-profile icon.menu-icon {\n      display: none; } }\n  .view-profile-topbar header.header-profile .header-title {\n    text-align: left;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-profile-topbar.view-profile-no-header-title header.header-profile .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-profile-title:not(.view-profile-topbar) header.header-profile {\n  top: 0;\n  bottom: unset;\n  opacity: 0;\n  visibility: hidden; }\n  .view-profile-title:not(.view-profile-topbar) header.header-profile icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-profile-title:not(.view-profile-topbar) header.header-profile icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-profile-title:not(.view-profile-topbar) header.header-profile icon.menu-icon {\n      display: none; } }\n  .view-profile-title:not(.view-profile-topbar) header.header-profile .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n  .view-profile-title:not(.view-profile-topbar) header.header-profile .header-title {\n    opacity: 0;\n    visibility: hidden; }\n\n.view-profile-title nav-section.app-profile header.nav-section-header {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-profile-title nav-section.app-profile header.nav-section-header icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-profile-title nav-section.app-profile header.nav-section-header icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-profile-title nav-section.app-profile header.nav-section-header icon.menu-icon {\n      display: none; } }\n  .view-profile-title nav-section.app-profile header.nav-section-header .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n\n.view-profile-peek header.header-profile {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-profile-peek header.header-profile icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-profile-peek header.header-profile .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-profile-next header.header-profile {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-profile-next header.header-profile icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-profile-next header.header-profile .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\nheader.header-projects {\n  background-color: #77a0a2;\n  color: rgba(0, 0, 0, 0.87); }\n  header.header-projects icon {\n    color: rgba(0, 0, 0, 0.87); }\n  header.header-projects .header-title {\n    color: rgba(0, 0, 0, 0.87); }\n\n.view-projects-active navigation ul.navigation-list li:hover {\n  background-color: rgba(119, 160, 162, 0.6); }\n\n.view-projects-active navigation ul.navigation-list li.active {\n  background-color: #77a0a2;\n  color: rgba(0, 0, 0, 0.87); }\n\n.view-projects-no-header-title header.header-projects .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-projects-topbar header.header-projects {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-projects-topbar header.header-projects icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-projects-topbar header.header-projects icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-projects-topbar header.header-projects icon.menu-icon {\n      display: none; } }\n  .view-projects-topbar header.header-projects .header-title {\n    text-align: left;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-projects-topbar.view-projects-no-header-title header.header-projects .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-projects-title:not(.view-projects-topbar) header.header-projects {\n  top: 0;\n  bottom: unset;\n  opacity: 0;\n  visibility: hidden; }\n  .view-projects-title:not(.view-projects-topbar) header.header-projects icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-projects-title:not(.view-projects-topbar) header.header-projects icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-projects-title:not(.view-projects-topbar) header.header-projects icon.menu-icon {\n      display: none; } }\n  .view-projects-title:not(.view-projects-topbar) header.header-projects .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n  .view-projects-title:not(.view-projects-topbar) header.header-projects .header-title {\n    opacity: 0;\n    visibility: hidden; }\n\n.view-projects-title nav-section.app-projects header.nav-section-header {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-projects-title nav-section.app-projects header.nav-section-header icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-projects-title nav-section.app-projects header.nav-section-header icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-projects-title nav-section.app-projects header.nav-section-header icon.menu-icon {\n      display: none; } }\n  .view-projects-title nav-section.app-projects header.nav-section-header .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n\n.view-projects-peek header.header-projects {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-projects-peek header.header-projects icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-projects-peek header.header-projects .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-projects-next header.header-projects {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-projects-next header.header-projects icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-projects-next header.header-projects .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\nheader.header-experience {\n  background-color: #D9D9D9;\n  color: rgba(0, 0, 0, 0.87); }\n  header.header-experience icon {\n    color: rgba(0, 0, 0, 0.87); }\n  header.header-experience .header-title {\n    color: rgba(0, 0, 0, 0.87); }\n\n.view-experience-active navigation ul.navigation-list li:hover {\n  background-color: rgba(217, 217, 217, 0.6); }\n\n.view-experience-active navigation ul.navigation-list li.active {\n  background-color: #D9D9D9;\n  color: rgba(0, 0, 0, 0.87); }\n\n.view-experience-no-header-title header.header-experience .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-experience-topbar header.header-experience {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-experience-topbar header.header-experience icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-experience-topbar header.header-experience icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-experience-topbar header.header-experience icon.menu-icon {\n      display: none; } }\n  .view-experience-topbar header.header-experience .header-title {\n    text-align: left;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-experience-topbar.view-experience-no-header-title header.header-experience .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-experience-title:not(.view-experience-topbar) header.header-experience {\n  top: 0;\n  bottom: unset;\n  opacity: 0;\n  visibility: hidden; }\n  .view-experience-title:not(.view-experience-topbar) header.header-experience icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-experience-title:not(.view-experience-topbar) header.header-experience icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-experience-title:not(.view-experience-topbar) header.header-experience icon.menu-icon {\n      display: none; } }\n  .view-experience-title:not(.view-experience-topbar) header.header-experience .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n  .view-experience-title:not(.view-experience-topbar) header.header-experience .header-title {\n    opacity: 0;\n    visibility: hidden; }\n\n.view-experience-title nav-section.app-experience header.nav-section-header {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-experience-title nav-section.app-experience header.nav-section-header icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-experience-title nav-section.app-experience header.nav-section-header icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-experience-title nav-section.app-experience header.nav-section-header icon.menu-icon {\n      display: none; } }\n  .view-experience-title nav-section.app-experience header.nav-section-header .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n\n.view-experience-peek header.header-experience {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-experience-peek header.header-experience icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-experience-peek header.header-experience .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-experience-next header.header-experience {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-experience-next header.header-experience icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-experience-next header.header-experience .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\nheader.header-education {\n  background-color: #353535;\n  color: white; }\n  header.header-education icon {\n    color: white; }\n  header.header-education .header-title {\n    color: white; }\n\n.view-education-active navigation ul.navigation-list li:hover {\n  background-color: rgba(53, 53, 53, 0.6); }\n\n.view-education-active navigation ul.navigation-list li.active {\n  background-color: #353535;\n  color: white; }\n\n.view-education-no-header-title header.header-education .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-education-topbar header.header-education {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-education-topbar header.header-education icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-education-topbar header.header-education icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-education-topbar header.header-education icon.menu-icon {\n      display: none; } }\n  .view-education-topbar header.header-education .header-title {\n    text-align: left;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-education-topbar.view-education-no-header-title header.header-education .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-education-title:not(.view-education-topbar) header.header-education {\n  top: 0;\n  bottom: unset;\n  opacity: 0;\n  visibility: hidden; }\n  .view-education-title:not(.view-education-topbar) header.header-education icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-education-title:not(.view-education-topbar) header.header-education icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-education-title:not(.view-education-topbar) header.header-education icon.menu-icon {\n      display: none; } }\n  .view-education-title:not(.view-education-topbar) header.header-education .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n  .view-education-title:not(.view-education-topbar) header.header-education .header-title {\n    opacity: 0;\n    visibility: hidden; }\n\n.view-education-title nav-section.app-education header.nav-section-header {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-education-title nav-section.app-education header.nav-section-header icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-education-title nav-section.app-education header.nav-section-header icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-education-title nav-section.app-education header.nav-section-header icon.menu-icon {\n      display: none; } }\n  .view-education-title nav-section.app-education header.nav-section-header .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n\n.view-education-peek header.header-education {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-education-peek header.header-education icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-education-peek header.header-education .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-education-next header.header-education {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-education-next header.header-education icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-education-next header.header-education .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\nheader.header-technology {\n  background-color: #D9D9D9;\n  color: rgba(0, 0, 0, 0.87); }\n  header.header-technology icon {\n    color: rgba(0, 0, 0, 0.87); }\n  header.header-technology .header-title {\n    color: rgba(0, 0, 0, 0.87); }\n\n.view-technology-active navigation ul.navigation-list li:hover {\n  background-color: rgba(217, 217, 217, 0.6); }\n\n.view-technology-active navigation ul.navigation-list li.active {\n  background-color: #D9D9D9;\n  color: rgba(0, 0, 0, 0.87); }\n\n.view-technology-no-header-title header.header-technology .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-technology-topbar header.header-technology {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-technology-topbar header.header-technology icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-technology-topbar header.header-technology icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-technology-topbar header.header-technology icon.menu-icon {\n      display: none; } }\n  .view-technology-topbar header.header-technology .header-title {\n    text-align: left;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-technology-topbar.view-technology-no-header-title header.header-technology .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-technology-title:not(.view-technology-topbar) header.header-technology {\n  top: 0;\n  bottom: unset;\n  opacity: 0;\n  visibility: hidden; }\n  .view-technology-title:not(.view-technology-topbar) header.header-technology icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-technology-title:not(.view-technology-topbar) header.header-technology icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-technology-title:not(.view-technology-topbar) header.header-technology icon.menu-icon {\n      display: none; } }\n  .view-technology-title:not(.view-technology-topbar) header.header-technology .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n  .view-technology-title:not(.view-technology-topbar) header.header-technology .header-title {\n    opacity: 0;\n    visibility: hidden; }\n\n.view-technology-title nav-section.app-technology header.nav-section-header {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-technology-title nav-section.app-technology header.nav-section-header icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-technology-title nav-section.app-technology header.nav-section-header icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-technology-title nav-section.app-technology header.nav-section-header icon.menu-icon {\n      display: none; } }\n  .view-technology-title nav-section.app-technology header.nav-section-header .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n\n.view-technology-peek header.header-technology {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-technology-peek header.header-technology icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-technology-peek header.header-technology .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-technology-next header.header-technology {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-technology-next header.header-technology icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-technology-next header.header-technology .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n@media screen and (max-width: 1200px) {\n  container > header:first-of-type {\n    visibility: visible;\n    opacity: 1; }\n  container > main,\n  container > header {\n    animation-timing-function: ease-out;\n    animation-fill-mode: forwards;\n    animation-duration: 0.3s; }\n  container.showing-navigation > main,\n  container.showing-navigation > header {\n    animation-name: animate-main-right; }\n  container.show-navigation > main,\n  container.show-navigation > header {\n    transform: translate3d(200px, 0, 0); }\n  container.hiding-navigation > main,\n  container.hiding-navigation > header {\n    animation-name: animate-main-default; }\n  container.hide-navigatin > main,\n  container.hide-navigatin > header {\n    transform: translate3d(0, 0, 0); } }\n\n.profile-background {\n  background-color: #284B63; }\n\n.technology-background {\n  background-color: #D9D9D9; }\n\n.projects-background {\n  background-color: #77a0a2; }\n\n.experience-background {\n  background-color: #D9D9D9; }\n\n.education-background {\n  background-color: #353535; }\n\n.app-title {\n  background-color: #D9D9D9; }\n  .app-title-header {\n    background-color: #D9D9D9; }\n\n.app-profile {\n  background-color: #284B63; }\n  .app-profile article {\n    flex: 1 0 auto;\n    display: flex;\n    flex-direction: column;\n    align-items: stretch;\n    justify-content: flex-start; }\n  .app-profile .profile-image {\n    flex: 0 0 258px;\n    margin: 0 auto;\n    text-align: center; }\n    .app-profile .profile-image img {\n      height: 250px;\n      width: 250px;\n      border-radius: 100%;\n      border: 4px solid white;\n      box-shadow: 0 10px 10px -6px rgba(0, 0, 0, 0.2); }\n  @media screen and (min-width: 1200px) {\n    .app-profile {\n      text-align: center; }\n      .app-profile .profile-image {\n        flex: 0 0 358px; }\n        .app-profile .profile-image img {\n          width: 350px;\n          height: 350px; } }\n  .app-profile .profile-content {\n    flex: 1; }\n  .app-profile ul.profile-detail {\n    list-style: none;\n    margin: 24px 0;\n    padding: 0; }\n    .app-profile ul.profile-detail li {\n      min-height: 48px;\n      line-height: 48px;\n      font-size: 24px;\n      color: white;\n      margin-bottom: 12px;\n      display: flex;\n      flex-direction: column;\n      align-items: flex-start;\n      justify-content: flex-start;\n      padding-bottom: 12px; }\n      .app-profile ul.profile-detail li label {\n        font-size: 14px;\n        padding-right: 12px;\n        color: rgba(255, 255, 255, 0.7);\n        font-weight: bold;\n        margin: 0;\n        flex: 1;\n        padding-left: 24px; }\n      .app-profile ul.profile-detail li .value {\n        flex: 1;\n        display: flex;\n        flex-direction: column;\n        align-items: stretch;\n        justify-content: flex-start;\n        font-size: inherit;\n        line-height: inherit;\n        color: inherit; }\n      .app-profile ul.profile-detail li p {\n        font-size: inherit;\n        line-height: inherit;\n        color: inherit;\n        text-align: left;\n        padding-left: 24px;\n        margin: 0;\n        border-left: 1px solid rgba(255, 255, 255, 0.12); }\n    @media screen and (min-width: 768px) {\n      .app-profile ul.profile-detail li {\n        padding-left: 56px;\n        padding-right: 56px;\n        flex-direction: row;\n        align-items: flex-start;\n        justify-content: flex-start; }\n        .app-profile ul.profile-detail li label {\n          text-align: right;\n          padding-left: 0; }\n        .app-profile ul.profile-detail li p {\n          padding-left: 12px; } }\n  .app-profile-header {\n    background-color: #284B63; }\n    .app-profile-header icon {\n      color: white; }\n    .app-profile-header .header-title {\n      color: white; }\n  .app-profile .header-title {\n    color: white; }\n\n.app-technology {\n  background-color: #D9D9D9; }\n  .app-technology h1 {\n    font-size: 32px;\n    padding-left: 24px; }\n  .app-technology ul {\n    list-style: none;\n    margin: 0 12px;\n    padding: 0;\n    display: flex;\n    flex-wrap: wrap;\n    flex-direction: row;\n    align-items: flex-start;\n    justify-content: flex-start;\n    max-width: 100%; }\n    .app-technology ul li {\n      display: inline-block;\n      margin: 12px;\n      max-width: 100px;\n      min-width: 100px;\n      max-height: 136px;\n      min-height: 136px;\n      background-color: white;\n      box-shadow: 0 3px 4px -3px rgba(0, 0, 0, 0.2), 0 3px 4px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.1); }\n      .app-technology ul li img {\n        display: block;\n        width: inherit;\n        max-width: inherit; }\n      .app-technology ul li span {\n        display: block;\n        text-align: center;\n        font-size: 18px;\n        font-weight: bold;\n        line-height: 24px; }\n  .app-technology-header {\n    background-color: #D9D9D9; }\n\n.app-projects {\n  background-color: #77a0a2; }\n  .app-projects article {\n    margin-bottom: 24px;\n    border-bottom: 1px solid rgba(0, 0, 0, 0.12);\n    display: flex;\n    flex-direction: column;\n    align-items: flex-start;\n    justify-content: flex-start;\n    padding: 0 12px; }\n    .app-projects article > .card-image {\n      height: auto;\n      max-width: 120px;\n      min-width: 120px;\n      height: 120px;\n      width: 120px;\n      margin: 24px auto;\n      text-align: center;\n      background: white;\n      border-radius: 100%;\n      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2); }\n      .app-projects article > .card-image img {\n        max-width: 110px;\n        max-height: 110px;\n        margin: 5px; }\n    .app-projects article > .card-content {\n      order: -1;\n      flex: 1 1 auto;\n      padding-top: 20px;\n      height: auto;\n      display: flex;\n      flex-direction: column;\n      align-items: flex-start;\n      justify-content: flex-start; }\n    .app-projects article .card-heading {\n      display: flex;\n      flex-direction: column;\n      align-items: flex-start;\n      justify-content: flex-start;\n      margin-bottom: 12px;\n      padding-top: 12px;\n      width: 100%; }\n    .app-projects article .card-title {\n      flex: 1;\n      font-weight: normal;\n      font-size: 36px;\n      color: rgba(0, 0, 0, 0.54);\n      padding-left: 24px;\n      padding-right: 12px;\n      font-size: 24px;\n      font-weight: bold; }\n    .app-projects article .card-date {\n      margin-left: auto;\n      text-align: right;\n      font-size: 14px;\n      padding-right: 12px;\n      letter-spacing: 1.34px;\n      font-weight: bold;\n      color: rgba(0, 0, 0, 0.54);\n      padding-right: 24px;\n      padding-left: 12px;\n      margin-left: 12px; }\n    .app-projects article .card-details {\n      list-style: none;\n      margin: 0;\n      padding: 0; }\n      .app-projects article .card-details li {\n        min-height: 36px;\n        display: flex;\n        flex-direction: row;\n        align-items: flex-start;\n        justify-content: flex-start;\n        padding-left: 24px;\n        padding-right: 24px; }\n      .app-projects article .card-details icon {\n        color: rgba(0, 0, 0, 0.87);\n        flex: 0 0 auto;\n        margin: 6px;\n        font-size: 16px; }\n      .app-projects article .card-details span.text {\n        flex: 0 1 auto;\n        padding-top: 4px;\n        line-height: 1.34;\n        font-size: 16px;\n        font-weight: normal;\n        color: rgba(0, 0, 0, 0.87); }\n    .app-projects article .card-tags {\n      margin: 0 0 24px 0;\n      padding: 0 12px;\n      list-style: none; }\n      .app-projects article .card-tags li {\n        display: inline;\n        padding: 6px 12px;\n        font-size: 12px;\n        font-weight: normal;\n        color: rgba(0, 0, 0, 0.87);\n        margin: 4px; }\n  @media screen and (min-width: 1200px) {\n    .app-projects article {\n      padding: 0 56px;\n      flex-direction: row; }\n      .app-projects article .card-image {\n        margin: 24px; }\n      .app-projects article .card-title {\n        font-size: 36px;\n        font-weight: normal; } }\n  .app-projects .project-image {\n    margin-left: 24px;\n    width: 100px;\n    height: 100px;\n    position: relative;\n    flex: 0 0 auto;\n    height: 108px;\n    width: 108px;\n    background-color: white;\n    box-shadow: 0 4px 4px -3px rgba(0, 0, 0, 0.1), 0 3px 4px rgba(0, 0, 0, 0.2); }\n    .app-projects .project-image img {\n      display: block;\n      max-height: 80px;\n      max-width: 80px;\n      margin: 10px auto; }\n  .app-projects .project-heading {\n    display: flex;\n    flex-direction: column;\n    align-items: flex-start;\n    justify-content: flex-start;\n    margin-bottom: 12px;\n    padding-top: 12px;\n    width: 100%;\n    align-items: flex-end; }\n  .app-projects .project-title {\n    flex: 1;\n    font-weight: normal;\n    font-size: 36px;\n    color: rgba(0, 0, 0, 0.54);\n    padding-left: 24px;\n    padding-right: 12px; }\n  .app-projects .project-date {\n    margin-left: auto;\n    text-align: right;\n    font-size: 14px;\n    padding-right: 12px;\n    letter-spacing: 1.34px;\n    font-weight: bold;\n    color: rgba(0, 0, 0, 0.54);\n    padding-right: 24px;\n    padding-left: 12px; }\n  .app-projects ul.project-details {\n    list-style: none;\n    margin: 0;\n    padding: 0; }\n    .app-projects ul.project-details li {\n      min-height: 36px;\n      display: flex;\n      flex-direction: row;\n      align-items: flex-start;\n      justify-content: flex-start;\n      padding-left: 24px;\n      padding-right: 24px; }\n    .app-projects ul.project-details icon {\n      color: rgba(0, 0, 0, 0.54);\n      flex: 0 0 auto;\n      margin: 6px;\n      font-size: 16px; }\n    .app-projects ul.project-details span.text {\n      flex: 0 1 auto;\n      padding-top: 4px;\n      line-height: 1.34;\n      font-size: 16px;\n      font-weight: normal;\n      color: rgba(0, 0, 0, 0.87); }\n  .app-projects-header {\n    background-color: #77a0a2; }\n\n.app-experience {\n  background-color: #D9D9D9; }\n  .app-experience article {\n    margin-bottom: 24px;\n    border-bottom: 1px solid rgba(0, 0, 0, 0.12);\n    display: flex;\n    flex-direction: column;\n    align-items: flex-start;\n    justify-content: flex-start;\n    padding: 0 12px; }\n    .app-experience article > .card-image {\n      height: auto;\n      max-width: 120px;\n      min-width: 120px;\n      height: 120px;\n      width: 120px;\n      margin: 24px auto;\n      text-align: center;\n      background: white;\n      border-radius: 100%;\n      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2); }\n      .app-experience article > .card-image img {\n        max-width: 110px;\n        max-height: 110px;\n        margin: 5px; }\n    .app-experience article > .card-content {\n      order: -1;\n      flex: 1 1 auto;\n      padding-top: 20px;\n      height: auto;\n      display: flex;\n      flex-direction: column;\n      align-items: flex-start;\n      justify-content: flex-start; }\n    .app-experience article .card-heading {\n      display: flex;\n      flex-direction: column;\n      align-items: flex-start;\n      justify-content: flex-start;\n      margin-bottom: 12px;\n      padding-top: 12px;\n      width: 100%; }\n    .app-experience article .card-title {\n      flex: 1;\n      font-weight: normal;\n      font-size: 36px;\n      color: rgba(0, 0, 0, 0.54);\n      padding-left: 24px;\n      padding-right: 12px;\n      font-size: 24px;\n      font-weight: bold; }\n    .app-experience article .card-date {\n      margin-left: auto;\n      text-align: right;\n      font-size: 14px;\n      padding-right: 12px;\n      letter-spacing: 1.34px;\n      font-weight: bold;\n      color: rgba(0, 0, 0, 0.54);\n      padding-right: 24px;\n      padding-left: 12px;\n      margin-left: 12px; }\n    .app-experience article .card-details {\n      list-style: none;\n      margin: 0;\n      padding: 0; }\n      .app-experience article .card-details li {\n        min-height: 36px;\n        display: flex;\n        flex-direction: row;\n        align-items: flex-start;\n        justify-content: flex-start;\n        padding-left: 24px;\n        padding-right: 24px; }\n      .app-experience article .card-details icon {\n        color: rgba(0, 0, 0, 0.87);\n        flex: 0 0 auto;\n        margin: 6px;\n        font-size: 16px; }\n      .app-experience article .card-details span.text {\n        flex: 0 1 auto;\n        padding-top: 4px;\n        line-height: 1.34;\n        font-size: 16px;\n        font-weight: normal;\n        color: rgba(0, 0, 0, 0.87); }\n    .app-experience article .card-tags {\n      margin: 0 0 24px 0;\n      padding: 0 12px;\n      list-style: none; }\n      .app-experience article .card-tags li {\n        display: inline;\n        padding: 6px 12px;\n        font-size: 12px;\n        font-weight: normal;\n        color: rgba(0, 0, 0, 0.87);\n        margin: 4px; }\n  @media screen and (min-width: 1200px) {\n    .app-experience article {\n      padding: 0 56px;\n      flex-direction: row; }\n      .app-experience article .card-image {\n        margin: 24px; }\n      .app-experience article .card-title {\n        font-size: 36px;\n        font-weight: normal; } }\n  .app-experience .xp-heading {\n    display: flex;\n    flex-direction: column;\n    align-items: flex-start;\n    justify-content: flex-start;\n    margin-bottom: 12px;\n    padding-top: 12px;\n    width: 100%; }\n  .app-experience .xp-title {\n    flex: 1;\n    font-weight: normal;\n    font-size: 36px;\n    color: rgba(0, 0, 0, 0.54);\n    padding-left: 24px;\n    padding-right: 12px; }\n  .app-experience .xp-date {\n    margin-left: auto;\n    text-align: right;\n    font-size: 14px;\n    padding-right: 12px;\n    letter-spacing: 1.34px;\n    font-weight: bold;\n    color: rgba(0, 0, 0, 0.54);\n    padding-right: 24px;\n    padding-left: 12px; }\n  .app-experience ul.xp-details {\n    list-style: none;\n    margin: 0;\n    padding: 0; }\n    .app-experience ul.xp-details li {\n      min-height: 36px;\n      display: flex;\n      flex-direction: row;\n      align-items: flex-start;\n      justify-content: flex-start;\n      padding-left: 24px;\n      padding-right: 24px; }\n    .app-experience ul.xp-details icon {\n      color: rgba(0, 0, 0, 0.54);\n      flex: 0 0 auto;\n      margin: 6px;\n      font-size: 16px; }\n    .app-experience ul.xp-details span.text {\n      flex: 0 1 auto;\n      padding-top: 4px;\n      line-height: 1.34;\n      font-size: 16px;\n      font-weight: normal;\n      color: rgba(0, 0, 0, 0.87); }\n  .app-experience ul.xp-tech {\n    margin: 0 0 24px 0;\n    padding: 0 12px;\n    list-style: none; }\n    .app-experience ul.xp-tech li {\n      display: inline;\n      padding: 6px 12px;\n      font-size: 12px;\n      font-weight: normal;\n      color: #2196F3;\n      margin: 4px; }\n  .app-experience-header {\n    background-color: #D9D9D9; }\n\n.app-education {\n  background-color: #353535; }\n  .app-education article {\n    margin-bottom: 24px;\n    border-bottom: 1px solid rgba(255, 255, 255, 0.12);\n    display: flex;\n    flex-direction: column;\n    align-items: flex-start;\n    justify-content: flex-start;\n    padding: 0 12px; }\n    .app-education article > .card-image {\n      height: auto;\n      max-width: 120px;\n      min-width: 120px;\n      height: 120px;\n      width: 120px;\n      margin: 24px auto;\n      text-align: center;\n      background: white;\n      border-radius: 100%;\n      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2); }\n      .app-education article > .card-image img {\n        max-width: 110px;\n        max-height: 110px;\n        margin: 5px; }\n    .app-education article > .card-content {\n      order: -1;\n      flex: 1 1 auto;\n      padding-top: 20px;\n      height: auto;\n      display: flex;\n      flex-direction: column;\n      align-items: flex-start;\n      justify-content: flex-start; }\n    .app-education article .card-heading {\n      display: flex;\n      flex-direction: column;\n      align-items: flex-start;\n      justify-content: flex-start;\n      margin-bottom: 12px;\n      padding-top: 12px;\n      width: 100%; }\n    .app-education article .card-title {\n      flex: 1;\n      font-weight: normal;\n      font-size: 36px;\n      color: rgba(255, 255, 255, 0.7);\n      padding-left: 24px;\n      padding-right: 12px;\n      font-size: 24px;\n      font-weight: bold; }\n    .app-education article .card-date {\n      margin-left: auto;\n      text-align: right;\n      font-size: 14px;\n      padding-right: 12px;\n      letter-spacing: 1.34px;\n      font-weight: bold;\n      color: rgba(255, 255, 255, 0.5);\n      padding-right: 24px;\n      padding-left: 12px;\n      margin-left: 12px; }\n    .app-education article .card-details {\n      list-style: none;\n      margin: 0;\n      padding: 0; }\n      .app-education article .card-details li {\n        min-height: 36px;\n        display: flex;\n        flex-direction: row;\n        align-items: flex-start;\n        justify-content: flex-start;\n        padding-left: 24px;\n        padding-right: 24px; }\n      .app-education article .card-details icon {\n        color: white;\n        flex: 0 0 auto;\n        margin: 6px;\n        font-size: 16px; }\n      .app-education article .card-details span.text {\n        flex: 0 1 auto;\n        padding-top: 4px;\n        line-height: 1.34;\n        font-size: 16px;\n        font-weight: normal;\n        color: white; }\n    .app-education article .card-tags {\n      margin: 0 0 24px 0;\n      padding: 0 12px;\n      list-style: none; }\n      .app-education article .card-tags li {\n        display: inline;\n        padding: 6px 12px;\n        font-size: 12px;\n        font-weight: normal;\n        color: white;\n        margin: 4px; }\n  @media screen and (min-width: 1200px) {\n    .app-education article {\n      padding: 0 56px;\n      flex-direction: row; }\n      .app-education article .card-image {\n        margin: 24px; }\n      .app-education article .card-title {\n        font-size: 36px;\n        font-weight: normal; } }\n  .app-education header {\n    color: white; }\n    .app-education header icon {\n      color: white; }\n  .app-education-header {\n    background-color: #353535;\n    color: white; }\n    .app-education-header icon {\n      color: white; }\n\n@media screen and (max-width: 1200px) {\n  .platform-ios container navigation {\n    opacity: 0;\n    visibility: hidden;\n    transition: opacity 0.3s ease 0s; }\n  .platform-ios container.offset-main-right navigation {\n    opacity: 1;\n    visibility: visible; }\n  .platform-ios container.animate-main-right navigation {\n    opacity: 1;\n    visibility: visible; }\n  .platform-ios container.animate-main-default navigation {\n    opacity: 0;\n    visibility: hidden; } }\n\n@media screen and (min-width: 1201px) {\n  container {\n    margin-left: 200px; }\n    container > header {\n      margin-left: 200px; }\n    container .header-title {\n      padding-left: 24px; }\n    container icon.menu-icon {\n      display: none !important; } }\n\n.ui-materialize-logo {\n  height: 100%;\n  width: 100%;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center; }\n  .ui-materialize-logo:before {\n    content: \"ui\";\n    display: block;\n    color: deeppink;\n    font-weight: bold;\n    font-size: 16px;\n    line-height: 20px; }\n  .ui-materialize-logo:after {\n    content: \"Materialize\";\n    display: block;\n    color: dimgrey;\n    font-weight: normal;\n    font-size: 20px; }\n\n.domx-logo {\n  height: 100%;\n  width: 100%;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center; }\n  .domx-logo:before {\n    content: \"<\";\n    display: block;\n    color: darkorange;\n    font-weight: bold;\n    font-size: 30px;\n    line-height: 24px; }\n  .domx-logo:after {\n    content: \"dom-x\";\n    display: block;\n    color: indigo;\n    font-weight: normal;\n    font-size: 30px; }\n\narticle.card-mparticle .card-image img {\n  margin-top: 24px; }\n\narticle.card-plusamp .card-image img {\n  border-radius: 100%; }\n\narticle.card-his .card-image img {\n  margin-top: 45px; }\n\narticle.card-southwestern .card-image img {\n  margin-top: 26px; }\n"; });
-define('text!modules/header/header.html', ['module'], function(module) { module.exports = "<template><nav class=left-nav><icon ico=menu class=menu-icon></icon></nav><nav class=center-nav><span ref=nodes.title class=header-title>${props.title}</span></nav><nav class=right-nav><icon ico=arrow_back class=direction-icon></icon></nav></template>"; });
+define('text!modules/footer/footer.html', ['module'], function(module) { module.exports = "<template><footer ref=element class=app-footer><div ripple class=footer-content><nav class=left-nav></nav><nav class=center-nav><span ref=nodes.title class=header-title>${props.title}</span></nav><nav class=right-nav><icon ico=arrow_forward class=direction-icon click.delegate=navigateForward($event)></icon></nav></div></footer></template>"; });
+define('text!app.css', ['module'], function(module) { module.exports = "@import url(\"https://fonts.googleapis.com/css?family=Roboto\");\nnav-section {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  min-height: 100%;\n  position: relative; }\n  nav-section .row {\n    flex: 1 0 auto;\n    display: flex;\n    align-items: flex-start;\n    justify-content: flex-start;\n    flex-direction: row; }\n  nav-section .section-container {\n    flex: 1;\n    height: auto;\n    display: flex;\n    position: relative;\n    flex-direction: column;\n    align-items: stretch;\n    justify-content: flex-start;\n    padding-top: 200px;\n    box-shadow: -3px 0 3px rgba(0, 0, 0, 0.3);\n    background-color: inherit;\n    z-index: 4; }\n  nav-section article {\n    margin-bottom: 24px;\n    display: flex;\n    flex-direction: column;\n    align-self: stretch; }\n  nav-section header.nav-section-header {\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    min-height: 56px;\n    font-size: 36px;\n    text-align: center;\n    transform: translateY(150%);\n    color: inherit;\n    display: flex;\n    flex-direction: row;\n    align-items: flex-start;\n    justify-content: flex-start; }\n    nav-section header.nav-section-header .header-title {\n      flex: 1;\n      display: block;\n      text-align: inherit;\n      font-size: inherit;\n      color: inherit; }\n    @media screen and (min-width: 768px) {\n      nav-section header.nav-section-header {\n        font-size: 56px; } }\n  nav-section.light-tint-section {\n    color: white; }\n  nav-section.dark-tint-section {\n    color: rgba(0, 0, 0, 0.87); }\n\ncontainer > header.nav-section-header {\n  border-bottom: 1px solid rgba(0, 0, 0, 0.12); }\n\n.app-section-header {\n  opacity: 0;\n  visibility: hidden; }\n  .app-section-header icon {\n    position: relative;\n    user-select: none;\n    height: 56px;\n    width: 56px;\n    line-height: 56px;\n    text-align: center;\n    cursor: pointer;\n    color: inherit; }\n  .app-section-header icon.menu-icon {\n    display: none; }\n  .app-section-header .header-title {\n    user-select: none;\n    padding: 0 56px;\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n    text-align: left;\n    display: block;\n    font-size: 24px;\n    line-height: 56px;\n    font-weight: bold;\n    cursor: pointer;\n    user-select: none;\n    color: inherit; }\n  .app-section-header.fixed {\n    opacity: 0;\n    visibility: hidden; }\n    .app-section-header.fixed:hover .header-title {\n      opacity: 0.7; }\n  .app-section-header.first {\n    opacity: 0;\n    visibility: hidden; }\n\nnavigation {\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  min-height: 100vh;\n  max-height: 100vh;\n  width: 200px;\n  z-index: 2;\n  pointer-events: none;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: flex-start; }\n  navigation > header {\n    display: block;\n    width: 100%;\n    background-color: rgba(255, 255, 255, 0.6);\n    height: 56px;\n    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2); }\n  navigation > section {\n    flex: 1;\n    display: block;\n    width: 100%; }\n  navigation > footer {\n    background-color: rgba(255, 255, 255, 0.6);\n    display: block;\n    width: 100%;\n    height: 56px;\n    box-shadow: 0 -3px 4px rgba(0, 0, 0, 0.2); }\n  navigation ul.navigation-list {\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n    flex: 1 0 auto;\n    margin: 0;\n    padding: 0;\n    list-style: none;\n    display: flex;\n    flex-direction: column;\n    align-items: flex-start;\n    justify-content: flex-start; }\n    navigation ul.navigation-list:after, navigation ul.navigation-list:before {\n      display: block;\n      content: \" \";\n      background-color: rgba(255, 255, 255, 0.6);\n      width: 100%; }\n    navigation ul.navigation-list:before {\n      min-height: 56px;\n      max-height: 56px; }\n    navigation ul.navigation-list:after {\n      flex: 1 0 auto; }\n    navigation ul.navigation-list li {\n      flex: 1 0 auto;\n      color: inherit;\n      width: 100%;\n      pointer-events: auto;\n      display: flex;\n      flex-direction: row;\n      align-items: flex-start;\n      justify-content: flex-start;\n      min-height: 48px;\n      max-height: 48px;\n      cursor: pointer;\n      background-color: rgba(255, 255, 255, 0.6);\n      transition: background-color 0.3s ease 0s; }\n      navigation ul.navigation-list li icon {\n        color: rgba(0, 0, 0, 0.87);\n        pointer-events: none;\n        margin: 12px; }\n      navigation ul.navigation-list li span.text {\n        pointer-events: none;\n        flex: 0 1 auto;\n        font-size: 16px;\n        font-weight: 500;\n        line-height: 48px;\n        letter-spacing: 1.34px;\n        user-select: none;\n        color: rgba(0, 0, 0, 0.87); }\n      navigation ul.navigation-list li.active icon, navigation ul.navigation-list li.active span.text {\n        color: inherit; }\n    navigation ul.navigation-list li:last-child {\n      height: auto;\n      flex: 1 0 auto;\n      background-color: rgba(255, 255, 255, 0.6); }\n\n@keyframes animate-main-right {\n  from {\n    transform: translate3d(0, 0, 0); }\n  to {\n    transform: translate3d(200px, 0, 0); } }\n\n@keyframes animate-main-default {\n  from {\n    transform: translate3d(200px, 0, 0); }\n  to {\n    transform: translate3d(0, 0, 0); } }\n\nripple-container {\n  pointer-events: none;\n  display: block;\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  min-height: 100%;\n  min-width: 100%;\n  overflow: hidden;\n  opacity: 0.8; }\n\nripple {\n  display: block;\n  position: absolute;\n  opacity: 0;\n  transform: scale(0);\n  top: 0;\n  left: 0;\n  border-radius: 100%;\n  animation-timing-function: linear;\n  animation-duration: 0.5s;\n  animation-fill-mode: forwards;\n  animation-name: show-ripple; }\n\n@keyframes show-ripple {\n  0% {\n    opacity: 0;\n    transform: scale(0); }\n  50% {\n    opacity: 1;\n    transform: scale(1); }\n  100% {\n    opacity: 0;\n    transform: scale(3); } }\n\n.app-title .ux-animation {\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center;\n  width: 320px;\n  margin: 0 auto;\n  animation-duration: 1s;\n  animation-timing-function: ease;\n  animation-fill-mode: forwards;\n  opacity: 0; }\n  .app-title .ux-animation span {\n    height: 28px;\n    line-height: 28px; }\n  .app-title .ux-animation span.u {\n    flex: 0 1 auto; }\n  .app-title .ux-animation span.ix {\n    position: relative;\n    flex: 0 0 auto;\n    display: flex;\n    flex-direction: row;\n    align-items: center;\n    justify-content: flex-start; }\n    .app-title .ux-animation span.ix span.i,\n    .app-title .ux-animation span.ix span.x {\n      animation-timing-function: linear;\n      animation-fill-mode: forwards;\n      animation-duration: 0.25s;\n      position: absolute;\n      display: block;\n      width: 10px;\n      top: 0;\n      left: 0; }\n    .app-title .ux-animation span.ix span.i {\n      animation-delay: 2.3s; }\n    .app-title .ux-animation span.ix span.x {\n      animation-delay: 2.5s;\n      transform: rotate(-180deg);\n      opacity: 0; }\n  .app-title .ux-animation span.type {\n    margin-left: 30px;\n    text-align: left;\n    display: inline-block;\n    flex: 0 0 auto; }\n  .app-title .ux-animation.animate {\n    animation-name: show-ux; }\n    .app-title .ux-animation.animate span.i {\n      animation-delay: 2.3s;\n      animation-name: start-spin-i; }\n    .app-title .ux-animation.animate span.x {\n      animation-delay: 2.5s;\n      transform: rotate(-180deg);\n      opacity: 0;\n      animation-name: start-spin-x; }\n  .app-title .ux-animation.split-ix span.ix span.i {\n    animation-name: start-split-i; }\n  .app-title .ux-animation.split-ix span.ix span.x {\n    transform: rotate(0deg);\n    animation-name: start-split-x; }\n  .app-title .ux-animation.animate-out {\n    animation-name: hide-ux; }\n\n@keyframes show-ux {\n  from {\n    opacity: 0; }\n  to {\n    opacity: 1; } }\n\n@keyframes hide-ux {\n  from {\n    opacity: 1; }\n  to {\n    opacity: 0; } }\n\n@keyframes start-spin-i {\n  from {\n    opacity: 1;\n    transform: rotate(0deg); }\n  to {\n    opacity: 0;\n    transform: rotate(180deg); } }\n\n@keyframes start-spin-x {\n  from {\n    opacity: 0;\n    transform: rotate(-180deg); }\n  to {\n    opacity: 1;\n    transform: rotate(0deg); } }\n\n@keyframes start-split-i {\n  0% {\n    opacity: 0;\n    transform: rotate(180deg); }\n  2% {\n    opacity: 0;\n    transform: rotate(0deg); }\n  100% {\n    opacity: 1;\n    transform: rotate(0deg); } }\n\n@keyframes start-split-x {\n  from {\n    opacity: 1;\n    transform: translate(0, 0); }\n  to {\n    opacity: 1;\n    transform: translate(100%, 0); } }\n\nheader.app-header {\n  display: flex;\n  flex-direction: row;\n  align-items: flex-start;\n  justify-content: flex-start;\n  min-height: 56px;\n  line-height: 56px;\n  background-color: #D9D9D9;\n  color: rgba(0, 0, 0, 0.87);\n  font-size: 24px;\n  border-bottom: rgba(0, 0, 0, 0.12);\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  z-index: 6;\n  border-width: 0;\n  border-color: rgba(0, 0, 0, 0.12); }\n  header.app-header .header-content {\n    flex: 1;\n    display: flex;\n    flex-direction: row;\n    align-items: flex-start;\n    justify-content: flex-start;\n    font-size: inherit;\n    line-height: inherit;\n    background-color: inherit;\n    color: inherit;\n    border-bottom-width: 1px;\n    border-bottom-style: solid;\n    border-bottom-color: inherit; }\n  header.app-header icon, header.app-header span {\n    color: inherit;\n    line-height: inherit;\n    cursor: pointer; }\n  header.app-header icon {\n    width: 56px;\n    text-align: center; }\n  header.app-header span {\n    font-size: inherit; }\n  header.app-header nav {\n    font-size: inherit;\n    line-height: inherit;\n    color: inherit;\n    position: relative;\n    display: block;\n    flex: 0 0 auto; }\n  header.app-header nav.left-nav {\n    order: -1; }\n  header.app-header nav.center-nav {\n    flex: 1; }\n  header.app-header nav.right-nav {\n    margin-left: auto; }\n\nfooter.app-footer {\n  display: flex;\n  flex-direction: row;\n  justify-content: flex-start;\n  align-items: flex-start;\n  position: fixed;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  min-height: 56px;\n  z-index: 6;\n  font-size: 24px;\n  line-height: 56px;\n  color: rgba(0, 0, 0, 0.87);\n  max-height: 56px; }\n  footer.app-footer .footer-content {\n    flex: 1;\n    display: flex;\n    flex-direction: row;\n    align-items: flex-start;\n    justify-content: flex-start;\n    font-size: inherit;\n    line-height: inherit;\n    color: inherit; }\n  footer.app-footer icon, footer.app-footer span, footer.app-footer nav {\n    color: inherit;\n    line-height: inherit;\n    cursor: pointer; }\n  footer.app-footer span, footer.app-footer nav {\n    font-size: inherit; }\n  footer.app-footer icon {\n    width: 56px;\n    text-align: center; }\n  footer.app-footer nav.left-nav {\n    flex: 0 0 auto; }\n  footer.app-footer nav.center-nav {\n    flex: 1;\n    text-align: right; }\n  footer.app-footer nav.right-nav {\n    flex: 0 0 auto; }\n\n*::-webkit-scrollbar {\n  display: none; }\n\n* {\n  -webkit-tap-highlight-color: transparent; }\n\nhtml {\n  width: 100vw;\n  height: 100vh;\n  color: #323232;\n  font-family: 'Roboto', sans-serif;\n  max-width: 100%;\n  max-height: 100vh;\n  min-height: 100vh;\n  overflow-x: hidden;\n  overflow-y: auto;\n  -webkit-overflow-scrolling: touch;\n  /* lets it scroll lazy */ }\n\nbody {\n  padding: 0;\n  margin: 0;\n  position: relative;\n  width: 100%;\n  max-width: 100%; }\n\nbutton {\n  background: transparent;\n  border: none;\n  outline: none;\n  -webkit-webkit-appearance: none;\n  -moz-webkit-appearance: none;\n  -ms-webkit-appearance: none;\n  -o-webkit-appearance: none;\n  webkit-appearance: none; }\n\ncontainer {\n  position: relative;\n  display: block;\n  z-index: 3;\n  pointer-events: none;\n  box-shadow: -2px 0 4px rgba(0, 0, 0, 0.2); }\n  container > * {\n    pointer-events: auto; }\n\nmain {\n  display: flex;\n  flex-direction: column;\n  align-items: stretch;\n  justify-content: flex-start;\n  position: relative;\n  z-index: 5;\n  max-width: 100%;\n  overflow-x: hidden; }\n\nicon {\n  user-select: none; }\n\n.background-container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  min-height: 100%;\n  display: flex;\n  align-items: stretch;\n  flex-direction: column;\n  z-index: 1;\n  transform: translate3d(-50px, 0, 0); }\n\n.app-background {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  z-index: 0;\n  background-image: url(http://brodeurcampbellfence.com/wp-content/uploads/2013/03/gradient-background-more-white.jpg);\n  background-repeat: no-repeat;\n  background-size: cover; }\n\nnav-section {\n  height: auto;\n  min-height: 100vh;\n  flex: 1 0 auto;\n  min-width: 100%; }\n\nheader.nav-section-header {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  min-height: 56px;\n  display: flex;\n  flex-direction: row;\n  height: 56px;\n  z-index: 5; }\n\nnav-section header.nav-section-header {\n  position: absolute; }\n\nheader.header-title {\n  background-color: #D9D9D9;\n  color: rgba(0, 0, 0, 0.87); }\n  header.header-title icon {\n    color: rgba(0, 0, 0, 0.87); }\n  header.header-title .header-title {\n    color: rgba(0, 0, 0, 0.87); }\n\nnav-section.app-title {\n  background-color: #D9D9D9; }\n\n.background-container nav-section.app-title + nav-section {\n  position: relative; }\n  .background-container nav-section.app-title + nav-section:before {\n    content: \" \";\n    position: absolute;\n    top: 0;\n    right: 0;\n    left: 0;\n    min-height: 200px;\n    max-height: 200px;\n    width: 100%;\n    transform: translateY(-50%);\n    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#D9D9D9+0,#284B63+100 */\n    background: #D9D9D9;\n    /* Old browsers */\n    background: -moz-linear-gradient(top, #D9D9D9 0%, #284B63 100%);\n    /* FF3.6-15 */\n    background: -webkit-linear-gradient(top, #D9D9D9 0%, #284B63 100%);\n    /* Chrome10-25,Safari5.1-6 */\n    background: linear-gradient(to bottom, #D9D9D9 0%, #284B63 100%);\n    /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */\n    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#D9D9D9', endColorstr='#284B63',GradientType=0 );\n    /* IE6-9 */ }\n\n.view-title-active navigation ul.navigation-list li.active {\n  background-color: transparent; }\n\n@media screen and (min-width: 768px) {\n  .view-title-active navigation ul.navigation-list li:hover {\n    background-color: rgba(255, 255, 255, 0.4); } }\n\n.view-title-no-header-title header.header-title .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-title-topbar header.header-title {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-title-topbar header.header-title icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-title-topbar header.header-title icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-title-topbar header.header-title icon.menu-icon {\n      display: none; } }\n  .view-title-topbar header.header-title .header-title {\n    text-align: left;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-title-topbar.view-title-no-header-title header.header-title .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-title-title:not(.view-title-topbar) header.header-title {\n  top: 0;\n  bottom: unset;\n  opacity: 0;\n  visibility: hidden; }\n  .view-title-title:not(.view-title-topbar) header.header-title icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-title-title:not(.view-title-topbar) header.header-title icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-title-title:not(.view-title-topbar) header.header-title icon.menu-icon {\n      display: none; } }\n  .view-title-title:not(.view-title-topbar) header.header-title .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n  .view-title-title:not(.view-title-topbar) header.header-title .header-title {\n    opacity: 0;\n    visibility: hidden; }\n\n.view-title-title nav-section.app-title header.nav-section-header {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-title-title nav-section.app-title header.nav-section-header icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-title-title nav-section.app-title header.nav-section-header icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-title-title nav-section.app-title header.nav-section-header icon.menu-icon {\n      display: none; } }\n  .view-title-title nav-section.app-title header.nav-section-header .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n\n.view-title-peek header.header-title {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-title-peek header.header-title icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-title-peek header.header-title .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-title-next header.header-title {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-title-next header.header-title icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-title-next header.header-title .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\nheader.header-profile {\n  background-color: #284B63;\n  color: white; }\n  header.header-profile icon {\n    color: white; }\n  header.header-profile .header-title {\n    color: white; }\n\nnav-section.app-profile {\n  background-color: #284B63; }\n\n.background-container nav-section.app-profile + nav-section {\n  position: relative; }\n  .background-container nav-section.app-profile + nav-section:before {\n    content: \" \";\n    position: absolute;\n    top: 0;\n    right: 0;\n    left: 0;\n    min-height: 200px;\n    max-height: 200px;\n    width: 100%;\n    transform: translateY(-50%);\n    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#284B63+0,#77A0A2+100 */\n    background: #284B63;\n    /* Old browsers */\n    background: -moz-linear-gradient(top, #284B63 0%, #77A0A2 100%);\n    /* FF3.6-15 */\n    background: -webkit-linear-gradient(top, #284B63 0%, #77A0A2 100%);\n    /* Chrome10-25,Safari5.1-6 */\n    background: linear-gradient(to bottom, #284B63 0%, #77A0A2 100%);\n    /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */\n    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#284B63', endColorstr='#77A0A2',GradientType=0 );\n    /* IE6-9 */ }\n\n.view-profile-active navigation ul.navigation-list li.active {\n  background-color: transparent; }\n\n@media screen and (min-width: 768px) {\n  .view-profile-active navigation ul.navigation-list li:hover {\n    background-color: rgba(255, 255, 255, 0.4); } }\n\n.view-profile-no-header-title header.header-profile .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-profile-topbar header.header-profile {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-profile-topbar header.header-profile icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-profile-topbar header.header-profile icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-profile-topbar header.header-profile icon.menu-icon {\n      display: none; } }\n  .view-profile-topbar header.header-profile .header-title {\n    text-align: left;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-profile-topbar.view-profile-no-header-title header.header-profile .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-profile-title:not(.view-profile-topbar) header.header-profile {\n  top: 0;\n  bottom: unset;\n  opacity: 0;\n  visibility: hidden; }\n  .view-profile-title:not(.view-profile-topbar) header.header-profile icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-profile-title:not(.view-profile-topbar) header.header-profile icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-profile-title:not(.view-profile-topbar) header.header-profile icon.menu-icon {\n      display: none; } }\n  .view-profile-title:not(.view-profile-topbar) header.header-profile .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n  .view-profile-title:not(.view-profile-topbar) header.header-profile .header-title {\n    opacity: 0;\n    visibility: hidden; }\n\n.view-profile-title nav-section.app-profile header.nav-section-header {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-profile-title nav-section.app-profile header.nav-section-header icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-profile-title nav-section.app-profile header.nav-section-header icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-profile-title nav-section.app-profile header.nav-section-header icon.menu-icon {\n      display: none; } }\n  .view-profile-title nav-section.app-profile header.nav-section-header .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n\n.view-profile-peek header.header-profile {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-profile-peek header.header-profile icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-profile-peek header.header-profile .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-profile-next header.header-profile {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-profile-next header.header-profile icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-profile-next header.header-profile .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\nheader.header-projects {\n  background-color: #77A0A2;\n  color: rgba(0, 0, 0, 0.87); }\n  header.header-projects icon {\n    color: rgba(0, 0, 0, 0.87); }\n  header.header-projects .header-title {\n    color: rgba(0, 0, 0, 0.87); }\n\nnav-section.app-projects {\n  background-color: #77A0A2; }\n\n.background-container nav-section.app-projects + nav-section {\n  position: relative; }\n  .background-container nav-section.app-projects + nav-section:before {\n    content: \" \";\n    position: absolute;\n    top: 0;\n    right: 0;\n    left: 0;\n    min-height: 200px;\n    max-height: 200px;\n    width: 100%;\n    transform: translateY(-50%);\n    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#77A0A2+0,#D9D9D9+100 */\n    background: #77A0A2;\n    /* Old browsers */\n    background: -moz-linear-gradient(top, #77A0A2 0%, #D9D9D9 100%);\n    /* FF3.6-15 */\n    background: -webkit-linear-gradient(top, #77A0A2 0%, #D9D9D9 100%);\n    /* Chrome10-25,Safari5.1-6 */\n    background: linear-gradient(to bottom, #77A0A2 0%, #D9D9D9 100%);\n    /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */\n    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#77A0A2', endColorstr='#D9D9D9',GradientType=0 );\n    /* IE6-9 */ }\n\n.view-projects-active navigation ul.navigation-list li.active {\n  background-color: transparent; }\n\n@media screen and (min-width: 768px) {\n  .view-projects-active navigation ul.navigation-list li:hover {\n    background-color: rgba(255, 255, 255, 0.4); } }\n\n.view-projects-no-header-title header.header-projects .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-projects-topbar header.header-projects {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-projects-topbar header.header-projects icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-projects-topbar header.header-projects icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-projects-topbar header.header-projects icon.menu-icon {\n      display: none; } }\n  .view-projects-topbar header.header-projects .header-title {\n    text-align: left;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-projects-topbar.view-projects-no-header-title header.header-projects .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-projects-title:not(.view-projects-topbar) header.header-projects {\n  top: 0;\n  bottom: unset;\n  opacity: 0;\n  visibility: hidden; }\n  .view-projects-title:not(.view-projects-topbar) header.header-projects icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-projects-title:not(.view-projects-topbar) header.header-projects icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-projects-title:not(.view-projects-topbar) header.header-projects icon.menu-icon {\n      display: none; } }\n  .view-projects-title:not(.view-projects-topbar) header.header-projects .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n  .view-projects-title:not(.view-projects-topbar) header.header-projects .header-title {\n    opacity: 0;\n    visibility: hidden; }\n\n.view-projects-title nav-section.app-projects header.nav-section-header {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-projects-title nav-section.app-projects header.nav-section-header icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-projects-title nav-section.app-projects header.nav-section-header icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-projects-title nav-section.app-projects header.nav-section-header icon.menu-icon {\n      display: none; } }\n  .view-projects-title nav-section.app-projects header.nav-section-header .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n\n.view-projects-peek header.header-projects {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-projects-peek header.header-projects icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-projects-peek header.header-projects .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-projects-next header.header-projects {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-projects-next header.header-projects icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-projects-next header.header-projects .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\nheader.header-experience {\n  background-color: #D9D9D9;\n  color: rgba(0, 0, 0, 0.87); }\n  header.header-experience icon {\n    color: rgba(0, 0, 0, 0.87); }\n  header.header-experience .header-title {\n    color: rgba(0, 0, 0, 0.87); }\n\nnav-section.app-experience {\n  background-color: #D9D9D9; }\n\n.background-container nav-section.app-experience + nav-section {\n  position: relative; }\n  .background-container nav-section.app-experience + nav-section:before {\n    content: \" \";\n    position: absolute;\n    top: 0;\n    right: 0;\n    left: 0;\n    min-height: 200px;\n    max-height: 200px;\n    width: 100%;\n    transform: translateY(-50%);\n    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#D9D9D9+0,#353535+100 */\n    background: #D9D9D9;\n    /* Old browsers */\n    background: -moz-linear-gradient(top, #D9D9D9 0%, #353535 100%);\n    /* FF3.6-15 */\n    background: -webkit-linear-gradient(top, #D9D9D9 0%, #353535 100%);\n    /* Chrome10-25,Safari5.1-6 */\n    background: linear-gradient(to bottom, #D9D9D9 0%, #353535 100%);\n    /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */\n    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#D9D9D9', endColorstr='#353535',GradientType=0 );\n    /* IE6-9 */ }\n\n.view-experience-active navigation ul.navigation-list li.active {\n  background-color: transparent; }\n\n@media screen and (min-width: 768px) {\n  .view-experience-active navigation ul.navigation-list li:hover {\n    background-color: rgba(255, 255, 255, 0.4); } }\n\n.view-experience-no-header-title header.header-experience .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-experience-topbar header.header-experience {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-experience-topbar header.header-experience icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-experience-topbar header.header-experience icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-experience-topbar header.header-experience icon.menu-icon {\n      display: none; } }\n  .view-experience-topbar header.header-experience .header-title {\n    text-align: left;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-experience-topbar.view-experience-no-header-title header.header-experience .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-experience-title:not(.view-experience-topbar) header.header-experience {\n  top: 0;\n  bottom: unset;\n  opacity: 0;\n  visibility: hidden; }\n  .view-experience-title:not(.view-experience-topbar) header.header-experience icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-experience-title:not(.view-experience-topbar) header.header-experience icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-experience-title:not(.view-experience-topbar) header.header-experience icon.menu-icon {\n      display: none; } }\n  .view-experience-title:not(.view-experience-topbar) header.header-experience .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n  .view-experience-title:not(.view-experience-topbar) header.header-experience .header-title {\n    opacity: 0;\n    visibility: hidden; }\n\n.view-experience-title nav-section.app-experience header.nav-section-header {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-experience-title nav-section.app-experience header.nav-section-header icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-experience-title nav-section.app-experience header.nav-section-header icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-experience-title nav-section.app-experience header.nav-section-header icon.menu-icon {\n      display: none; } }\n  .view-experience-title nav-section.app-experience header.nav-section-header .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n\n.view-experience-peek header.header-experience {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-experience-peek header.header-experience icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-experience-peek header.header-experience .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-experience-next header.header-experience {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-experience-next header.header-experience icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-experience-next header.header-experience .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\nheader.header-education {\n  background-color: #353535;\n  color: white; }\n  header.header-education icon {\n    color: white; }\n  header.header-education .header-title {\n    color: white; }\n\nnav-section.app-education {\n  background-color: #353535; }\n\n.background-container nav-section.app-education + nav-section {\n  position: relative; }\n  .background-container nav-section.app-education + nav-section:before {\n    content: \" \";\n    position: absolute;\n    top: 0;\n    right: 0;\n    left: 0;\n    min-height: 200px;\n    max-height: 200px;\n    width: 100%;\n    transform: translateY(-50%);\n    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#353535+0,#D9D9D9+100 */\n    background: #353535;\n    /* Old browsers */\n    background: -moz-linear-gradient(top, #353535 0%, #D9D9D9 100%);\n    /* FF3.6-15 */\n    background: -webkit-linear-gradient(top, #353535 0%, #D9D9D9 100%);\n    /* Chrome10-25,Safari5.1-6 */\n    background: linear-gradient(to bottom, #353535 0%, #D9D9D9 100%);\n    /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */\n    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#353535', endColorstr='#D9D9D9',GradientType=0 );\n    /* IE6-9 */ }\n\n.view-education-active navigation ul.navigation-list li.active {\n  background-color: transparent; }\n\n@media screen and (min-width: 768px) {\n  .view-education-active navigation ul.navigation-list li:hover {\n    background-color: rgba(255, 255, 255, 0.4); } }\n\n.view-education-no-header-title header.header-education .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-education-topbar header.header-education {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-education-topbar header.header-education icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-education-topbar header.header-education icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-education-topbar header.header-education icon.menu-icon {\n      display: none; } }\n  .view-education-topbar header.header-education .header-title {\n    text-align: left;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-education-topbar.view-education-no-header-title header.header-education .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-education-title:not(.view-education-topbar) header.header-education {\n  top: 0;\n  bottom: unset;\n  opacity: 0;\n  visibility: hidden; }\n  .view-education-title:not(.view-education-topbar) header.header-education icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-education-title:not(.view-education-topbar) header.header-education icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-education-title:not(.view-education-topbar) header.header-education icon.menu-icon {\n      display: none; } }\n  .view-education-title:not(.view-education-topbar) header.header-education .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n  .view-education-title:not(.view-education-topbar) header.header-education .header-title {\n    opacity: 0;\n    visibility: hidden; }\n\n.view-education-title nav-section.app-education header.nav-section-header {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-education-title nav-section.app-education header.nav-section-header icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-education-title nav-section.app-education header.nav-section-header icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-education-title nav-section.app-education header.nav-section-header icon.menu-icon {\n      display: none; } }\n  .view-education-title nav-section.app-education header.nav-section-header .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n\n.view-education-peek header.header-education {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-education-peek header.header-education icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-education-peek header.header-education .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-education-next header.header-education {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-education-next header.header-education icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-education-next header.header-education .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\nheader.header-technology {\n  background-color: #D9D9D9;\n  color: rgba(0, 0, 0, 0.87); }\n  header.header-technology icon {\n    color: rgba(0, 0, 0, 0.87); }\n  header.header-technology .header-title {\n    color: rgba(0, 0, 0, 0.87); }\n\nnav-section.app-technology {\n  background-color: #D9D9D9; }\n\n.view-technology-active navigation ul.navigation-list li.active {\n  background-color: transparent; }\n\n@media screen and (min-width: 768px) {\n  .view-technology-active navigation ul.navigation-list li:hover {\n    background-color: rgba(255, 255, 255, 0.4); } }\n\n.view-technology-no-header-title header.header-technology .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-technology-topbar header.header-technology {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-technology-topbar header.header-technology icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-technology-topbar header.header-technology icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-technology-topbar header.header-technology icon.menu-icon {\n      display: none; } }\n  .view-technology-topbar header.header-technology .header-title {\n    text-align: left;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-technology-topbar.view-technology-no-header-title header.header-technology .header-title {\n  opacity: 0;\n  visibility: hidden; }\n\n.view-technology-title:not(.view-technology-topbar) header.header-technology {\n  top: 0;\n  bottom: unset;\n  opacity: 0;\n  visibility: hidden; }\n  .view-technology-title:not(.view-technology-topbar) header.header-technology icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-technology-title:not(.view-technology-topbar) header.header-technology icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-technology-title:not(.view-technology-topbar) header.header-technology icon.menu-icon {\n      display: none; } }\n  .view-technology-title:not(.view-technology-topbar) header.header-technology .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n  .view-technology-title:not(.view-technology-topbar) header.header-technology .header-title {\n    opacity: 0;\n    visibility: hidden; }\n\n.view-technology-title nav-section.app-technology header.nav-section-header {\n  top: 0;\n  bottom: unset;\n  opacity: 1;\n  visibility: visible; }\n  .view-technology-title nav-section.app-technology header.nav-section-header icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0; }\n  .view-technology-title nav-section.app-technology header.nav-section-header icon.menu-icon {\n    margin-right: auto;\n    display: block; }\n  @media screen and (min-width: 1200px) {\n    .view-technology-title nav-section.app-technology header.nav-section-header icon.menu-icon {\n      display: none; } }\n  .view-technology-title nav-section.app-technology header.nav-section-header .header-title {\n    text-align: center;\n    transform: translate3d(0, 150%, 0);\n    font-size: 56px; }\n\n.view-technology-peek header.header-technology {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-technology-peek header.header-technology icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-technology-peek header.header-technology .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-technology-next header.header-technology {\n  top: unset;\n  bottom: 0;\n  opacity: 1;\n  visibility: visible; }\n  .view-technology-next header.header-technology icon.direction-icon {\n    margin-left: auto;\n    margin-right: 0;\n    transform: rotate(180deg); }\n  .view-technology-next header.header-technology .header-title {\n    text-align: right;\n    transform: translate3d(0, 0, 0);\n    font-size: 24px; }\n\n.view-title-topbar header.app-header icon.direction-icon {\n  display: none; }\n\n@media screen and (max-width: 1200px) {\n  container > header:first-of-type {\n    visibility: visible;\n    opacity: 1; }\n  container > main,\n  container > header {\n    animation-timing-function: ease-out;\n    animation-fill-mode: forwards;\n    animation-duration: 0.3s; }\n  container.showing-navigation > main,\n  container.showing-navigation > header {\n    animation-name: animate-main-right; }\n  container.show-navigation > main,\n  container.show-navigation > header {\n    transform: translate3d(200px, 0, 0); }\n  container.hiding-navigation > main,\n  container.hiding-navigation > header {\n    animation-name: animate-main-default; }\n  container.hide-navigatin > main,\n  container.hide-navigatin > header {\n    transform: translate3d(0, 0, 0); } }\n\n.profile-background {\n  background-color: #284B63; }\n\n.technology-background {\n  background-color: #D9D9D9; }\n\n.projects-background {\n  background-color: #77A0A2; }\n\n.experience-background {\n  background-color: #D9D9D9; }\n\n.education-background {\n  background-color: #353535; }\n\n.app-title {\n  background-color: #D9D9D9; }\n  .app-title-header {\n    background-color: #D9D9D9; }\n\n.app-profile {\n  background-color: #284B63; }\n  .app-profile article {\n    flex: 1 0 auto;\n    display: flex;\n    flex-direction: column;\n    align-items: stretch;\n    justify-content: flex-start; }\n  .app-profile .profile-image {\n    flex: 0 0 258px;\n    margin: 0 auto;\n    text-align: center; }\n    .app-profile .profile-image img {\n      height: 250px;\n      width: 250px;\n      border-radius: 100%;\n      border: 4px solid white;\n      box-shadow: 0 10px 10px -6px rgba(0, 0, 0, 0.2); }\n  @media screen and (min-width: 1200px) {\n    .app-profile {\n      text-align: center; }\n      .app-profile .profile-image {\n        flex: 0 0 358px; }\n        .app-profile .profile-image img {\n          width: 350px;\n          height: 350px; } }\n  .app-profile .profile-content {\n    flex: 1; }\n  .app-profile ul.profile-detail {\n    list-style: none;\n    margin: 24px 0;\n    padding: 0; }\n    .app-profile ul.profile-detail li {\n      min-height: 48px;\n      line-height: 48px;\n      font-size: 24px;\n      color: white;\n      margin-bottom: 12px;\n      display: flex;\n      flex-direction: column;\n      align-items: flex-start;\n      justify-content: flex-start;\n      padding-bottom: 12px; }\n      .app-profile ul.profile-detail li label {\n        font-size: 14px;\n        padding-right: 12px;\n        color: rgba(255, 255, 255, 0.7);\n        font-weight: bold;\n        margin: 0;\n        flex: 1;\n        padding-left: 24px; }\n      .app-profile ul.profile-detail li .value {\n        flex: 1;\n        display: flex;\n        flex-direction: column;\n        align-items: stretch;\n        justify-content: flex-start;\n        font-size: inherit;\n        line-height: inherit;\n        color: inherit; }\n      .app-profile ul.profile-detail li p {\n        font-size: inherit;\n        line-height: inherit;\n        color: inherit;\n        text-align: left;\n        padding-left: 24px;\n        margin: 0;\n        border-left: 1px solid rgba(255, 255, 255, 0.12); }\n    @media screen and (min-width: 768px) {\n      .app-profile ul.profile-detail li {\n        padding-left: 56px;\n        padding-right: 56px;\n        flex-direction: row;\n        align-items: flex-start;\n        justify-content: flex-start; }\n        .app-profile ul.profile-detail li label {\n          text-align: right;\n          padding-left: 0; }\n        .app-profile ul.profile-detail li p {\n          padding-left: 12px; } }\n  .app-profile-header {\n    background-color: #284B63; }\n    .app-profile-header icon {\n      color: white; }\n    .app-profile-header .header-title {\n      color: white; }\n  .app-profile .header-title {\n    color: white; }\n\n.app-technology {\n  background-color: #D9D9D9; }\n  .app-technology h1 {\n    font-size: 32px;\n    padding-left: 24px; }\n  .app-technology ul {\n    list-style: none;\n    margin: 0 12px;\n    padding: 0;\n    display: flex;\n    flex-wrap: wrap;\n    flex-direction: row;\n    align-items: flex-start;\n    justify-content: flex-start;\n    max-width: 100%; }\n    .app-technology ul li {\n      display: inline-block;\n      margin: 12px;\n      max-width: 100px;\n      min-width: 100px;\n      max-height: 136px;\n      min-height: 136px;\n      background-color: white;\n      box-shadow: 0 3px 4px -3px rgba(0, 0, 0, 0.2), 0 3px 4px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.1); }\n      .app-technology ul li img {\n        display: block;\n        width: inherit;\n        max-width: inherit; }\n      .app-technology ul li span {\n        display: block;\n        text-align: center;\n        font-size: 18px;\n        font-weight: bold;\n        line-height: 24px; }\n  .app-technology-header {\n    background-color: #D9D9D9; }\n\n.app-projects {\n  background-color: #77A0A2; }\n  .app-projects article {\n    margin-bottom: 24px;\n    border-bottom: 1px solid rgba(0, 0, 0, 0.12);\n    display: flex;\n    flex-direction: column;\n    align-items: flex-start;\n    justify-content: flex-start;\n    padding: 0 12px; }\n    .app-projects article:last-child {\n      border-bottom: none; }\n    .app-projects article > .card-image {\n      height: auto;\n      max-width: 120px;\n      min-width: 120px;\n      height: 120px;\n      width: 120px;\n      margin: 24px auto;\n      text-align: center;\n      background: white;\n      border-radius: 100%;\n      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2); }\n      .app-projects article > .card-image img {\n        max-width: 110px;\n        max-height: 110px;\n        margin: 5px; }\n    .app-projects article > .card-content {\n      order: -1;\n      flex: 1 1 auto;\n      padding-top: 20px;\n      height: auto;\n      display: flex;\n      flex-direction: column;\n      align-items: flex-start;\n      justify-content: flex-start; }\n    .app-projects article .card-heading {\n      display: flex;\n      flex-direction: column;\n      align-items: flex-start;\n      justify-content: flex-start;\n      margin-bottom: 12px;\n      padding-top: 12px;\n      width: 100%; }\n    .app-projects article .card-title {\n      flex: 1;\n      font-weight: normal;\n      font-size: 36px;\n      color: rgba(0, 0, 0, 0.54);\n      padding-left: 24px;\n      padding-right: 12px;\n      font-size: 24px;\n      font-weight: bold; }\n    .app-projects article .card-date {\n      margin-left: auto;\n      text-align: right;\n      font-size: 14px;\n      padding-right: 12px;\n      letter-spacing: 1.34px;\n      font-weight: bold;\n      color: rgba(0, 0, 0, 0.54);\n      padding-right: 24px;\n      padding-left: 12px;\n      margin-left: 12px; }\n    .app-projects article .card-details {\n      list-style: none;\n      margin: 0;\n      padding: 0; }\n      .app-projects article .card-details li {\n        min-height: 36px;\n        display: flex;\n        flex-direction: row;\n        align-items: flex-start;\n        justify-content: flex-start;\n        padding-left: 24px;\n        padding-right: 24px; }\n      .app-projects article .card-details icon {\n        color: rgba(0, 0, 0, 0.87);\n        flex: 0 0 auto;\n        margin: 6px;\n        font-size: 16px; }\n      .app-projects article .card-details span.text {\n        flex: 0 1 auto;\n        padding-top: 4px;\n        line-height: 1.34;\n        font-size: 16px;\n        font-weight: normal;\n        color: rgba(0, 0, 0, 0.87); }\n    .app-projects article .card-tags {\n      margin: 0 0 24px 0;\n      padding: 0 24px;\n      list-style: none;\n      display: flex;\n      flex-direction: row;\n      align-items: flex-start;\n      justify-content: flex-start;\n      flex-wrap: wrap; }\n      .app-projects article .card-tags li {\n        display: inline;\n        padding: 6px 12px;\n        white-space: nowrap;\n        font-size: 12px;\n        font-weight: normal;\n        color: rgba(0, 0, 0, 0.87);\n        margin: 0 8px 0 0; }\n  @media screen and (min-width: 1200px) {\n    .app-projects article {\n      padding: 0 56px;\n      flex-direction: row; }\n      .app-projects article .card-image {\n        margin: 24px; }\n      .app-projects article .card-title {\n        font-size: 36px;\n        font-weight: normal; } }\n  .app-projects .project-image {\n    margin-left: 24px;\n    width: 100px;\n    height: 100px;\n    position: relative;\n    flex: 0 0 auto;\n    height: 108px;\n    width: 108px;\n    background-color: white;\n    box-shadow: 0 4px 4px -3px rgba(0, 0, 0, 0.1), 0 3px 4px rgba(0, 0, 0, 0.2); }\n    .app-projects .project-image img {\n      display: block;\n      max-height: 80px;\n      max-width: 80px;\n      margin: 10px auto; }\n  .app-projects .project-heading {\n    display: flex;\n    flex-direction: column;\n    align-items: flex-start;\n    justify-content: flex-start;\n    margin-bottom: 12px;\n    padding-top: 12px;\n    width: 100%;\n    align-items: flex-end; }\n  .app-projects .project-title {\n    flex: 1;\n    font-weight: normal;\n    font-size: 36px;\n    color: rgba(0, 0, 0, 0.54);\n    padding-left: 24px;\n    padding-right: 12px; }\n  .app-projects .project-date {\n    margin-left: auto;\n    text-align: right;\n    font-size: 14px;\n    padding-right: 12px;\n    letter-spacing: 1.34px;\n    font-weight: bold;\n    color: rgba(0, 0, 0, 0.54);\n    padding-right: 24px;\n    padding-left: 12px; }\n  .app-projects ul.project-details {\n    list-style: none;\n    margin: 0;\n    padding: 0; }\n    .app-projects ul.project-details li {\n      min-height: 36px;\n      display: flex;\n      flex-direction: row;\n      align-items: flex-start;\n      justify-content: flex-start;\n      padding-left: 24px;\n      padding-right: 24px; }\n    .app-projects ul.project-details icon {\n      color: rgba(0, 0, 0, 0.54);\n      flex: 0 0 auto;\n      margin: 6px;\n      font-size: 16px; }\n    .app-projects ul.project-details span.text {\n      flex: 0 1 auto;\n      padding-top: 4px;\n      line-height: 1.34;\n      font-size: 16px;\n      font-weight: normal;\n      color: rgba(0, 0, 0, 0.87); }\n  .app-projects-header {\n    background-color: #77A0A2; }\n\n.app-experience {\n  background-color: #D9D9D9; }\n  .app-experience article {\n    margin-bottom: 24px;\n    border-bottom: 1px solid rgba(0, 0, 0, 0.12);\n    display: flex;\n    flex-direction: column;\n    align-items: flex-start;\n    justify-content: flex-start;\n    padding: 0 12px; }\n    .app-experience article:last-child {\n      border-bottom: none; }\n    .app-experience article > .card-image {\n      height: auto;\n      max-width: 120px;\n      min-width: 120px;\n      height: 120px;\n      width: 120px;\n      margin: 24px auto;\n      text-align: center;\n      background: white;\n      border-radius: 100%;\n      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2); }\n      .app-experience article > .card-image img {\n        max-width: 110px;\n        max-height: 110px;\n        margin: 5px; }\n    .app-experience article > .card-content {\n      order: -1;\n      flex: 1 1 auto;\n      padding-top: 20px;\n      height: auto;\n      display: flex;\n      flex-direction: column;\n      align-items: flex-start;\n      justify-content: flex-start; }\n    .app-experience article .card-heading {\n      display: flex;\n      flex-direction: column;\n      align-items: flex-start;\n      justify-content: flex-start;\n      margin-bottom: 12px;\n      padding-top: 12px;\n      width: 100%; }\n    .app-experience article .card-title {\n      flex: 1;\n      font-weight: normal;\n      font-size: 36px;\n      color: rgba(0, 0, 0, 0.54);\n      padding-left: 24px;\n      padding-right: 12px;\n      font-size: 24px;\n      font-weight: bold; }\n    .app-experience article .card-date {\n      margin-left: auto;\n      text-align: right;\n      font-size: 14px;\n      padding-right: 12px;\n      letter-spacing: 1.34px;\n      font-weight: bold;\n      color: rgba(0, 0, 0, 0.54);\n      padding-right: 24px;\n      padding-left: 12px;\n      margin-left: 12px; }\n    .app-experience article .card-details {\n      list-style: none;\n      margin: 0;\n      padding: 0; }\n      .app-experience article .card-details li {\n        min-height: 36px;\n        display: flex;\n        flex-direction: row;\n        align-items: flex-start;\n        justify-content: flex-start;\n        padding-left: 24px;\n        padding-right: 24px; }\n      .app-experience article .card-details icon {\n        color: rgba(0, 0, 0, 0.87);\n        flex: 0 0 auto;\n        margin: 6px;\n        font-size: 16px; }\n      .app-experience article .card-details span.text {\n        flex: 0 1 auto;\n        padding-top: 4px;\n        line-height: 1.34;\n        font-size: 16px;\n        font-weight: normal;\n        color: rgba(0, 0, 0, 0.87); }\n    .app-experience article .card-tags {\n      margin: 0 0 24px 0;\n      padding: 0 24px;\n      list-style: none;\n      display: flex;\n      flex-direction: row;\n      align-items: flex-start;\n      justify-content: flex-start;\n      flex-wrap: wrap; }\n      .app-experience article .card-tags li {\n        display: inline;\n        padding: 6px 12px;\n        white-space: nowrap;\n        font-size: 12px;\n        font-weight: normal;\n        color: rgba(0, 0, 0, 0.87);\n        margin: 0 8px 0 0; }\n  @media screen and (min-width: 1200px) {\n    .app-experience article {\n      padding: 0 56px;\n      flex-direction: row; }\n      .app-experience article .card-image {\n        margin: 24px; }\n      .app-experience article .card-title {\n        font-size: 36px;\n        font-weight: normal; } }\n  .app-experience .xp-heading {\n    display: flex;\n    flex-direction: column;\n    align-items: flex-start;\n    justify-content: flex-start;\n    margin-bottom: 12px;\n    padding-top: 12px;\n    width: 100%; }\n  .app-experience .xp-title {\n    flex: 1;\n    font-weight: normal;\n    font-size: 36px;\n    color: rgba(0, 0, 0, 0.54);\n    padding-left: 24px;\n    padding-right: 12px; }\n  .app-experience .xp-date {\n    margin-left: auto;\n    text-align: right;\n    font-size: 14px;\n    padding-right: 12px;\n    letter-spacing: 1.34px;\n    font-weight: bold;\n    color: rgba(0, 0, 0, 0.54);\n    padding-right: 24px;\n    padding-left: 12px; }\n  .app-experience ul.xp-details {\n    list-style: none;\n    margin: 0;\n    padding: 0; }\n    .app-experience ul.xp-details li {\n      min-height: 36px;\n      display: flex;\n      flex-direction: row;\n      align-items: flex-start;\n      justify-content: flex-start;\n      padding-left: 24px;\n      padding-right: 24px; }\n    .app-experience ul.xp-details icon {\n      color: rgba(0, 0, 0, 0.54);\n      flex: 0 0 auto;\n      margin: 6px;\n      font-size: 16px; }\n    .app-experience ul.xp-details span.text {\n      flex: 0 1 auto;\n      padding-top: 4px;\n      line-height: 1.34;\n      font-size: 16px;\n      font-weight: normal;\n      color: rgba(0, 0, 0, 0.87); }\n  .app-experience ul.xp-tech {\n    margin: 0 0 24px 0;\n    padding: 0 24px;\n    list-style: none;\n    display: flex;\n    flex-direction: row;\n    align-items: flex-start;\n    justify-content: flex-start;\n    flex-wrap: wrap; }\n    .app-experience ul.xp-tech li {\n      display: inline;\n      padding: 6px 12px;\n      white-space: nowrap;\n      font-size: 12px;\n      font-weight: normal;\n      color: #2196F3;\n      margin: 0 8px 0 0; }\n  .app-experience-header {\n    background-color: #D9D9D9; }\n\n.app-education {\n  background-color: #353535; }\n  .app-education article {\n    margin-bottom: 24px;\n    border-bottom: 1px solid rgba(255, 255, 255, 0.12);\n    display: flex;\n    flex-direction: column;\n    align-items: flex-start;\n    justify-content: flex-start;\n    padding: 0 12px; }\n    .app-education article:last-child {\n      border-bottom: none; }\n    .app-education article > .card-image {\n      height: auto;\n      max-width: 120px;\n      min-width: 120px;\n      height: 120px;\n      width: 120px;\n      margin: 24px auto;\n      text-align: center;\n      background: white;\n      border-radius: 100%;\n      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2); }\n      .app-education article > .card-image img {\n        max-width: 110px;\n        max-height: 110px;\n        margin: 5px; }\n    .app-education article > .card-content {\n      order: -1;\n      flex: 1 1 auto;\n      padding-top: 20px;\n      height: auto;\n      display: flex;\n      flex-direction: column;\n      align-items: flex-start;\n      justify-content: flex-start; }\n    .app-education article .card-heading {\n      display: flex;\n      flex-direction: column;\n      align-items: flex-start;\n      justify-content: flex-start;\n      margin-bottom: 12px;\n      padding-top: 12px;\n      width: 100%; }\n    .app-education article .card-title {\n      flex: 1;\n      font-weight: normal;\n      font-size: 36px;\n      color: rgba(255, 255, 255, 0.7);\n      padding-left: 24px;\n      padding-right: 12px;\n      font-size: 24px;\n      font-weight: bold; }\n    .app-education article .card-date {\n      margin-left: auto;\n      text-align: right;\n      font-size: 14px;\n      padding-right: 12px;\n      letter-spacing: 1.34px;\n      font-weight: bold;\n      color: rgba(255, 255, 255, 0.5);\n      padding-right: 24px;\n      padding-left: 12px;\n      margin-left: 12px; }\n    .app-education article .card-details {\n      list-style: none;\n      margin: 0;\n      padding: 0; }\n      .app-education article .card-details li {\n        min-height: 36px;\n        display: flex;\n        flex-direction: row;\n        align-items: flex-start;\n        justify-content: flex-start;\n        padding-left: 24px;\n        padding-right: 24px; }\n      .app-education article .card-details icon {\n        color: white;\n        flex: 0 0 auto;\n        margin: 6px;\n        font-size: 16px; }\n      .app-education article .card-details span.text {\n        flex: 0 1 auto;\n        padding-top: 4px;\n        line-height: 1.34;\n        font-size: 16px;\n        font-weight: normal;\n        color: white; }\n    .app-education article .card-tags {\n      margin: 0 0 24px 0;\n      padding: 0 24px;\n      list-style: none;\n      display: flex;\n      flex-direction: row;\n      align-items: flex-start;\n      justify-content: flex-start;\n      flex-wrap: wrap; }\n      .app-education article .card-tags li {\n        display: inline;\n        padding: 6px 12px;\n        white-space: nowrap;\n        font-size: 12px;\n        font-weight: normal;\n        color: white;\n        margin: 0 8px 0 0; }\n  @media screen and (min-width: 1200px) {\n    .app-education article {\n      padding: 0 56px;\n      flex-direction: row; }\n      .app-education article .card-image {\n        margin: 24px; }\n      .app-education article .card-title {\n        font-size: 36px;\n        font-weight: normal; } }\n  .app-education header {\n    color: white; }\n    .app-education header icon {\n      color: white; }\n  .app-education-header {\n    background-color: #353535;\n    color: white; }\n    .app-education-header icon {\n      color: white; }\n\n@media screen and (max-width: 1200px) {\n  .platform-ios container navigation {\n    opacity: 0;\n    visibility: hidden;\n    transition: opacity 0.3s ease 0s; }\n  .platform-ios container.offset-main-right navigation {\n    opacity: 1;\n    visibility: visible; }\n  .platform-ios container.animate-main-right navigation {\n    opacity: 1;\n    visibility: visible; }\n  .platform-ios container.animate-main-default navigation {\n    opacity: 0;\n    visibility: hidden; } }\n\n@media screen and (min-width: 1201px) {\n  container {\n    margin-left: 200px; }\n    container > header {\n      margin-left: 200px; }\n    container .header-title {\n      padding-left: 24px; }\n    container icon.menu-icon {\n      display: none !important; } }\n\n.ui-materialize-logo {\n  height: 100%;\n  width: 100%;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center; }\n  .ui-materialize-logo:before {\n    content: \"ui\";\n    display: block;\n    color: deeppink;\n    font-weight: bold;\n    font-size: 16px;\n    line-height: 20px; }\n  .ui-materialize-logo:after {\n    content: \"Materialize\";\n    display: block;\n    color: dimgrey;\n    font-weight: normal;\n    font-size: 20px; }\n\n.domx-logo {\n  height: 100%;\n  width: 100%;\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center; }\n  .domx-logo:before {\n    content: \"<\";\n    display: block;\n    color: darkorange;\n    font-weight: bold;\n    font-size: 30px;\n    line-height: 24px; }\n  .domx-logo:after {\n    content: \"dom-x\";\n    display: block;\n    color: indigo;\n    font-weight: normal;\n    font-size: 30px; }\n\narticle.card-mparticle .card-image img {\n  margin-top: 24px; }\n\narticle.card-plusamp .card-image img {\n  border-radius: 100%; }\n\narticle.card-his .card-image img {\n  margin-top: 45px; }\n\narticle.card-southwestern .card-image img {\n  margin-top: 26px; }\n"; });
+define('text!modules/header/header.html', ['module'], function(module) { module.exports = "<template><header ref=element class=app-header><div ripple class=header-content><nav class=left-nav><icon ico=menu class=menu-icon click.delegate=toggleNavigation($event)></icon></nav><nav class=center-nav><span ref=titleNode class=header-title>${props.title}</span></nav><nav class=right-nav><icon ico=arrow_back class=direction-icon click.delegate=navigateBack($event)></icon></nav></div></header></template>"; });
 define('text!modules/nav/nav.html', ['module'], function(module) { module.exports = "<template><ul><li repeat.for=\"items of leftNav\" click.delegate=\"navigateToItem($event, item)\"><a>${item.name}</a></li></ul><button click.delegate=buttonClicked($event)></button><ul><li repeat.for=\"items of rightNav\" click.delegate=\"navigateToItem($event, item)\"><a>${item.name}</a></li></ul></template>"; });
-define('text!modules/nav-section/nav-section.html', ['module'], function(module) { module.exports = "<template class=\"${view.isActive ? 'active' : ''} ${view.isScrolling ? 'scrolling' : ''} ${view.isPeeking ? 'peeking' : ''} ${view.isVisible ? 'visible' : ''}\"><section class=section-container><header ref=header show.bind=view.showTitle click.delegate=headerClicked($event) class=\"${positionClass} nav-section-header app-${view.name}-header absolute-top ${view.isVisible && view.isMiddle ? 'is-visible' : ''} ${view.alignTitleLeft ? 'align-title-left' : view.alignTitleRight ? 'align-title-right' : view.alignTitleCenter ? 'align-title-center' : ''} ${view.alignIconLeft ? 'align-icon-left' : view.alighIconRight ? 'align-icon-right' : ''} ${view.showDirectionIcon ? 'show-direction-icon' : 'hide-direction-icon'} ${view.isActive ? 'active' : ''} ${view.isScrolling ? 'scrolling' : ''} ${view.isPeeking ? 'peeking' : ''} ${view.isVisible ? 'visible' : ''}\"><icon if.bind=view.showDirectionIcon class=direction-icon ico=arrow_back></icon><span if.bind=view.title class=header-title>${view.title}</span></header><compose containerless view-model.bind=view.viewModel></compose><header ref=fixedBottomHeader class=\"nav-section-header header-${view.name}\"><icon ripple class=menu-icon click.delegate=toggleNavigation($event) ico=menu></icon><icon if.bind=\"view.viewIndex > 0\" click.delegate=navigateDirection($event) class=direction-icon ico=arrow_back></icon><span if.bind=view.title click.delegate=navigateDirection($event) class=header-title>${view.title}</span></header></section></template>"; });
-define('text!modules/navigation/navigation.html', ['module'], function(module) { module.exports = "<template><section><ul class=navigation-list><li ripple repeat.for=\"view of views\" class=\"${view.isActive ? 'active' : ''}\" click.delegate=navigateToView(view)><icon ico.bind=view.icon></icon><span class=text>${view.title}</span></li></ul></section></template>"; });
+define('text!modules/nav-section/nav-section.html', ['module'], function(module) { module.exports = "<template class=\"${view.shade.key}-tint-section ${view.isActive ? 'active' : ''} ${view.isScrolling ? 'scrolling' : ''} ${view.isPeeking ? 'peeking' : ''} ${view.isVisible ? 'visible' : ''}\"><section class=section-container><header ref=header show.bind=view.showTitle click.delegate=headerClicked($event) class=\"nav-section-header app-${view.name}-header\"><span if.bind=view.title class=header-title>${view.title}</span></header><compose containerless view-model.bind=view.viewModel></compose></section></template>"; });
+define('text!modules/navigation/navigation.html', ['module'], function(module) { module.exports = "<template><style>navigation ul li.active span.text{color:{};}</style><section css=\"background-color: ${props.fill}\"><ul class=navigation-list css=\"color: ${currentTint};\"><li ripple data-use-fill=${view.fill} repeat.for=\"view of views\" class=\"${view.isActive ? 'active' : ''}\" click.delegate=navigateToView(view)><icon ico.bind=view.icon></icon><span class=text>${view.title}</span></li><li></li></ul></section></template>"; });
 define('text!modules/profile/profile.html', ['module'], function(module) { module.exports = "<template><style>@media screen and (max-width:1200px){.app-profile .row{flex-direction:column}.app-profile .row .profile-info{width:100%}.app-profile .row .profile-info ul{margin:24px}}</style><article><div class=profile-image><img src=\"https://avatars0.githubusercontent.com/u/4668188?v=3&s=460\" alt=\"\"></div><div class=profile-content><ul class=profile-detail><li><label>Name</label><div class=value><p>${props.name}</p></div></li><li><label>Birthday</label><div class=value><p>${props.birthday}</p></div></li><li><label>Titles</label><div class=value><p repeat.for=\"title of props.titles\">${title}</p></div></li><li><label>Locations</label><div class=value><p repeat.for=\"loc of props.locations\">${loc}</p></div></li><li><label>Info</label><div class=value><p>${props.info}</p></div></li></ul></div></article></template>"; });
 define('text!modules/projects/projects.html', ['module'], function(module) { module.exports = "<template><template repeat.for=\"project of props.projects\"><article class=card-${project.id}><div class=card-image><span if.bind=\"project.className && !project.image\" class=${project.className}></span><img if.bind=project.image class=${project.className} src.bind=project.image alt.bind=project.name></div><div class=card-content><div class=card-heading><div class=card-title>${project.name}</div><div class=card-date>${project.date}</div></div><ul class=card-details><li repeat.for=\"note of project.notes\"><icon ico=chevron_right></icon><span class=text>${note}</span></li></ul><ul class=card-tags><li repeat.for=\"stack of project.stack\">${stack}</li></ul></div></article></template></template>"; });
 define('text!modules/technology/technology.html', ['module'], function(module) { module.exports = "<template><template repeat.for=\"tech of props.technologies\"><article><h1>${tech.title}</h1><ul><li repeat.for=\"item of tech.list\"><img src.bind=item.img alt.bind=item.name><span class=text>${item.title}</span></li></ul></article></template></template>"; });

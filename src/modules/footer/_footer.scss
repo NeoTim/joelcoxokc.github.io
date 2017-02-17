@@ -1,10 +1,56 @@
 footer.app-footer {
-    nav.left-nav {}
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    min-height: $header-height;
+    z-index: 6;
+    font-size: 24px;
+    line-height: $header-height;
+    color: $dark-tint-primary;
+    max-height: $header-height;
+
+    .footer-content {
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: flex-start;
+        font-size: inherit;
+        line-height: inherit;
+        color: inherit;
+    }
+
+
+    icon, span, nav {
+        color: inherit;
+        line-height: inherit;
+        cursor: pointer;
+    }
+
+    span, nav {
+        font-size: inherit;
+    }
+
+    icon {
+        width: 56px;
+        text-align: center;
+    }
+
+    nav.left-nav {
+        flex: 0 0 auto;
+    }
 
     nav.center-nav {
+        flex: 1;
+        text-align: right;
     }
     
     nav.right-nav {
-
+        flex: 0 0 auto;
     }
 }

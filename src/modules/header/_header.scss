@@ -1,5 +1,57 @@
 header.app-header {
+
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    min-height: $header-height;
+    line-height: $header-height;
+    background-color: $theme-tan;
+    color: $dark-tint-primary;
+    font-size: 24px;
+    border-bottom: $dark-tint-divider;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 6;
+    border-width: 0;
+    border-color: $dark-tint-divider;
+
+    .header-content {
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: flex-start;
+        font-size: inherit;
+        line-height: inherit;
+        background-color: inherit;
+        color: inherit;
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
+        border-bottom-color: inherit;
+    }
+
+    icon, span {
+        color: inherit;
+        line-height: inherit;
+        cursor: pointer;
+    }
+
+    icon {
+        width: 56px;
+        text-align: center;
+    }
+
+    span {
+        font-size: inherit;
+    }
+
     nav {
+        font-size: inherit;
+        line-height: inherit;
+        color: inherit;
         position: relative;
         display: block;
         flex: 0 0 auto;

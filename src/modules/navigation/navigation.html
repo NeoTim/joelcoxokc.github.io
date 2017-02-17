@@ -1,10 +1,16 @@
 <template>
-    <section>
-        <ul class="navigation-list">
-            <li ripple repeat.for="view of views" class="${view.isActive ? 'active' : ''}" click.delegate="navigateToView(view)">
+    <style>
+        navigation ul li.active span.text {
+            color: ${currentTint};
+        }
+    </style>
+    <section css="background-color: ${props.fill}">
+        <ul class="navigation-list"  css="color: ${currentTint};">
+            <li ripple data-use-fill="${view.fill}" repeat.for="view of views" class="${view.isActive ? 'active' : ''}" click.delegate="navigateToView(view)">
                 <icon ico.bind="view.icon"></icon>
                 <span class="text">${view.title}</span>
             </li>
+            <li></li>
         </ul>
     </section>
 </template>

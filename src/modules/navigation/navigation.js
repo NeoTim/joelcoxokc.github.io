@@ -8,16 +8,32 @@ export class Navigation {
     
     @bindable visibility = false;
 
+    props = {
+        fill: '#FFFFFF',
+        activeTint: ''
+    };
+
+    currentFill = null;
+    currentTint = '';
+
+
     constructor(Element, EventAggregator, State) {
         this.element = Element;
         this.eventAggregator = EventAggregator;
         this.State = State;
+
+        this.eventAggregator.subscribe('navigation:props', props => {
+            Object.assign(this.props, props);
+            this.currentFill = this.props.fill;
+            this.currentTint = this.props.activeTint;
+        })
     }
 
     bind() {
-        this.eventAggregator.subscribe('state:navigation:toggle', ()=> {
+        this.eventAggregator.subscribe('navigation:toggle', ()=> {
             this.visibility = !this.visibility;
         })
+
         this.views = this.State.views.filter(view => view.hasOwnProperty('title'));
     }
 

@@ -27,6 +27,9 @@ export class Ripple {
     }
 
     _getBackground() {
+        if (this.element.dataset.useFill) {
+            return this.element.dataset.useFill;
+        }
         this._computed = this._computed || window.getComputedStyle(this.element);
         let background = this._computed.getPropertyValue('color');
         return background;

@@ -24,11 +24,9 @@ navigation {
     }
 
     > section {
-        padding-top: $header-height;
         flex: 1;
         display: block;
         width: 100%;
-        background-color: $ghost;
     }
 
     > footer {
@@ -41,6 +39,13 @@ navigation {
 
 
     ul.navigation-list {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        
+        flex: 1 0 auto;
         margin: 0;
         padding: 0;
         list-style: none;
@@ -49,7 +54,28 @@ navigation {
         align-items: flex-start;
         justify-content: flex-start;
 
+        &:after,
+        &:before {
+            display: block;            
+            content: " ";
+            background-color: $ghost;
+            width: 100%;
+        }
+
+        &:before {
+            min-height: $header-height;
+            max-height: $header-height;
+        }
+
+        &:after {
+            flex: 1 0 auto;
+        }
+
+        
+
         li {
+            flex: 1 0 auto;
+            color: inherit;
             width: 100%;
             pointer-events: auto;
             display: flex;
@@ -57,9 +83,13 @@ navigation {
             align-items: flex-start;
             justify-content: flex-start;
             min-height: 48px;
+            max-height: 48px;
             cursor: pointer;
+            background-color: $ghost;
+            transition: background-color 0.3s ease 0s;
 
             icon {
+                color: $dark-tint-primary;
                 pointer-events: none;
                 margin: 12px;
             }
@@ -72,21 +102,39 @@ navigation {
                 line-height: 48px;
                 letter-spacing: 1.34px;
                 user-select: none;
+                color: $dark-tint-primary;
             }
+
+            &.active {
+                icon, span.text {
+                    color: inherit;
+                }
+            }
+        }
+        
+        li:last-child {
+            height: auto;
+            flex: 1 0 auto;
+            background-color: $ghost;
         }
     }
 }
 
 @mixin navigation-list-state($fill: white, $tint: $dark-tint-primary) {
     navigation {
+        
         ul.navigation-list {
             li {
-                &:hover {
-                    background-color: transparentize($fill, 0.4);
-                }
                 &.active {
-                    background-color: $fill;
-                    color: $tint;
+                    background-color: transparent;
+                    // color: $tint;
+                }
+
+            }
+            
+            @media screen and (min-width: 768px) {
+                li:hover {
+                    background-color: rgba(255,255,255,0.4);
                 }
             }
         }

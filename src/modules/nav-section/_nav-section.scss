@@ -34,13 +34,49 @@ nav-section {
         flex-direction: column;
         align-self: stretch;
     }
+
+    header.nav-section-header {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        min-height: 56px;
+        font-size: 36px;
+        text-align: center;
+        transform: translateY(150%);
+        color: inherit;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: flex-start;
+
+        .header-title {
+            flex: 1;
+            display: block;
+            text-align: inherit;
+            font-size: inherit;
+            color: inherit;
+        }
+
+        @media screen and (min-width: 768px) {
+            font-size: 56px;
+        }
+    }
+
+    &.light-tint-section {
+        color: $light-tint-primary;
+    }
+
+    &.dark-tint-section {
+        color: $dark-tint-primary;
+    }
 }
 
 container > header.nav-section-header {
     border-bottom: 1px solid $dark-tint-divider;
 }
 
-.nav-section-header {
+.app-section-header {
     opacity: 0;
     visibility: hidden;
 

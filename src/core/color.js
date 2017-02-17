@@ -1,16 +1,23 @@
 export class Color {
-    blue      = '#2196F3';
-    blue200   = '#90CAF9';
-    blue700   = '#1976d2';
-    blue900   = '#0D47A1';
+    blue      = '#284B63';
+    teal      = '#77A0A2'
+    white     = '#FFFFFF';
+    tan       = '#D9D9D9';
+    brown     = '#353535';
 
-    cyan     = '#00BCD4';
-    cyan200  = '#80DEEA';
-    cyan700  = '#0097A7';
-    cyana200 = '#18FFFF';
+    light         = {
+        primary   : 'rgba(255,255,255,1)',
+        secondary : 'rgba(255,255,255,0.70)',
+        disabled  : 'rgba(255,255,255,0.50)',
+        divider   : 'rgba(255,255,255, 0.12)',
+        key       : 'light'
+    };
 
-    lime     = '#CDDC39';
-    lime200  = '#E6EE9C';
-    lime700  = '#AFB42B';
-    limeA400 = '#C6FF00';
+    dark = {
+        primary   : 'rgba(0,0,0,1)',
+        secondary : 'rgba(0,0,0,0.70)',
+        disabled  : 'rgba(0,0,0,0.50)',
+        divider   : 'rgba(0,0,0, 0.12)',
+        key       : 'dark',
+    };
 }

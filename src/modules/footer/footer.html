@@ -1,11 +1,14 @@
 <template>
-    <nav class="left-nav">
-        <icon ico="menu" class="menu-icon"></icon>
-    </nav>
-    <nav class="center-nav">
-        <span ref="nodes.title" class="header-title">${props.title}</span>
-    </nav>
-    <nav class="right-nav">
-        <icon ico="arrow_forward" class="direction-icon"></icon>
-    </nav>
+    <footer ref="element" class="app-footer">
+        <div ripple class="footer-content">
+            <nav class="left-nav">
+            </nav>
+            <nav class="center-nav">
+                <span ref="nodes.title" class="header-title">${props.title}</span>
+            </nav>
+            <nav class="right-nav">
+                <icon ico="arrow_forward" class="direction-icon" click.delegate="navigateForward($event)"></icon>
+            </nav>
+        </div>
+    </footer>
 </template>
