@@ -60,7 +60,7 @@ container > header.nav-section-header {
     }
 
     .header-title {
-        pointer-events: none;
+        user-select: none;
         padding: 0 56px;
         position: absolute;
         top: 0;

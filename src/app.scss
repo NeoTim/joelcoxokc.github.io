@@ -51,6 +51,7 @@ container {
     display: block;
     z-index: 3;
     pointer-events: none;
+    box-shadow: -2px 0 4px rgba(0,0,0,0.2);
 
     > * {
         pointer-events: auto;

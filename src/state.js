@@ -29,9 +29,10 @@ export class State {
         });
 
         this.eventAggregator.subscribe('state:scroll-to-view', view => {
-            if (view.coords.top() > document.body.scrollTop || view.coords.top() < document.body.scrollTop) {
+            if (view.coords.top() > document.body.scrollTop + 8 || view.coords.top() < document.body.scrollTop - 8) {
                 view.element.scrollIntoView();
             } else {
+                console.log('try-scroll')
                 let index = this.views.indexOf(view);
                 if (this.views[index-1]) {
                     this.views[index-1].element.scrollIntoView();

@@ -44,6 +44,7 @@ export class Ripple {
 
     ripple(event) {
         this.element.style.position = 'relative';
+        
         let container = this._getContainer();
         let background = this._getBackground();
         let ripple = this._createRipple();

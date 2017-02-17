@@ -21,7 +21,7 @@ ripple {
     left: 0;
     border-radius: 100%;
 
-    animation-timing-function: ease-out;
+    animation-timing-function: linear;
     animation-duration: 0.5s;
     animation-fill-mode: forwards;
     animation-name: show-ripple;
@@ -36,11 +36,6 @@ ripple {
     50% {
         opacity: 1;
         transform: scale(1);
-    }
-
-    80% {
-        opacity: 0.8;
-        transform: scale(2);
     }
 
     100% {
