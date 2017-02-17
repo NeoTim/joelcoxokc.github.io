@@ -254,22 +254,19 @@
         margin-bottom: 12px;
         
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         align-items: flex-start;
         justify-content: flex-start;
-
         padding-bottom: 12px;
-        padding-left: 56px;
-        padding-right: 56px;
         
         label {
             font-size: 14px;
+            padding-right: 12px;
             color: $label-tint;
             font-weight: bold;
             margin: 0;
             flex: 1;
-            text-align: right;
-            padding-right: 12px;
+            padding-left: 24px;
         }
 
         .value {
@@ -288,10 +285,29 @@
             line-height: inherit;
             color: inherit;
             text-align: left;
-            padding-left: 12px;
+            padding-left: 24px;
             margin: 0;
             border-left: 1px solid $divider-tint;
             
+        }
+    }
+
+    @media screen and (min-width: 768px) {
+        li {
+            padding-left: 56px; 
+            padding-right: 56px;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: flex-start;
+
+            label {
+                text-align: right;
+                padding-left: 0;
+            }
+
+            p {
+                padding-left: 12px;
+            }
         }
     }
 }
