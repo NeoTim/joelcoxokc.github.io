@@ -57,13 +57,16 @@ $red: #F44336;
 
 
 $theme-brown: #353535;
-$theme-teal: #5F888A;
+$theme-teal: #77a0a2;
 $theme-white: white;
 $theme-tan: #D9D9D9;
 $theme-blue: #284B63;
 
 
-$title-fill: white;
+// $title-fill: white;
+// $title-tint: $dark-tint-primary;
+
+$title-fill: $theme-tan;
 $title-tint: $dark-tint-primary;
 
 $profile-fill: $theme-blue;
@@ -78,7 +81,7 @@ $xp-tint: $dark-tint-primary;
 $edu-fill: $theme-brown;
 $edu-tint: $light-tint-primary;
 
-$tech-fill: $theme-white;
+$tech-fill: $theme-tan;
 $tech-tint: $dark-tint-primary;
 
 

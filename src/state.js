@@ -6,6 +6,12 @@ const viewPosition = {
     DOWN: 1
 }
 
+const ScrollInstruction = ()=> ({
+    top: document.body.scrollTop,
+    bottom: document.body.scrollTop + window.innerHeight,
+    height: window.innerHeight,
+});
+
 @inject(EventAggregator)
 export class State {
 
@@ -32,13 +38,16 @@ export class State {
             if (view.coords.top() > document.body.scrollTop + 8 || view.coords.top() < document.body.scrollTop - 8) {
                 view.element.scrollIntoView();
             } else {
-                console.log('try-scroll')
                 let index = this.views.indexOf(view);
                 if (this.views[index-1]) {
                     this.views[index-1].element.scrollIntoView();
                 }
             }
-        })
+        });
+
+        this.eventAggregator.subscribe('window:scroll', (event)=> {
+            this.handleScroll(event);
+        });
     }
 
     viewChanged(newView, lastView) {
@@ -60,65 +69,138 @@ export class State {
         }
     }
 
-    _viewChanged(view, lastView) {
-        console.log(view);
-        if (view) {
-            let position = view.position;
-            let leavePosition;
-            let enterPosition;
-            let leaveAnimation;
-            let enterAnimation;
-            let leaveClass;
-            let enterClass;
+    _updateViewPosition(scroll, view, index, views) {
+        let top = view.coords.top();
+        let bottom = view.coords.bottom();
+        let prev = views[index-1];
+        let halfScroll = scroll.top + (scroll.height / 2);
+        
+        view.isNext = false;
+        view.hideHeaderTitle = false;
 
-            if (position === viewPosition.DOWN) {
-                leavePosition = viewPosition.UP;
-                enterPosition = viewPosition.ACTIVE;
-                leaveAnimation = 'animate-view-active-to-up';
-                enterAnimation = 'animate-view-down-to-active';
-                leaveClass     = 'view-up';
-                enterClass     = 'view-active';
+        if (prev && prev.isActive && prev.showTopbar) {
+            view.isNext = true;
+        }
+
+        if (bottom < (scroll.top + 8)) {
+            view.isActive = false;
+            view.showTopbar = false;
+            view.showTitle = false;
+            return false;
+        }
+
+        if (top > scroll.bottom) {
+            view.isActive = false;
+            view.showTopbar = false;
+            view.showTitle = false;
+            return false;
+        }
+
+        if (top > scroll.top + 8 && top < halfScroll) {
+            view.isActive = true;
+            view.showTitle = true;
+            view.showTopbar = false;
+            return true;
+        }
+
+        if (top < scroll.top + 8 && bottom > halfScroll) {
+            view.isActive = true;
+            view.showTitle = true;
+            view.showTopbar = true;
+            view.hideHeaderTitle = true;
+
+            if (top < scroll.top - 8) {
+                view.hideHeaderTitle = false;
+                view.showTitle = false;
             }
-            else if (position === viewPosition.UP) {
-                leavePosition = viewPosition.DOWN;
-                enterPosition = viewPosition.ACTIVE;
-                leaveAnimation = 'animate-view-active-to-down';
-                enterAnimation = 'animate-view-up-to-active';
-                leaveClass     = 'view-down';
-                enterClass     = 'view-active';
+            return true;
+        }
+
+        if (top < scroll.top && bottom > (scroll.top + 56)) {
+            view.isActive = false;
+            view.showTitle = false;
+            view.showTopbar = true;
+        }
+
+        if (top > (scroll.top - 8) && top < (scroll.bottom - 56)) {
+            view.showTitle = true;
+            if (top > halfScroll) {
+                view.isActive = false;
+                view.showTopbar = false;
+            } else {
+                view.isActive = true;
+                return true;
+                view.showTopbar = false;
+            }
+            return false;
+        }
+
+        if (top < scroll.top + 8 && bottom > (scroll.top + 56)) {
+            view.isActive = true;
+            view.showTopbar = true;
+            
+            if (bottom < halfScroll) {
+                view.isActive = false;
+            }
+
+            if (top < scroll.top - 8) {
+                view.showTitle = false;
+            } else {
+                view.showTitle = true;
+            }
+            return true;
+        }
+    }
+
+    handleScroll(event) {
+        let scroll = ScrollInstruction();
+        let views  = this.views;
+        let view   = null;
+        let found  = null;
+        let next   = null;
+        let prev   = null;
+
+        let index  = 0;
+        while(view = views[index++]) {
+            view.isActive = false;
+            view.isNext = false;
+        }
+
+        index = 0;
+        view = null;
+
+        while(view = views[index++]) {
+            if (this._updateViewPosition(scroll, view, index-1, views)) {
+                found = view;
+                prev = views[index-2];
+                continue;
             }
             
-            if (lastView) {
-                let listener = null;
-                let position = lastView.position;
-                
-                lastView.element.addEventListener('animationend', listener = (event)=> {
-                    lastView.isActive = false;
-                    lastView.position = leavePosition;
-                    lastView.element.removeEventListener('animationend', listener);
-                    lastView.element.classList.add(leaveClass);
-                    lastView.element.classList.remove(leaveAnimation);
-                });
-                lastView.element.classList.remove('view-up', 'view-down', 'view-active');
-                lastView.element.classList.add(leaveAnimation);
+            if (found && !next) {
+                next = view;
             }
+        }
 
-            if (!this.isInitial) {
-                this.isInitial = true;
-                view.isActive = true;
-                view.position = enterPosition;
-            } else {
-                let listener = null;
-                view.element.addEventListener('animationend', listener = (event)=> {
-                    view.element.removeEventListener('animationend', listener);
-                    view.isActive = true;
-                    view.position = enterPosition;
-                    view.element.classList.add(enterClass);
-                    view.element.classList.remove(enterAnimation);
-                });
-                view.element.classList.remove('view-up', 'view-down', 'view-active');
-                view.element.classList.add(enterAnimation);
-            }
+        if (found && found.isActive && found.showTopbar) {
+            this.app.header.setBackground(found.getBackground());
+            this.app.header.setTitle(found.title);
+            this.app.header.setTitleVisibility(!found.hideHeaderTitle);
+            this.app.header.setVisibility(true);
+        }
+
+        if (prev & prev.showTopbar) {
+            this.app.header.setBackground(prev.getBackground());
+            this.app.header.setTitle(prev.title);
+            this.app.header.setTitleVisibility(!found.hideHeaderTitle);
+            this.app.header.setVisibility(true);
+        }
+
+        if (next && next.isNext) {
+            this.app.footer.setTitle(next.title);
+            this.app.footer.setBackground(next.getBackground());
+            this.app.footer.setVisibility(true);
+        } else {
+            this.app.footer.setVisibility(false);
         }
     }
 

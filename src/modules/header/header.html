@@ -1,19 +1,11 @@
 <template>
-    <nav>
-        <button>
-            <icon ico="home"></icon>
-        </button>
-        <button click.delegate="setActiveTab('profile')">
-            Profile
-        </button>
-        <button click.delegate="setActiveTab('projects')">
-            Projects
-        </button>
-        <button click.delegate="setActiveTab('experience')">
-            Experience
-        </button>
-        <button click.delegate="setActiveTab('educuation')">
-            Educuation
-        </button>
+    <nav class="left-nav">
+        <icon ico="menu" class="menu-icon"></icon>
+    </nav>
+    <nav class="center-nav">
+        <span ref="nodes.title" class="header-title">${props.title}</span>
+    </nav>
+    <nav class="right-nav">
+        <icon ico="arrow_back" class="direction-icon"></icon>
     </nav>
 </template>

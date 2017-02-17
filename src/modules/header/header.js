@@ -3,6 +3,9 @@ import { Core } from 'core/core';
 
 
 export class Header {
+
+    nodes = {};
+    
     constructor(State) {
         this.State = State;
     }
@@ -11,7 +14,19 @@ export class Header {
 
     }
 
-    setActiveTab(tab) {
-        this.State.view = tab;
+    setTitle(text) {
+        this.title = text;
+    }
+
+    setBackground(background) {
+        this.element.style.backgroundColor = background;
+    }
+
+    setTitleVisibility(isVisible) {
+        this.nodes.title.style.setProperty('display', isVisible ? '' : 'none');
+    }
+
+    setVisibility(isVisible) {
+        this.element.style.setProperty('display', isVisible ? '' : 'none');
     }
 }

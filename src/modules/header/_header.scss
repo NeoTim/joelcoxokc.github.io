@@ -1,0 +1,19 @@
+header.app-header {
+    nav {
+        position: relative;
+        display: block;
+        flex: 0 0 auto;
+    }
+
+    nav.left-nav {
+        order: -1;
+    }
+
+    nav.center-nav {
+        flex: 1;
+    }
+
+    nav.right-nav {
+        margin-left: auto;
+    }
+}

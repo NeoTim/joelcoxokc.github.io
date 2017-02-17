@@ -1,10 +1,10 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto');
 @import 'core/_variables.scss';
 @import 'core/_mixin.scss';
-@import 'modules/nav-bar/_nav-bar.scss';
 @import 'modules/nav-section/_nav-section.scss';
 @import 'modules/navigation/_navigation.scss';
 @import 'resources/_ripple.scss';
+@import 'modules/title/_title.scss';
 
 *::-webkit-scrollbar {
     display: none;
@@ -602,7 +602,7 @@ nav-section {
         color: deeppink;
         font-weight: bold;
         font-size: 16px;
-        line-height: 24px;
+        line-height: 20px;
     }
 
     &:after {
@@ -610,7 +610,7 @@ nav-section {
         display: block;
         color: dimgrey;
         font-weight: normal;
-        font-size: 24px;
+        font-size: 20px;
     }
 }
 
@@ -627,7 +627,7 @@ nav-section {
         display: block;
         color: darkorange;
         font-weight: bold;
-        font-size: 36px;
+        font-size: 30px;
         line-height: 24px;
     }
 
@@ -636,14 +636,14 @@ nav-section {
         display: block;
         color: indigo;
         font-weight: normal;
-        font-size: 36px;
+        font-size: 30px;
     }
 }
 
 article.card-mparticle {
     .card-image {
         img {
-            margin-top: 30px;
+            margin-top: 24px;
         }
     }
 }
@@ -659,7 +659,7 @@ article.card-plusamp {
 article.card-his {
     .card-image {
         img {
-            margin-top: 54px;
+            margin-top: 45px;
         }
     }
 }
@@ -667,7 +667,7 @@ article.card-his {
 article.card-southwestern {
     .card-image {
         img {
-            margin-top: 30px;
+            margin-top: 26px;
         }
     }
 }
