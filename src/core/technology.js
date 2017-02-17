@@ -5,7 +5,7 @@ export class TechnologyEnums {
     tools         = ['node', 'jspm', 'gulp', 'webpack', 'aurelia-cli', 'grunt', 'slush', 'yeoman'];
     data          = ['redis', 'neo4j', 'mongo', 'sql'];
     design        = ['ai', 'ps', 'sketch', 'zeplin'];
-    rolanguages   = ['C#', '.Net', '.Net core', 'java']
+    rolanguages   = ['C#', '.Net', '.Net core', 'java', 'Python']
     
     constructor() {
         this.process();
@@ -52,9 +52,10 @@ export class TechnologyEnums {
         
         this.list = list.map(listset => {
             listset.list = listset.list.map(item => {
+                let ref = item.replace(/\.|\#|core|\s/ig, '').toLowerCase();
                 return {
-                    img: `/scripts/logos/${item}-logo.png`,
-                    name: item,
+                    img: `/scripts/logos/${ref}-logo.png`,
+                    name: ref,
                     title: item[0].toUpperCase() + item.slice(1)
                 }
             })

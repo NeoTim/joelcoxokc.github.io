@@ -81,7 +81,7 @@
         }
     }
 
-    @media screen and (min-width: 1200px) {
+    @media screen and (min-width: 768px) {
         article {
             padding: 0 56px;
             flex-direction: row;
@@ -177,8 +177,10 @@
     max-height: 136px;
     min-height: 136px;
     background-color: white;
+    padding-bottom: 34px;
     box-shadow: 0 3px 4px -3px rgba(0,0,0,0.2), 0 3px 4px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.1);
-
+    position: relative;
+    
     img {
         display: block;
         width: inherit;
@@ -191,6 +193,12 @@
         font-size: 18px;
         font-weight: bold;
         line-height: 24px;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 24px;
+        margin-bottom: 10px;
     }
 }
 
@@ -274,7 +282,7 @@
             font-weight: bold;
             margin: 0;
             flex: 1;
-            padding-left: 24px;
+            padding-left: 36px;
         }
 
         .value {
@@ -293,7 +301,7 @@
             line-height: inherit;
             color: inherit;
             text-align: left;
-            padding-left: 24px;
+            padding-left: 36px;
             margin: 0;
             border-left: 1px solid $divider-tint;
             

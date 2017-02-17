@@ -415,17 +415,30 @@ $names: (title, profile, projects, experience, education, technology);
     
     h1 {
         font-size: 32px;
-        padding-left: 24px;
+        padding-left: 36px;
     }
+
 
     ul {
         @include grid-card-list();
+        margin-left: 24px;
+        margin-right: 24px;
 
         li {
             @include grid-card();
         }
     }
 
+    @media screen and (min-width: 768px) {
+        h1 {
+            padding-left: 56px;
+            padding-right: 56px;
+        }
+        ul {
+            margin-left: 44px;
+            margin-right: 44px;
+        }
+    }
     &-header {
         background-color: $tech-fill;
     }
@@ -678,5 +691,50 @@ article.card-southwestern {
         img {
             margin-top: 26px;
         }
+    }
+}
+
+
+li.card-item-net {
+    img {
+        margin-top: 30px;
+    }
+}
+
+li.card-item-node,
+li.card-item-mongo,
+li.card-item-python,
+li.card-item-postcss,
+li.card-item-express,
+li.card-item-sketch {
+    img {
+        width: 80% !important;
+        height: 80% !important;
+        margin: 10px;
+    }
+}
+
+li.card-item-sql,
+li.card-item-redis,
+li.card-item-grunt,
+li.card-item-coffeescript {
+    img {
+        margin-top: 10px;
+    }
+}
+
+li.card-item-html5,
+li.card-item-css3 {
+    img {
+        margin-top: 10px;
+    }
+}
+
+li.card-item-node,
+li.card-item-neo4j,
+li.card-item-cypher,
+li.card-item-express {
+    img {
+        margin-top: 30px;
     }
 }
