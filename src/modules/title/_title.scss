@@ -1,97 +1,113 @@
 .app-title {
     .ux-animation {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        width: 320px;
+        display: block;
+        width: 340px;
         height: 28px;
         margin: 0 auto;
         position: relative;
 
+        display: flex;
+        justify-content: center;
         animation-duration: 1s;
         animation-timing-function: ease;
         animation-fill-mode: forwards;
-        // opacity: 0;
-
-        span {
-            height: 28px;
-            line-height: 28px;
-        }
 
         span {
             display: block;
-            position: absolute;
-            top: 0;
+            float: left;
+            letter-spacing: 1.4px;
+            transform-origin: 150px;
         }
 
-        span.uix {
-            left: 0;
-            width: 50px;
-            transform: translatex(145px);
-        }
-
-        span.u {
-            left: 0;
-        }
-
-        span.i {
-            left: 15px;
-        }
-
-        span.x {
-            left: 15px;
-            opacity: 0;
-        }
-
-        span.architect {
-            right: 185px;
-            opacity: 0;
-            transform: translateX(110px);
-        }
-
-        span.designer {
-            right: 96px;
-            opacity: 0;
-            transform: translateX(80px);
-        }
-
-        span.engineer {
-            transform: translateX(50px);
-            opacity: 0;
-            right: 0;
-        }
-
-        &.animate {
-            animation-name: show-ux;
-
-            span.i {
-                animation-delay: 2.3s;
-                animation-name: start-spin-i;
-            }
-            span.x {
-                animation-delay: 2.5s;
-                transform: rotate(-180deg);
-                opacity: 0;
-                animation-name: start-spin-x;
+        .platform-ios & {
+            width: 340px;
+            text-align: center;
+            white-space: nowrap;
+            span {
+                letter-spacing: 1px;
+                font-size: 80%;
             }
         }
+        // opacity: 0;
 
-        &.split-ix {
-            span.ix {
-                span.i {
-                    animation-name: start-split-i;
-                }
-                span.x {
-                    transform: rotate(0deg);
-                    animation-name: start-split-x;
-                }
-            }
-        }
+        // span {
+        //     height: 28px;
+        //     line-height: 28px;
+        // }
 
-        &.animate-out {
-            animation-name: hide-ux;
-        }
+        // span {
+        //     display: block;
+        //     position: absolute;
+        //     top: 0;
+        // }
+
+        // span.uix {
+        //     left: 0;
+        //     width: 50px;
+        //     transform: translatex(145px);
+        // }
+
+        // span.u {
+        //     left: 0;
+        // }
+
+        // span.i {
+        //     left: 15px;
+        // }
+
+        // span.x {
+        //     left: 15px;
+        //     opacity: 0;
+        // }
+
+        // span.architect {
+        //     right: 185px;
+        //     opacity: 0;
+        //     transform: translateX(110px);
+        // }
+
+        // span.designer {
+        //     right: 96px;
+        //     opacity: 0;
+        //     transform: translateX(80px);
+        // }
+
+        // span.engineer {
+        //     transform: translateX(50px);
+        //     opacity: 0;
+        //     right: 0;
+        // }
+
+        // &.animate {
+        //     animation-name: show-ux;
+
+        //     span.i {
+        //         animation-delay: 2.3s;
+        //         animation-name: start-spin-i;
+        //     }
+        //     span.x {
+        //         animation-delay: 2.5s;
+        //         transform: rotate(-180deg);
+        //         opacity: 0;
+        //         animation-name: start-spin-x;
+        //     }
+        // }
+
+        // &.split-ix {
+        //     span.ix {
+        //         span.i {
+        //             animation-name: start-split-i;
+        //         }
+        //         span.x {
+        //             transform: rotate(0deg);
+        //             animation-name: start-split-x;
+        //         }
+        //     }
+        // }
+
+        // &.animate-out {
+        //     animation-name: hide-ux;
+        // }
     }
 }
 

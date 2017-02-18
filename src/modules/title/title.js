@@ -7,7 +7,229 @@ export class Title {
     }
 
     bind() {
-        this.startAnimation();
+        // this.startAnimation();
+        this.setupAnimation();
+    }
+
+    setupAnimation() {
+
+        let clearNodes;
+        let append;
+        let animate;
+        let reset;
+        let UX = this.uxAnimation;
+        let U = document.createElement('SPAN',{innerText:'U'});
+        let I = document.createElement('SPAN',{innerText:'I'});
+        let X = document.createElement('SPAN',{innerText:'X'});
+        
+        let nodes = chars.split('').map((t, i) => {
+            if (i === 0) {
+                t = '--' + t;
+            }
+            return document.createElement('SPAN', {innerHTML: t.replace(/\-/g, '&nbsp;')})
+        });
+
+        reset = ()=> {
+            UX.animate([
+                {opacity: 1},
+                {opacity: 0}
+            ], {
+                duration: 100,
+                fill: 'forwards',
+                delay: 5000
+            }).onfinish = ()=> {
+                this.setupAnimation();
+            }
+        }
+        
+        clearNodes = ()=> {
+            UX.innerHTML = '';
+        }
+
+        append = (node)=> {
+            UX.appendChild(node);
+        }
+
+        animate = (node)=> {
+            if (node === U) {
+                node.css({
+                    transform: 'translateX(150px)'
+                });
+                return node.animate([
+                    {
+                        offset: 0,
+                        opacity: 1,
+                        transform: 'translateX(150px)'
+                    },
+                    {
+                        offset: 0.9,
+                        opacity: 1,
+                        transform: 'translateX(150px)'
+                    },
+                    {
+                        offset: 1,
+                        opacity: 1,
+                        transform: 'translateX(0)'
+                    },
+                ], {
+                    duration: 1500,
+                    fill: 'forwards',
+                    delay: 1000
+                });
+            }
+            if (node === I) {
+                node.css({
+                    opacity: 0,
+                    transform: 'rotate(0deg) translateX(150px)'
+                })
+                return node.animate([
+                    {
+                        offset: 0,
+                        opacity: 0,
+                        transform: 'rotate(0deg) translateX(150px)'
+                    },
+                    {
+                        offset: 0.1,
+                        opacity: 1,
+                        transform: 'rotate(0deg) translateX(150px)'
+                    },
+                    {
+                        offset: 0.3,
+                        opacity: 1,
+                        transform: 'rotate(0deg) translateX(150px)'
+                    },
+                    {
+                        offset: 0.4,
+                        opacity: 0,
+                        transform: 'rotate(180deg) translateX(150px)'
+                    },
+                    {
+                        offset: 0.5,
+                        opacity: 0,
+                        transform: 'rotate(0deg) translateX(150px)'
+                    },
+                    {
+                        offset: 0.7,
+                        opacity: 0,
+                        transform: 'rotate(0deg) translateX(150px)'
+                    },
+                    {
+                        offset: 0.8,
+                        opacity: 0,
+                        transform: 'rotate(0deg) translateX(150px)'
+                    },
+                    {
+                        offset: 0.9,
+                        opacity: 1,
+                        transform: 'rotate(0deg) translateX(150px)'
+                    },
+                    {
+                        offset: 1,
+                        opacity: 1,
+                        transform: 'rotate(0deg) translateX(0)'
+                    }
+                ], {
+                    duration: 1500,
+                    delay: 1000,
+                    fill: 'forwards',
+                })
+            }
+            if (node === X) {
+                node.css({
+                    transform: 'rotate(-180deg) translatex(calc(-40% + 150px))',
+                    opacity: 0
+                });
+                return node.animate([
+                    {
+                        offset: 0,
+                        opacity: 0,
+                        transform: 'rotate(-180deg) translateX(calc(-40% + 150px))'
+                    },
+                    {
+                        offset: 0.3,
+                        opacity: 0,
+                        transform: 'rotate(-180deg) translateX(calc(-40% + 150px))'
+                    },
+                    {
+                        offset: 0.4,
+                        opacity: 1,
+                        transform: 'rotate(0deg) translateX(calc(-40% + 150px))'
+                    },
+                    {
+                        offset: 0.6,
+                        opacity: 1,
+                        transform: 'translateX(calc(-40% + 150px))'
+                    },
+                    {
+                        offset: 0.8,
+                        opacity: 1,
+                        transform: 'translateX(calc(-40% + 150px))'
+                    },
+                    {
+                        offset: 0.9,
+                        opacity: 1,
+                        transform: 'translateX(150px)'
+                    },
+                    {
+                        offset: 1,
+                        opacity: 1,
+                        transform: 'translateX(0)'
+                    }
+                ], {
+                    duration: 1500,
+                    delay: 1000,
+                    fill: 'forwards'
+                });
+            }
+            node.css({
+                opacity: 0
+            })
+            return node.animate([
+                {opacity: 0},
+                {opacity: 1}
+            ], {
+                duration: 500,
+                fill: 'forwards',
+                delay: 2500
+            });
+        }
+        
+        
+        clearNodes();
+        
+        UX.css({
+            opacity: 0
+        });
+
+        UX.animate([
+            {opacity: 0},
+            {opacity: 1}
+        ], {
+            duration: 100,
+            fill: 'forwards'
+        });
+
+        append(U);
+        animate(U);
+
+        append(I);
+        append(X);
+
+        animate(I);
+        animate(X);
+
+        let node;
+        let last = null;
+        while (node = nodes.shift()) {
+            append(node);
+            last = animate(node);
+        }
+
+        if (last) {
+            last.onfinish = ()=> {
+                reset();
+            }
+        }
     }
 
     startAnimation() {
