@@ -1527,17 +1527,6 @@ define('core/view',['exports'], function (exports) {
         return View;
     }();
 });
-define('resources/index',['exports'], function (exports) {
-  'use strict';
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.configure = configure;
-  function configure(config) {
-    config.globalResources(['./attributes/ripple']);
-  }
-});
 define('modules/index',['exports'], function (exports) {
     'use strict';
 
@@ -1549,111 +1538,16 @@ define('modules/index',['exports'], function (exports) {
         config.globalResources('./nav-section/nav-section', './navigation/navigation', './icon/icon');
     }
 });
-define('resources/attributes/ripple',['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
-    'use strict';
+define('resources/index',['exports'], function (exports) {
+  'use strict';
 
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-    exports.Ripple = undefined;
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    var _dec, _dec2, _class;
-
-    var Ripple = exports.Ripple = (_dec = (0, _aureliaFramework.customAttribute)('ripple'), _dec2 = (0, _aureliaFramework.inject)(Element, _aureliaFramework.ElementEvents), _dec(_class = _dec2(_class = function () {
-        function Ripple(Element, ElementEvents) {
-            _classCallCheck(this, Ripple);
-
-            this.element = Element;
-            this.events = ElementEvents;
-        }
-
-        Ripple.prototype.bind = function bind() {
-            var _this = this;
-
-            this.eventName = 'mousedown';
-
-            if (document.documentElement.classList.contains('platform-ios')) {
-                this.eventName = 'touchstart';
-            }
-
-            this.events.subscribe(this.eventName, function (event) {
-                _this.ripple(event);
-            });
-        };
-
-        Ripple.prototype._getContainer = function _getContainer() {
-            return this.container ? this.container : this.container = document.createElement('ripple-container');
-        };
-
-        Ripple.prototype._getBackground = function _getBackground() {
-            if (this.element.dataset.useFill) {
-                return this.element.dataset.useFill;
-            }
-            this._computed = this._computed || window.getComputedStyle(this.element);
-            var background = this._computed.getPropertyValue('color');
-            return background;
-        };
-
-        Ripple.prototype._createRipple = function _createRipple() {
-            var ripple = document.createElement('ripple');
-            var _listener = null;
-            ripple.addEventListener('animationend', _listener = function listener(event) {
-                ripple.parentNode.removeChild(ripple);
-                ripple.removeEventListener('animationend', _listener);
-            });
-            return ripple;
-        };
-
-        Ripple.prototype.ripple = function ripple(event) {
-            this.element.style.position = 'relative';
-
-            var container = this._getContainer();
-            var background = this._getBackground();
-            var ripple = this._createRipple();
-            var height = this.element.clientHeight;
-            var width = this.element.clientWidth;
-            var size = height > width ? height : width;
-            var rect = this.element.getBoundingClientRect();
-
-            var clientX = event.clientX;
-            var clientY = event.clientY;
-
-            if (event.touches && event.touches.length) {
-                clientX = event.touches[0].clientX;
-                clientY = event.touches[0].clientY;
-            }
-            var bounds = {
-                left: clientX - rect.left,
-                top: clientY - rect.top
-            };
-
-            var half = size / 2;
-
-            bounds.top = bounds.top - half;
-            bounds.left = bounds.left - half;
-
-            Object.assign(ripple.style, {
-                top: bounds.top + 'px',
-                left: bounds.left + 'px',
-                backgroundColor: background,
-                width: size + 'px',
-                height: size + 'px'
-            });
-
-            this.element.insertBefore(container, this.element.firstChild);
-            container.appendChild(ripple);
-
-            console.log(this.element);
-        };
-
-        return Ripple;
-    }()) || _class) || _class);
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.configure = configure;
+  function configure(config) {
+    config.globalResources(['./attributes/ripple']);
+  }
 });
 define('modules/education/education',["exports"], function (exports) {
     "use strict";
@@ -1673,27 +1567,6 @@ define('modules/education/education',["exports"], function (exports) {
 
         this.props = {
             educations: educations.list
-        };
-    };
-});
-define('modules/experience/experience',["exports"], function (exports) {
-    "use strict";
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    var Experience = exports.Experience = function Experience(experiences) {
-        _classCallCheck(this, Experience);
-
-        this.props = {
-            experiences: experiences.list
         };
     };
 });
@@ -1830,6 +1703,27 @@ define('modules/footer/footer',['exports', 'aurelia-framework', 'aurelia-event-a
         enumerable: true,
         initializer: null
     })), _class2)) || _class) || _class);
+});
+define('modules/experience/experience',["exports"], function (exports) {
+    "use strict";
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var Experience = exports.Experience = function Experience(experiences) {
+        _classCallCheck(this, Experience);
+
+        this.props = {
+            experiences: experiences.list
+        };
+    };
 });
 define('modules/header/header',['exports', 'aurelia-framework', 'aurelia-event-aggregator'], function (exports, _aureliaFramework, _aureliaEventAggregator) {
     'use strict';
@@ -2486,6 +2380,29 @@ define('modules/projects/projects',['exports', 'aurelia-framework'], function (e
         console.log(this.props.projects);
     };
 });
+define('modules/technology/technology',["exports"], function (exports) {
+    "use strict";
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var Technology = exports.Technology = function Technology(technologies) {
+        _classCallCheck(this, Technology);
+
+        this.props = {
+            technologies: technologies.list
+        };
+
+        console.log(this.props.technologies);
+    };
+});
 define('modules/title/title',['exports'], function (exports) {
     'use strict';
 
@@ -2583,12 +2500,13 @@ define('modules/title/title',['exports'], function (exports) {
         return Title;
     }();
 });
-define('modules/technology/technology',["exports"], function (exports) {
-    "use strict";
+define('resources/attributes/ripple',['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
+    'use strict';
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
+    exports.Ripple = undefined;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -2596,15 +2514,97 @@ define('modules/technology/technology',["exports"], function (exports) {
         }
     }
 
-    var Technology = exports.Technology = function Technology(technologies) {
-        _classCallCheck(this, Technology);
+    var _dec, _dec2, _class;
 
-        this.props = {
-            technologies: technologies.list
+    var Ripple = exports.Ripple = (_dec = (0, _aureliaFramework.customAttribute)('ripple'), _dec2 = (0, _aureliaFramework.inject)(Element, _aureliaFramework.ElementEvents), _dec(_class = _dec2(_class = function () {
+        function Ripple(Element, ElementEvents) {
+            _classCallCheck(this, Ripple);
+
+            this.element = Element;
+            this.events = ElementEvents;
+        }
+
+        Ripple.prototype.bind = function bind() {
+            var _this = this;
+
+            this.eventName = 'mousedown';
+
+            if (document.documentElement.classList.contains('platform-ios')) {
+                this.eventName = 'touchstart';
+            }
+
+            this.events.subscribe(this.eventName, function (event) {
+                _this.ripple(event);
+            });
         };
 
-        console.log(this.props.technologies);
-    };
+        Ripple.prototype._getContainer = function _getContainer() {
+            return this.container ? this.container : this.container = document.createElement('ripple-container');
+        };
+
+        Ripple.prototype._getBackground = function _getBackground() {
+            if (this.element.dataset.useFill) {
+                return this.element.dataset.useFill;
+            }
+            this._computed = this._computed || window.getComputedStyle(this.element);
+            var background = this._computed.getPropertyValue('color');
+            return background;
+        };
+
+        Ripple.prototype._createRipple = function _createRipple() {
+            var ripple = document.createElement('ripple');
+            var _listener = null;
+            ripple.addEventListener('animationend', _listener = function listener(event) {
+                ripple.parentNode.removeChild(ripple);
+                ripple.removeEventListener('animationend', _listener);
+            });
+            return ripple;
+        };
+
+        Ripple.prototype.ripple = function ripple(event) {
+            this.element.style.position = 'relative';
+
+            var container = this._getContainer();
+            var background = this._getBackground();
+            var ripple = this._createRipple();
+            var height = this.element.clientHeight;
+            var width = this.element.clientWidth;
+            var size = height > width ? height : width;
+            var rect = this.element.getBoundingClientRect();
+
+            var clientX = event.clientX;
+            var clientY = event.clientY;
+
+            if (event.touches && event.touches.length) {
+                clientX = event.touches[0].clientX;
+                clientY = event.touches[0].clientY;
+            }
+            var bounds = {
+                left: clientX - rect.left,
+                top: clientY - rect.top
+            };
+
+            var half = size / 2;
+
+            bounds.top = bounds.top - half;
+            bounds.left = bounds.left - half;
+
+            Object.assign(ripple.style, {
+                top: bounds.top + 'px',
+                left: bounds.left + 'px',
+                backgroundColor: background,
+                width: size + 'px',
+                height: size + 'px'
+            });
+
+            this.element.insertBefore(container, this.element.firstChild);
+            container.appendChild(ripple);
+
+            console.log(this.element);
+        };
+
+        return Ripple;
+    }()) || _class) || _class);
 });
 define('text!app.html', ['module'], function(module) { module.exports = "<template><require from=./app.css></require><div class=app-background></div><navigation></navigation><container><compose containerless view-model.bind=header></compose><main><template repeat.for=\"view of State.views\"><nav-section class=\"${$first ? 'first' : $last ? 'last' : ''} app-${view.name}\" ref=view.element view.bind=view></nav-section></template></main><compose containerless view-model.bind=footer></compose></container><div class=background-container></div></template>"; });
 define('text!modules/education/education.html', ['module'], function(module) { module.exports = "<template><template repeat.for=\"edu of props.educations\"><article class=card-${edu.id}><div class=card-image if.bind=edu.image><span if.bind=\"edu.className && !edu.image\" class=${edu.className}></span><img src.bind=edu.image class=${edu.className} alt.bind=edu.name></div><div class=card-content><div class=card-heading><div class=card-title>${edu.name}</div><div class=card-date>${edu.date}</div></div><ul class=card-details><li repeat.for=\"note of edu.notes\"><icon ico=chevron_right></icon><span class=text>${note}</span></li></ul></div></article></template></template>"; });
@@ -2614,9 +2614,9 @@ define('text!app.css', ['module'], function(module) { module.exports = "@import 
 define('text!modules/header/header.html', ['module'], function(module) { module.exports = "<template><header ref=element class=app-header><div ripple class=header-content><nav class=left-nav><icon ico=menu class=menu-icon click.delegate=toggleNavigation($event)></icon></nav><nav class=center-nav><span ref=titleNode class=header-title>${props.title}</span></nav><nav class=right-nav><icon ico=arrow_back class=direction-icon click.delegate=navigateBack($event)></icon></nav></div></header></template>"; });
 define('text!modules/nav/nav.html', ['module'], function(module) { module.exports = "<template><ul><li repeat.for=\"items of leftNav\" click.delegate=\"navigateToItem($event, item)\"><a>${item.name}</a></li></ul><button click.delegate=buttonClicked($event)></button><ul><li repeat.for=\"items of rightNav\" click.delegate=\"navigateToItem($event, item)\"><a>${item.name}</a></li></ul></template>"; });
 define('text!modules/nav-section/nav-section.html', ['module'], function(module) { module.exports = "<template class=\"${view.shade.key}-tint-section ${view.isActive ? 'active' : ''} ${view.isScrolling ? 'scrolling' : ''} ${view.isPeeking ? 'peeking' : ''} ${view.isVisible ? 'visible' : ''}\"><section class=section-container><header ref=header show.bind=view.showTitle click.delegate=headerClicked($event) class=\"nav-section-header app-${view.name}-header\"><span if.bind=view.title class=header-title>${view.title}</span></header><compose containerless view-model.bind=view.viewModel></compose></section></template>"; });
+define('text!modules/navigation/navigation.html', ['module'], function(module) { module.exports = "<template><style>navigation ul li.active span.text{color:{};}</style><section css=\"background-color: ${props.fill}\"><ul class=navigation-list css=\"color: ${currentTint};\"><li ripple data-use-fill=${view.fill} repeat.for=\"view of views\" class=\"${view.isActive ? 'active' : ''}\" click.delegate=navigateToView(view)><icon ico.bind=view.icon></icon><span class=text>${view.title}</span></li><li></li></ul></section></template>"; });
 define('text!modules/profile/profile.html', ['module'], function(module) { module.exports = "<template><style>@media screen and (max-width:1200px){.app-profile .row{flex-direction:column}.app-profile .row .profile-info{width:100%}.app-profile .row .profile-info ul{margin:24px}}</style><article><div class=profile-image><img src=\"https://avatars0.githubusercontent.com/u/4668188?v=3&s=460\" alt=\"\"></div><div class=profile-content><ul class=profile-detail><li><label>Name</label><div class=value><p>${props.name}</p></div></li><li><label>Birthday</label><div class=value><p>${props.birthday}</p></div></li><li><label>Titles</label><div class=value><p repeat.for=\"title of props.titles\">${title}</p></div></li><li><label>Locations</label><div class=value><p repeat.for=\"loc of props.locations\">${loc}</p></div></li><li><label>Info</label><div class=value><p>${props.info}</p></div></li></ul></div></article></template>"; });
 define('text!modules/projects/projects.html', ['module'], function(module) { module.exports = "<template><template repeat.for=\"project of props.projects\"><article class=card-${project.id}><div class=card-image><span if.bind=\"project.className && !project.image\" class=${project.className}></span><img if.bind=project.image class=${project.className} src.bind=project.image alt.bind=project.name></div><div class=card-content><div class=card-heading><div class=card-title>${project.name}</div><div class=card-date>${project.date}</div></div><ul class=card-details><li repeat.for=\"note of project.notes\"><icon ico=chevron_right></icon><span class=text>${note}</span></li></ul><ul class=card-tags><li repeat.for=\"stack of project.stack\">${stack}</li></ul></div></article></template></template>"; });
-define('text!modules/navigation/navigation.html', ['module'], function(module) { module.exports = "<template><style>navigation ul li.active span.text{color:{};}</style><section css=\"background-color: ${props.fill}\"><ul class=navigation-list css=\"color: ${currentTint};\"><li ripple data-use-fill=${view.fill} repeat.for=\"view of views\" class=\"${view.isActive ? 'active' : ''}\" click.delegate=navigateToView(view)><icon ico.bind=view.icon></icon><span class=text>${view.title}</span></li><li></li></ul></section></template>"; });
 define('text!modules/technology/technology.html', ['module'], function(module) { module.exports = "<template><template repeat.for=\"tech of props.technologies\"><article><h1>${tech.title}</h1><ul><li repeat.for=\"item of tech.list\" class=card-item-${item.name}><img src.bind=item.img alt.bind=item.name><span class=text>${item.title}</span></li></ul></article></template></template>"; });
 define('text!modules/title/title.html', ['module'], function(module) { module.exports = "<template><style>.app-title .title-image{height:450px;width:350px;display:block;float:left;margin:75px 75px 0 75px}.app-title .title-text h1{margin-top:75px;margin-bottom:75px;text-align:center;font-size:56px}.app-title .title-text{display:block;width:100%;text-align:center}</style><div class=title-text><h1>${title}</h1><h3 ref=uxAnimation class=ux-animation><span class=u>U</span><span class=ix><span class=i>I</span><span class=x>X</span></span><span ref=textInsert class=type></span></h3></div></template>"; });
 //# sourceMappingURL=app-bundle.js.map
