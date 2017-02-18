@@ -1,4 +1,5 @@
 import environment from './environment';
+import 'web-animations-js';
 import 'core/element';
 
 //Configure Bluebird Promises.

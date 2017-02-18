@@ -117,6 +117,11 @@
           "aurelia-templating-binding",
           "text",
           {
+            "name": "web-animations-js",
+            "path": "../node_modules/web-animations-js",
+            "main": "web-animations-next.min"
+          },
+          {
             "name": "aurelia-templating-resources",
             "path": "../node_modules/aurelia-templating-resources/dist/amd",
             "main": "aurelia-templating-resources"
