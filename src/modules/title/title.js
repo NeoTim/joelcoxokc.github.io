@@ -8,7 +8,89 @@ export class Title {
 
     bind() {
         // this.startAnimation();
-        this.setupAnimation();
+        // this.setupAnimation();
+        this.showNativeAnimation();
+    }
+
+    showNativeAnimation() {
+        let animationstart;
+        let animationend;
+        let clearNodes;
+        let animate;
+        let append;
+        let reset;
+        let node;
+        let last;
+        
+        let UX = this.uxAnimation;
+        let U = document.createElement('SPAN',{innerText:'U'});
+        let I = document.createElement('SPAN',{innerText:'I'});
+        let X = document.createElement('SPAN',{innerText:'X'});
+        
+        let nodes = chars.split('').map((t, i) => {
+            if (i === 0) {
+                t = '--' + t;
+            }
+            return document.createElement('SPAN', {innerHTML: t.replace(/\-/g, '&nbsp;')})
+        });
+        
+        animationstart = (element, callback)=> {
+            let listener = (event)=> {
+                event.dispose = ()=> {
+                    element.removeEventListener('animationstart', listener, true);
+                }
+                callback(event);
+            }
+            element.addEventListener('animationstart', listener, true);
+        }
+
+        animationend = (element, callback)=> {
+            let listener = (event)=> {
+                event.dispose = ()=> {
+                    element.removeEventListener('animationend', listener, true);
+                }
+                callback(event);
+            }
+            element.addEventListener('animationend', listener, true);
+        }
+
+        reset = ()=> {
+            animationend(UX, ()=> {
+                UX.classList.remove('animate', 'animate-out');
+                this.showNativeAnimation();
+            });
+            UX.classList.add('animate-out');
+        }
+
+        append = (node)=> {
+            UX.appendChild(node);
+        }
+
+        clearNodes = ()=> {
+            UX.innerHTML = '';
+        }
+
+        clearNodes();
+        
+        let animCount = 0;
+
+        append(U);
+        append(I);
+        append(X);
+        
+        while(node = nodes.shift()) {
+            append(node);
+            if (!nodes.length) {
+                animationend(node, (event)=> {
+                    console.log('last-ended');
+                    event.dispose();
+                    reset();
+                })
+            }
+        }
+
+
+        UX.classList.add('animate');
     }
 
     setupAnimation() {
@@ -206,7 +288,8 @@ export class Title {
             {opacity: 1}
         ], {
             duration: 100,
-            fill: 'forwards'
+            fill: 'forwards',
+            delay: 100
         });
 
         append(U);

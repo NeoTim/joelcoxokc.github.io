@@ -1,3 +1,8 @@
+
+@mixin transform($x: 0, $y: 0, $z: 0, $rotate: 0) {
+    transform: rotate($rotate) translate3d($x, $y, $z);
+}
+
 @mixin card-element($outline: $dark-tint-divider, $title-tint:$dark-tint-secondary, $date-tint: $dark-tint-disabled, $text-tint:$dark-tint-primary) {
     
     article {

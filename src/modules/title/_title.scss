@@ -8,9 +8,6 @@
 
         display: flex;
         justify-content: center;
-        animation-duration: 1s;
-        animation-timing-function: ease;
-        animation-fill-mode: forwards;
 
         span {
             display: block;
@@ -108,6 +105,222 @@
         // &.animate-out {
         //     animation-name: hide-ux;
         // }
+    }
+}
+
+.ux-animation {
+    animation-fill-mode: forwards;
+    animation-duration: 100;
+    animation-delay: 100;
+
+    > span {
+        animation-timing-function: linear;
+        animation-fill-mode: forwards;
+        animation-delay: 2500ms;
+        animation-duration: 500ms;
+    }
+
+    > span:first-child {
+        animation-delay: 1000ms;
+        animation-duration: 1500ms;
+    }
+
+    > span:nth-child(2) {
+        animation-duration: 1500ms;
+        animation-delay: 1000ms;
+        transform-origin: 150px;
+    }
+
+    > span:nth-child(3) {
+        animation-duration: 1500;
+        animation-delay: 1000;
+        transform-origin: 150px;
+    }
+
+    &.animate {
+        animation-name: show-ux;
+
+        > span {
+            animation-name: animate-char;
+            opacity: 0;
+        }
+
+        > span:first-child {
+            @include transform(
+                $x: 150px
+            );
+
+            opacity: 1;
+            animation-name: animate-u;
+        }
+
+        > span:nth-child(2) {
+            @include transform(
+                $x: 150px
+            );
+
+            animation-name: animate-i;
+        }
+
+        > span:nth-child(3) {
+            @include transform(
+                $rotate: -180deg,
+                $x: calc(-40% + 150px)
+            );
+            opacity: 0;
+            animation-name: animate-x;
+        }
+    }
+
+    &.animate-out {
+        animation-delay: 5000;
+        animation-name: hide-ux;
+    }
+}
+
+
+@keyframes animate-u {
+    0% {
+        opacity: 1;
+        @include transform(
+            $x: 150px
+        );
+    }
+
+    90% {
+        opacity: 1;
+        @include transform(
+            $x: 150px
+        );
+    }
+
+    100% {
+        opacity: 1;
+        @include transform(
+            $x: 0px
+        );
+    }
+}
+
+
+@keyframes animate-i {
+    0% {
+        opacity: 0;
+        @include transform(
+            $rotate: 0deg,
+            $x: 150px
+        );
+    }
+    10% {
+        opacity: 1;
+        @include transform(
+            $rotate: 0deg,
+            $x: 150px
+        );
+    }
+    30% {
+        opacity: 1;
+        @include transform(
+            $rotate: 0deg,
+            $x: 150px
+        );
+    }
+    40% {
+        opacity: 0;
+        @include transform(
+            $rotate: 180deg,
+            $x: 150px
+        );
+    }
+    50% {
+        opacity: 0;
+        @include transform(
+            $rotate: 0deg,
+            $x: 150px
+        );
+    }
+    80% {
+        opacity: 0;
+        @include transform(
+            $rotate: 0deg,
+            $x: 150px
+        );
+    }
+    90% {
+        opacity: 1;
+        @include transform(
+            $rotate: 0deg,
+            $x: 150px
+        );
+    }
+    100% {
+        opacity: 1;
+        @include transform(
+            $rotate: 0deg,
+            $x: 0
+        );
+    }
+}
+
+
+@keyframes animate-x {
+    0% {
+        opacity: 0;
+        @include transform(
+            $rotate: -180deg,
+            $x: calc(-40% + 150px)
+        );
+    }
+    30% {
+        opacity: 0;
+        @include transform(
+            $rotate: -180deg,
+            $x: calc(-40% + 150px)
+        );
+    }
+    40% {
+        opacity: 1;
+        @include transform(
+            $rotate: 0deg,
+            $x: calc(-40% + 150px)
+        );
+    }
+    60% {
+        opacity: 1;
+        @include transform(
+            $rotate: 0deg,
+            $x: calc(-40% + 150px)
+        );
+    }
+    80% {
+        opacity: 1;
+        @include transform(
+            $rotate: 0deg,
+            $x: calc(-40% + 150px)
+        );
+    }
+    90% {
+        opacity: 1;
+        @include transform(
+            $rotate: 0deg,
+            $x: 150px
+        );
+    }
+    100% {
+        opacity: 1;
+        @include transform(
+            $rotate: 0deg,
+            $x: 0
+        );
+    }
+}
+
+@keyframes animate-char {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
     }
 }
 
