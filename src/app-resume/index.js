@@ -8,7 +8,7 @@ import { Technology } from 'modules/technology/technology';
 import { Experience } from 'modules/experience/experience';
 import { Education } from 'modules/education/education';
 import { Enums } from 'core/enums';
-import { State } from './state';
+import { State } from 'state';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {View} from 'core/view';
 import {Util} from 'core/util';
@@ -22,9 +22,19 @@ const props = {
 };
 
 @inject(
+    Util,
+    State,
+    Enums,
+    Color,
     EventAggregator,
     Factory.of(Header),
-    Factory.of(Footer)
+    Factory.of(Footer),
+    Factory.of(Title),
+    Factory.of(Profile),
+    Factory.of(Technology),
+    Factory.of(Projects),
+    Factory.of(Experience),
+    Factory.of(Education)
 )
 export class App {
 
@@ -114,28 +124,6 @@ export class App {
                 viewModel: Technology(Enums.Technology, State)
             })
         );
-    }
-
-    configureRouter(config, router) {
-        config.mapRoute({
-            route: [''],
-            moduleId: 'app-resume/index',
-            name: 'resume',
-            title: 'Resume'
-        });
-
-        config.mapRoute({
-            route: ['blog'],
-            moduleId: 'app-blog/index',
-            name: 'blog',
-            title: 'Blog'
-        });
-
-        config.mapUnknownRoute(()=> {
-            return 'modules/404/404';
-        });
-
-        this.router = router;
     }
 
     bind() {

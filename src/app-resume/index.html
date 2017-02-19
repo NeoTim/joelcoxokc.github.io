@@ -1,12 +1,5 @@
 <template>
-  <require from="./app.css"></require>
-  <div class="app-background"></div>
-  
-  <navigation></navigation>
-
-  <router-view class="view-${router.currentInstruction.name}"></router-view>
-  
-  <!--<container>
+  <container>
     <compose containerless view-model.bind="header"></compose>
     <main>
       <template repeat.for="view of State.views">
@@ -14,6 +7,5 @@
       </template>
     </main>
     <compose containerless view-model.bind="footer"></compose>
-  </container>-->
-  <div class="background-container"></div>
+  </container>
 </template>
