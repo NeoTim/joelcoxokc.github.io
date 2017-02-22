@@ -20,10 +20,15 @@ export class ExperienceEnums {
             'Gulp'
         ],
         notes: [
-            'Spent countless nights completing issues before our first release',
-            'Re-architected the client side component structure',
-            'Built several features using provided design comps',
-            'Designed ux flow using provided flow descriptions'
+            'Spent many hours completing issues before the project release',
+
+            'Constructed several client side components',
+            
+            'Built multiple features using provided design comps',
+            
+            'Designed ux flow with provided flow conventions',
+
+            'Collaborated with dev and design teams over project decisions'
         ]
     }
 
@@ -46,7 +51,7 @@ export class ExperienceEnums {
         ],
         notes: [
             'Migrated existing Angular 1.0 App to Aurelia',
-            'Merged Several Aurelia and React components to work on the same state engine',
+            'Merged multiple Aurelia and React components to work on the same state engine',
             'Built the site-map, including designs, using provided comps'
         ]
     }
@@ -75,9 +80,9 @@ export class ExperienceEnums {
         notes: [
             'Re-scaled nine applications into one web application',
             'Designed a rich interactive flow creation tool',
-            'Visually display flow data using HTML Canvas and D3',
+            'Visually displayed flow data using HTML Canvas and D3',
             'Collaborated with a small team using scrum methodologies',
-            'Design UI Component Library for internal use across Wolters Kluwer applications'
+            'Designed UI Component Library for internal use across Wolters Kluwer applications'
         ]
     }
 
