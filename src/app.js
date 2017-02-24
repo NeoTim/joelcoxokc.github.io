@@ -13,6 +13,7 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import {View} from 'core/view';
 import {Util} from 'core/util';
 import {Color} from 'core/color';
+import {Connect} from 'modules/connect/connect';
 
 const props = {
     fullName: 'Joel Cox',
@@ -34,13 +35,14 @@ const props = {
     Factory.of(Technology),
     Factory.of(Projects),
     Factory.of(Experience),
-    Factory.of(Education)
+    Factory.of(Education),
+    Factory.of(Connect),
 )
 export class App {
 
     @observable view;
 
-    constructor(Util, State, Enums, Color, EventAggregator, Header, Footer, Title, Profile, Technology, Projects, Experience, Education) {
+    constructor(Util, State, Enums, Color, EventAggregator, Header, Footer, Title, Profile, Technology, Projects, Experience, Education, Connect) {
 
         this.State = State;
         this.props = props;
@@ -86,7 +88,7 @@ export class App {
                 title: 'Projects',
                 name: 'projects',
                 icon: 'screen_share',
-                fill: Color.teal,
+                fill: Color.tan,
                 shade: Color.dark,
                 viewModel: Projects(Enums.Projects, State)
             })
@@ -97,7 +99,7 @@ export class App {
                 title: 'Experience',
                 name: 'experience',
                 icon: 'verified_user',
-                fill: Color.tan,
+                fill: Color.teal,
                 shade: Color.dark,
                 viewModel: Experience(Enums.Experience, State)
             })
@@ -108,8 +110,8 @@ export class App {
                 title: 'Education',
                 name: 'education',
                 icon: 'school',
-                fill: Color.brown,
-                shade: Color.light,
+                fill: Color.tan,
+                shade: Color.dark,
                 viewModel: Education(Enums.Education, State)
             })
         );
@@ -119,9 +121,20 @@ export class App {
                 title: 'Technology',
                 name: 'technology',
                 icon: 'layers',
+                fill: Color.brown,
+                shade: Color.light,
+                viewModel: Technology(Enums.Technology, State)
+            })
+        );
+
+        State.registerView(
+            new View({
+                title: 'Connect',
+                name: 'connect',
+                icon: 'share',
                 fill: Color.tan,
                 shade: Color.dark,
-                viewModel: Technology(Enums.Technology, State)
+                viewModel: Connect(Enums.Connect, State)
             })
         );
     }

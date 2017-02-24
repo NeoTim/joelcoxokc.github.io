@@ -1,0 +1,19 @@
+<template>
+    <require from="modules/connect/connect-card.html" as="connect-card"></require>
+        <article class="connect-card private">
+            <template if.bind="robotUser.value">
+                <template repeat.for="item of props.private">
+                    <connect-card props.bind="props" item.bind="item"></connect-card>
+                </template>
+            </template>
+            <template if.bind="!robotUser.value">
+                <button class="btn btn-blue" click.delegate="validateUserIsNotARobot($event)">Contact</button>
+            </template>
+        </article>
+
+    <article class="connect-card">
+        <template repeat.for="item of props.public">
+            <connect-card props.bind="props" item.bind="item"></connect-card>
+        </template>
+    </article>
+</template>

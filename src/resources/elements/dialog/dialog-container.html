@@ -1,0 +1,5 @@
+<template class="${currentInstruction ? 'active' : ''}">
+    <template if.bind="currentInstruction">
+        <compose containerless view-model.bind="currentInstruction.viewModel" model.bind="dialogModel"></compose>
+    </template>
+</template>

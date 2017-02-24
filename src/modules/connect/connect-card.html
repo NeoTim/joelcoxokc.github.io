@@ -1,0 +1,24 @@
+<template bindable="item, props" class="connection connection-${item.name}">
+    <a href.bind="item.url || item.href || 'javascript:;'" click.delegate="props.handleItemClick($event, item)">
+        <template if.bind="item.html">
+            <compose class="anim-logo anim-${item.name}-logo" view="modules/connect/${item.name}-logo.html"></compose>
+        </template>
+        <template if.bind="!item.html && item.icon">
+            <icon ico.bind="item.icon"></icon>
+        </template>
+        <template if.bind="!item.html && item.logo">
+            <div class="connection-logo">
+                <img src.bind="item.logo"/>
+            </div>
+        </template>
+        <template if.bind="item.url">
+            <span class="anchor" href.bind="item.url" title="go to ${item.title}">@${item.name}</span>
+        </template>
+        <template if.bind="item.value">
+            <span class="text">${item.value}</span>
+        </template>
+    </a>
+    <template if.bind="item.url">
+        <input ref="item.input" click.delegate="item.input.select()" class="url" type="text" value.bind="item.url" title="${item.title} Web Address" />
+    </template>
+</template>

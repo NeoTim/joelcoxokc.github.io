@@ -40,7 +40,9 @@ export class Header {
     setElementProps(fn) {
         this.pendingElementProps = this.pendingElementProps || [];
         if (this.element) {
-            fn();
+            window.requestAnimationFrame(()=> {
+                fn();
+            })
         } else {
             this.pendingElementProps.push(fn);
         }
@@ -49,7 +51,9 @@ export class Header {
     setNodeProps(fn) {
         this.pendingNodeProps = this.pendingNodeProps || [];
         if (this.titleNode) {
-            fn();
+            window.requestAnimationFrame(()=> {
+                fn();
+            });
         } else {
             this.pendingNodeProps.push(fn);
         }

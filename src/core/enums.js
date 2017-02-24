@@ -4,8 +4,9 @@ import { ProjectEnums } from './projects';
 import { ExperienceEnums } from './experience';
 import { EducationEnums } from './education';
 import { TechnologyEnums } from './technology';
+import {ConnectEnums} from './connect';
 
-@inject(ProfileEnums, TechnologyEnums, ExperienceEnums, ProjectEnums, EducationEnums)
+@inject(ProfileEnums, TechnologyEnums, ExperienceEnums, ProjectEnums, EducationEnums, ConnectEnums)
 export class Enums {
     static Module = {
         Type: {
@@ -159,12 +160,13 @@ export class Enums {
         }
     ];
 
-    constructor(profile, technology, experience, projects, education) {
+    constructor(profile, technology, experience, projects, education, connect) {
         
         this.Profile = profile;
         this.Technology = technology;
         this.Experience = experience;
         this.Projects = projects;
         this.Education = education;
+        this.Connect = connect;
     }
 }

@@ -7,6 +7,8 @@
 @import 'modules/title/_title.scss';
 @import 'modules/header/_header.scss';
 @import 'modules/footer/_footer.scss';
+@import 'resources/elements/dialog/_dialog.scss';
+@import 'resources/elements/checkbox/_checkbox.scss';
 
 *::-webkit-scrollbar {
     display: none;
@@ -46,6 +48,43 @@ button {
     -ms-webkit-appearance: none;
     -o-webkit-appearance: none;
     webkit-appearance: none;
+    font-weight: normal;
+    text-transform: uppercase;
+}
+
+button.btn {
+    height: 36px;
+    min-width: 120px;
+    line-height: 36px;
+    padding: 0;
+    margin: 0;
+    align-self: flex-start;
+    box-shadow: 0 5px 4px -4px rgba(0,0,0,0.2), 0 3px 4px rgba(0,0,0,0.2);
+    transition: box-shadow 0.1s ease;
+    cursor: pointer;
+
+    &.btn-blue {
+        background-color: $theme-blue;
+        color: $theme-tan;
+    }
+
+    @media screen and (min-width: 768px) {
+        &:hover {
+            box-shadow: 0 6px 6px -7px rgba(0,0,0,0.2), 0 5px 6px rgba(0,0,0,0.2);
+        }
+    }
+
+    &:active {
+        box-shadow: 0 2px 3px rgba(0,0,0,0.2);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        color: $dark-tint-secondary !important;
+        cursor: not-allowed;
+        border: 1px solid $dark-tint-divider;
+        background: $dark-tint-divider;
+    }
 }
 
 container {
@@ -410,40 +449,6 @@ $names: (title, profile, projects, experience, education, technology);
     }
 }
 
-.app-technology {
-    background-color: $tech-fill;
-    
-    h1 {
-        font-size: 32px;
-        padding-left: 36px;
-    }
-
-
-    ul {
-        @include grid-card-list();
-        margin-left: 24px;
-        margin-right: 24px;
-
-        li {
-            @include grid-card();
-        }
-    }
-
-    @media screen and (min-width: 768px) {
-        h1 {
-            padding-left: 56px;
-            padding-right: 56px;
-        }
-        ul {
-            margin-left: 44px;
-            margin-right: 44px;
-        }
-    }
-    &-header {
-        background-color: $tech-fill;
-    }
-}
-
 .app-projects {
     background-color: $projects-fill;
     @include card-element();
@@ -533,11 +538,12 @@ $names: (title, profile, projects, experience, education, technology);
 .app-education {
     background-color: $edu-fill;
     
+
     @include card-element(
-        $outline: $light-tint-divider,
+        $outline: $edu-divider,
         $text-tint: $edu-tint,
-        $title-tint: $light-tint-secondary,
-        $date-tint: $light-tint-disabled
+        $title-tint: $edu-secondary,
+        $date-tint: $edu-disabled
     );
 
     header {
@@ -549,6 +555,226 @@ $names: (title, profile, projects, experience, education, technology);
         background-color: $edu-fill;
         color: $edu-tint;
         icon {color: $edu-tint}
+    }
+}
+
+.app-technology {
+    background-color: $tech-fill;
+    
+    h1 {
+        font-size: 32px;
+        padding-left: 36px;
+    }
+
+
+    ul {
+        @include grid-card-list();
+        margin-left: 24px;
+        margin-right: 24px;
+
+        li {
+            @include grid-card();
+            color: $tech-fill;
+        }
+    }
+
+    @media screen and (min-width: 768px) {
+        h1 {
+            padding-left: 56px;
+            padding-right: 56px;
+        }
+        ul {
+            margin-left: 44px;
+            margin-right: 44px;
+        }
+    }
+    &-header {
+        background-color: $tech-fill;
+    }
+}
+
+.app-connect {
+
+    article.connect-card {
+        margin-bottom: 56px;
+        border-bottom: 1px solid $connect-divider;
+    }
+
+    button {
+        margin: 24px;
+    }
+
+    article.private {
+        min-height: 152px;
+    }
+
+    .connection {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: flex-start;
+        margin-bottom: 24px;
+        padding: 0 24px;
+        height: 48px;
+        line-height: 48px;
+        cursor: pointer;
+
+        * {
+            pointer-events: none;
+        }
+
+        a {
+            pointer-events: auto;
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: flex-start;
+            flex: 0 0 auto;
+            text-decoration: none;
+        }
+
+        .anchor,
+        .text {
+            line-height: 24px;
+            margin: 12px 0;
+            font-size: 20px;
+            color: $theme-blue;
+        }
+
+        .anchor {
+            color: $theme-blue;
+            transition: transform 0.5s ease-out;
+            margin-right: 24px;
+        }
+
+        .url {
+            line-height: 24px;
+            height: 24px;
+            margin: 12px 0;
+            min-width: 50%;
+            opacity: 0;
+            transition: opacity 0.5s, transform 0.5s ease-out;
+            padding-left: 4px;
+            font-size: 16px;
+            background-color: transparent;
+            border-color: $connect-divider;
+            border-radius: 12px;
+            color: $connect-secondary;
+            outline: none;
+            text-decoration: none;
+            pointer-events: auto;
+            display: none;
+        }
+        
+        icon {
+            margin: 12px;
+        }
+
+        .connection-logo {
+            width: 48px;
+            height: 48px;
+            font-size: 0;
+            margin-right: 12px;
+            
+            img {
+                max-width: 48px;
+                max-height: 48px;
+            }
+        }
+
+        .anim-logo {
+            height: 48px;
+            width: 48px;
+            display: block;
+            position: relative;
+            border-radius: 100%;
+            color: $theme-blue;
+            fill: $theme-blue;
+            border-radius: 100%;
+            margin-right: 24px;
+            
+            svg {
+                color: inherit;
+                fill: inherit;
+                height: 48px;
+                width: 48px;
+            }
+
+            &.anim-npm-logo {
+                svg {
+                    width: 80%;
+                    margin: 0 10%;
+                    .background {
+                        fill: $theme-blue;
+                    }
+
+                    .foreground {
+                        fill: $theme-tan;
+                    }
+                }
+            }
+
+            &.anim-phone-logo,
+            &.anim-email-logo {
+                svg {
+                    height: 24px;
+                    width: 24px;
+                    margin: 12px;
+                }
+            }
+        }
+
+
+    }
+
+    @media screen and (min-width: 768px) {
+
+        button {
+            margin: 56px;
+        }
+
+        .connection {
+            padding: 0 56px;
+
+            .url {
+                display: block;
+            }
+
+            &:hover {
+                
+                .anchor {
+                    text-decoration: underline;
+                    transform: translateX(25px);
+                }
+                
+                .url {
+                    transform: translateX(50px);
+                    opacity: 1;
+                }
+
+                .anim-logo {
+                    background: $theme-blue;
+                    transition: background-color 0.5s, transform 0.5s ease-out;
+                    transform: scale(1.25);
+                    fill: $connect-fill;
+                    color: $connect-fill;
+                }
+
+                .anim-npm-logo {
+                    svg {
+                        .background {
+                            fill: $theme-blue;
+                            transition: fill 0.5s;
+                        }
+                        
+                        .foreground {
+                            fill: $theme-tan;
+                            transition: fill 0.5s;
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

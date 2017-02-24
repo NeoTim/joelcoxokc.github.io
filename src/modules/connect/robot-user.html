@@ -1,0 +1,19 @@
+<template>
+    <dialog>
+        <span slot="header" class="text">
+            Are you a Robot?
+        </span>
+        <section>
+            <label>
+                <checkbox checked.bind="value"></checkbox>
+                <span class="text">
+                    Select if you are not a robot.
+                </span>
+            </label>
+        </section>
+        <footer>
+            <button class="btn cancel" click.delegate="service.cancel()">Cancel</button>
+            <button class="btn" disabled.bind="!value" click.delegate="service.ok()">Ok</button>
+        </footer>
+    </dialog>
+</template>

@@ -68,21 +68,51 @@ $theme-blue: #284B63;
 
 $title-fill: $theme-tan;
 $title-tint: $dark-tint-primary;
+$title-divider: $dark-tint-divider;
+$title-secondary: $dark-tint-secondary;
+$title-disabled: $dark-tint-disabled;
+
 
 $profile-fill: $theme-blue;
 $profile-tint: $light-tint-primary;
+$profile-divider: $dark-tint-divider;
+$profile-secondary: $dark-tint-secondary;
+$profile-disabled: $dark-tint-disabled;
 
-$projects-fill: $theme-teal;
+
+$projects-fill: $theme-tan;
 $projects-tint: $dark-tint-primary;
+$projects-divider: $dark-tint-divider;
+$projects-secondary: $dark-tint-secondary;
+$projects-disabled: $dark-tint-disabled;
 
-$xp-fill: $theme-tan;
+
+$xp-fill: $theme-teal;
 $xp-tint: $dark-tint-primary;
+$xp-divider: $dark-tint-divider;
+$xp-secondary: $dark-tint-secondary;
+$xp-disabled: $dark-tint-disabled;
 
-$edu-fill: $theme-brown;
-$edu-tint: $light-tint-primary;
 
-$tech-fill: $theme-tan;
-$tech-tint: $dark-tint-primary;
+$edu-fill: $theme-tan;
+$edu-tint: $dark-tint-primary;
+$edu-divider: $dark-tint-divider;
+$edu-secondary: $dark-tint-secondary;
+$edu-disabled: $dark-tint-disabled;
+
+
+$tech-fill: $theme-brown;
+$tech-tint: $light-tint-primary;
+$tech-divider: $dark-tint-divider;
+$tech-secondary: $dark-tint-secondary;
+$tech-disabled: $dark-tint-disabled;
+
+
+$connect-fill: $theme-tan;
+$connect-tint: $dark-tint-primary;
+$connect-divider: $dark-tint-divider;
+$connect-secondary: $dark-tint-secondary;
+$connect-disabled: $dark-tint-disabled;
 
 
 
@@ -93,7 +123,7 @@ $tech-tint: $dark-tint-primary;
 $header-height: 56px;
 
 
-$headers: (title, profile, projects, experience, education, technology);
+$headers: (title, profile, projects, experience, education, technology, connect);
 $views: (
     (
         name: title,
@@ -124,5 +154,10 @@ $views: (
         name: technology,
         fill: $tech-fill,
         tint: $tech-tint
+    ),
+    (
+        name: connect,
+        fill: $connect-fill,
+        tint: $connect-tint
     )
 );
