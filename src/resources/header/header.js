@@ -1,7 +1,7 @@
 import { inject, useView,  observable } from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 
-@useView('modules/header/header.html')
+@useView('resources/header/header.html')
 @inject(EventAggregator)
 export class Header {
 
@@ -19,8 +19,15 @@ export class Header {
         title: ''
     }
 
+    settings = {};
+
     constructor(EventAggregator) {
         this.eventAggregator = EventAggregator;
+
+        this.eventAggregator.subscribe('router:navigation:complete', (payload)=> {
+            this.settings = payload.instruction.config.settings;
+            this.updateSettings(this.settings);
+        })
     }
 
     activate() {
@@ -30,6 +37,14 @@ export class Header {
     navigateBack(event) {
         event.preventDefault();
         this.eventAggregator.publish('state:view:back');
+    }
+
+    updateSettings(settings) {
+        Object.assign(this.settings, settings);
+        this.setShade(settings);
+        this.setTitle(settings);
+        this.setVisibility(settings);
+        this.setTitleVisibility(settings);
     }
 
     toggleNavigation(event) {
@@ -75,35 +90,43 @@ export class Header {
         }
     }
 
-    setTitle(text) {
-        this.props.title = text;
+    setTitle(settings) {
+        this.props.title = settings.headerTitle;
     }
 
-    setShade(primary, shade) {
+    setShade(settings) {
+        settings.headerShade = settings.headerShade || {};
         this.setElementProps(()=> {
-
-            this.element.style.color = shade.primary;
-            this.element.style.borderColor = shade.divider;
-            this.element.style.backgroundColor = primary;
+            
+            this.element.css({
+                color: settings.headerShade.primary,
+                borderColor: settings.headerShade.divider,
+                backgroundColor: settings.headerShade.fill
+            });
 
             this.eventAggregator.publish('navigation:props', {
-                fill: primary,
-                activeTint: shade.primary 
+                fill: settings.headerShade.fill,
+                activeTint: settings.headerShade.primary 
             });
         });
     }
 
-    setTitleVisibility(isVisible) {
+    setTitleVisibility(settings) {
         this.setNodeProps(()=> {
-            this.titleNode.style.setProperty('display', isVisible ? '' : 'none');
+            this.titleNode.css({
+                display: settings.showHeaderTitle ? '' : 'none'
+            });
         });
     }
 
-    setVisibility(isVisible, name) {
+    setVisibility(settings) {
         let doc = document.documentElement;
-
+        let name = settings.headerName;
         this.setElementProps(()=> {
-            this.element.style.setProperty('display', isVisible ? '' : 'none');
+
+            this.element.css({
+                display: settings.showHeader ? '' : 'none'
+            })
 
             if (doc.hasAttribute('topbar-name')) {
                 let className = 'view-'+doc.getAttribute('topbar-name')+'-topbar';
@@ -111,7 +134,7 @@ export class Header {
                 doc.classList.remove(className);
             }
             
-            if (isVisible) {
+            if (settings.showHeader) {
                 let className = `view-${name}-topbar`;
                 doc.setAttribute('topbar-name', name);
                 doc.classList.add(className);

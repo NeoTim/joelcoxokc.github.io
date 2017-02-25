@@ -1,10 +1,10 @@
 import { inject } from 'aurelia-framework';
-import { ProfileEnums } from './profile';
-import { ProjectEnums } from './projects';
-import { ExperienceEnums } from './experience';
-import { EducationEnums } from './education';
-import { TechnologyEnums } from './technology';
-import {ConnectEnums} from './connect';
+import { ProfileEnums } from './enums/profile';
+import { ProjectEnums } from './enums/projects';
+import { ExperienceEnums } from './enums/experience';
+import { EducationEnums } from './enums/education';
+import { TechnologyEnums } from './enums/technology';
+import { ConnectEnums } from './enums/connect';
 
 @inject(ProfileEnums, TechnologyEnums, ExperienceEnums, ProjectEnums, EducationEnums, ConnectEnums)
 export class Enums {

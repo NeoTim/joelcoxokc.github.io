@@ -1,4 +1,6 @@
 export class View {
+
+    element: Element = null;
     
     name: String = null;
 
@@ -53,12 +55,27 @@ export class View {
         this.coords = {};
 
         this.coords.top = ()=> {
-            return this.element ? this.element.offsetTop : 0;
+            let node = this.getElement();
+            if (node !== null) {
+                return node.offsetTop;
+            }
+            return 0;
         }
 
         this.coords.bottom = ()=> {
-            return this.element.offsetTop + this.element.clientHeight;
+            let node = this.getElement();
+            if (node !== null) {
+                return node.offsetTop + node.clientHeight;
+            }
+            return 0;
         }
+    }
+
+    getElement() {
+        if (!this.element) {
+            this.element = document.querySelector('.app-'+this.name);
+        }
+        return this.element || null;
     }
 
     updateBounds() {

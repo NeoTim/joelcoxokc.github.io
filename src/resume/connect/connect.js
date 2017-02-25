@@ -1,5 +1,5 @@
 import {inject, Factory} from 'aurelia-framework';
-import {RobotUser} from 'modules/connect/robot-user';
+import {RobotUser} from './robot-user';
 import {DialogService} from 'resources/elements/dialog/service';
 
 @inject(Factory.of(RobotUser), DialogService)

@@ -1,12 +1,12 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto');
 @import 'core/_variables.scss';
 @import 'core/_mixin.scss';
-@import 'modules/nav-section/_nav-section.scss';
-@import 'modules/navigation/_navigation.scss';
-@import 'resources/_ripple.scss';
-@import 'modules/title/_title.scss';
-@import 'modules/header/_header.scss';
-@import 'modules/footer/_footer.scss';
+@import 'resources/nav-section/_nav-section.scss';
+@import 'resources/navigation/_navigation.scss';
+@import 'resources/attributes/ripple/_ripple.scss';
+@import 'resume/title/_title.scss';
+@import 'resources/header/_header.scss';
+@import 'resources/footer/_footer.scss';
 @import 'resources/elements/dialog/_dialog.scss';
 @import 'resources/elements/checkbox/_checkbox.scss';
 
@@ -43,11 +43,10 @@ button {
     background: transparent;
     border: none;
     outline: none;
-    -webkit-webkit-appearance: none;
+    -webkit-appearance: none;
     -moz-webkit-appearance: none;
     -ms-webkit-appearance: none;
-    -o-webkit-appearance: none;
-    webkit-appearance: none;
+    -o-appearance: none;
     font-weight: normal;
     text-transform: uppercase;
 }

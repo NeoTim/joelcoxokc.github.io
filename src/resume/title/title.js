@@ -43,7 +43,11 @@ export class Title {
         }
         
         clearNodes = ()=> {
-            UX.innerHTML = '';
+            if (this.uxAnimation) {
+                UX.innerHTML = '';
+                return true;
+            }
+            return false;
         }
 
         append = (node)=> {
@@ -195,39 +199,39 @@ export class Title {
         }
         
         
-        clearNodes();
-        
-        UX.css({
-            opacity: 0
-        });
+        if (clearNodes()) {
+            UX.css({
+                opacity: 0
+            });
 
-        UX.animate([
-            {opacity: 0},
-            {opacity: 1}
-        ], {
-            duration: 100,
-            fill: 'forwards'
-        });
+            UX.animate([
+                {opacity: 0},
+                {opacity: 1}
+            ], {
+                duration: 100,
+                fill: 'forwards'
+            });
 
-        append(U);
-        animate(U);
+            append(U);
+            animate(U);
 
-        append(I);
-        append(X);
+            append(I);
+            append(X);
 
-        animate(I);
-        animate(X);
+            animate(I);
+            animate(X);
 
-        let node;
-        let last = null;
-        while (node = nodes.shift()) {
-            append(node);
-            last = animate(node);
-        }
+            let node;
+            let last = null;
+            while (node = nodes.shift()) {
+                append(node);
+                last = animate(node);
+            }
 
-        if (last) {
-            last.onfinish = ()=> {
-                reset();
+            if (last) {
+                last.onfinish = ()=> {
+                    reset();
+                }
             }
         }
     }

@@ -2,14 +2,12 @@
   <require from="./app.css"></require>
   <div class="app-background"></div>
   <dialog-container></dialog-container>
-  <navigation></navigation>
+  <navigation instruction.bind="router.currentInstruction"></navigation>
 
   <container>
     <compose containerless view-model.bind="header"></compose>
     <main>
-      <template repeat.for="view of State.views">
-        <nav-section class="${$first ? 'first' : $last ? 'last' : ''} app-${view.name}" ref="view.element" view.bind="view"></nav-section>
-      </template>
+      <router-view></router-view>
     </main>
     <compose containerless view-model.bind="footer"></compose>
   </container>

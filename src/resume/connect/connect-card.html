@@ -1,7 +1,7 @@
 <template bindable="item, props" class="connection connection-${item.name}">
     <a href.bind="item.url || item.href || 'javascript:;'" click.delegate="props.handleItemClick($event, item)">
         <template if.bind="item.html">
-            <compose class="anim-logo anim-${item.name}-logo" view="modules/connect/${item.name}-logo.html"></compose>
+            <compose class="anim-logo anim-${item.name}-logo" view="resume/connect/${item.name}-logo.html"></compose>
         </template>
         <template if.bind="!item.html && item.icon">
             <icon ico.bind="item.icon"></icon>

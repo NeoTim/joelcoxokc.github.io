@@ -1,0 +1,5 @@
+<template>
+    <template repeat.for="view of State.views">
+        <nav-section class="${$first ? 'first' : $last ? 'last' : ''} app-${view.name}" view.bind="view"></nav-section>
+    </template>
+</template>

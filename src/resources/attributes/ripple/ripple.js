@@ -84,6 +84,5 @@ export class Ripple {
         this.element.insertBefore(container, this.element.firstChild);
         container.appendChild(ripple);
 
-        console.log(this.element)
     }
 }

@@ -1,7 +1,7 @@
 import {inject, useView, observable} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 
-@useView('modules/footer/footer.html')
+@useView('resources/footer/footer.html')
 @inject(EventAggregator)
 export class Footer {
 
@@ -17,6 +17,8 @@ export class Footer {
         title: ''
     };
 
+    settings = {};
+
     constructor(EventAggregator, State) {
         this.eventAggregator = EventAggregator;
         this.State = State;
@@ -24,12 +26,26 @@ export class Footer {
         this.eventAggregator.subscribe('view-changed', (event)=> {
             this.handleViewChange(event);
         });
+
+        this.eventAggregator.subscribe('router:navigation:complete', (payload)=> {
+            this.settings = payload.instruction.config.settings;
+            this.updateSettings(this.settings);
+        })
+    }
+
+    updateSettings(settings) {
+        Object.assign(this.settings, settings);
+        this.setTitle(settings);
+        this.setShade(settings);
+        this.setVisibility(settings);
     }
 
     setElementProps(fn) {
         this.pendingElementProps = this.pendingElementProps || [];
         if (this.element) {
-            fn();
+            window.requestAnimationFrame(()=> {
+                fn();
+            });
         } else {
             this.pendingElementProps.push(fn);
         }
@@ -48,21 +64,26 @@ export class Footer {
         this.eventAggregator.publish('state:view:next');
     }
 
-    setTitle(text) {
-        this.props.title = text;
+    setTitle(settings) {
+        this.props.title = settings.footerTitle;
     }
 
-    setShade(primary, shade) {
+    setShade(settings) {
+        settings.footerShade = settings.footerShade || {};
         this.setElementProps(()=> {
-            this.element.style.color = shade.primary;
-            this.element.style.borderColor = shade.divider;
-            this.element.style.backgroundColor = primary;
-        })
+            this.element.css({
+                color: settings.footerShade.primary,
+                borderColor: settings.footerShade.divider,
+                backgroundColor: settings.footerShade.fill
+            });
+        });
     }
 
-    setVisibility(isVisible) {
+    setVisibility(settings) {
         this.setElementProps(()=> {
-            this.element.style.setProperty('display', isVisible ? '' : 'none');
-        })
+            this.element.css({
+                display: settings.showFooter ? '' : 'none'
+            });
+        });
     }
 }

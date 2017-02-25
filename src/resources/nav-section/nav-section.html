@@ -8,7 +8,7 @@
     <section class="section-container">
     
         <header ref="header"
-                css="opacity: ${view.showTitle ? 1 : 0}; visibility: ${view.showTitle ? visible : hidden};"
+                show.bind="view.showTitle"
                 click.delegate="headerClicked($event)" 
                 class="
                     nav-section-header 

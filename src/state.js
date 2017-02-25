@@ -24,6 +24,7 @@ export class State {
     activeViews = [];
 
     constructor(eventAggregator) {
+        window.State = this;
         this.eventAggregator = eventAggregator;
 
         this.isNavigationEvent = false;
@@ -89,7 +90,7 @@ export class State {
 
     viewChanged(newView, lastView) {
         if (this.isNavigationEvent || this.initial) {
-            console.log(newView);
+          // console.log(newView);
             const doc = document.documentElement;
             const scrollTop = document.body.scrollTop;
             const scrollHeight = document.body.clientHeight;
@@ -162,11 +163,11 @@ export class State {
             view.hideHeaderTitle = true;
 
             if (top < scroll.top - 8) {
-                console.log('step 4.2', view.name)
+              // console.log('step 4.2', view.name)
                 view.hideHeaderTitle = false;
                 view.showTitle = false;
             } else {
-                console.log('step 4', view.name)
+              // console.log('step 4', view.name)
             }
             return true;
         }
@@ -243,26 +244,43 @@ export class State {
         }
 
         if (found && found.isActive && found.showTopbar) {
-            this.header.setShade(found.fill, found.shade);
-            this.header.setTitle(found.title);
-            this.header.setTitleVisibility(!found.hideHeaderTitle);
-            this.header.setVisibility(true, found.name);
+
+            this.header.updateSettings({
+                headerFill: found.fill,
+                headerShade: found.shade,
+                headerTitle: found.title,
+                showHeader: true,
+                headerName: found.name,
+                showHeaderTitle: !found.hideHeaderTitle
+            });
             this.view = found;
         }
 
         if (prev && prev.showTopbar) {
-            this.header.setShade(prev.fill, prev.shade);
-            this.header.setTitle(prev.title);
-            this.header.setTitleVisibility(!prev.hideHeaderTitle);
-            this.header.setVisibility(true, prev.name);
+
+            this.header.updateSettings({
+                title: prev.title,
+                showHeader: true,
+                headerName: prev.name,
+                headerFill: prev.fill,
+                headerShade: prev.shade,
+                showHeaderTitle: !prev.hideHeaderTitle
+            });
         }
 
         if (next && next.isNext) {
-            this.footer.setShade(next.fill, next.shade);
-            this.footer.setTitle(next.title);
-            this.footer.setVisibility(true);
+            this.footer.updateSettings({
+                footerFill: next.fill,
+                footerShade: next.shade,
+                footerName: next.name,
+                footerTitle: next.title,
+                showFooter: true,
+                showFooterTitle: true
+            });
         } else {
-            this.footer.setVisibility(false);
+            this.footer.updateSettings({
+                showFooter: false
+            });
         }
     }
 
@@ -271,7 +289,7 @@ export class State {
 
         let index = this.views.indexOf(this.view);
         let next = this.views[index + 1];
-        console.log(next)
+      // console.log(next)
         if (next) {
             this.view = next;
         }

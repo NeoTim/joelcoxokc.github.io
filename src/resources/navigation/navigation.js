@@ -1,12 +1,14 @@
 import {inject, bindable, customElement} from 'aurelia-framework';
 import {State} from 'state';
 import {EventAggregator} from 'aurelia-event-aggregator';
+import {Router} from 'aurelia-router';
 
 @customElement('navigation')
-@inject(Element, EventAggregator, State)
+@inject(Element, EventAggregator, State, Router)
 export class Navigation {
     
     @bindable visibility = false;
+    @bindable instruction = null;
 
     props = {
         fill: '#FFFFFF',
@@ -15,18 +17,26 @@ export class Navigation {
 
     currentFill = null;
     currentTint = '';
+    otherRoute = null;
 
+    settings = {};
 
-    constructor(Element, EventAggregator, State) {
+    constructor(Element, EventAggregator, State, Router) {
         this.element = Element;
         this.eventAggregator = EventAggregator;
         this.State = State;
+        this.router = Router;
 
-        this.eventAggregator.subscribe('navigation:props', props => {
+        this.eventAggregator.subscribe('navigation:props', (props) => {
             Object.assign(this.props, props);
             this.currentFill = this.props.fill;
             this.currentTint = this.props.activeTint;
-        })
+        });
+
+        this.eventAggregator.subscribe('router:navigation:complete', (payload) => {
+            this.settings = payload.instruction.config.settings;
+            this.updateSettings(this.settings);
+        });
     }
 
     bind() {
@@ -38,7 +48,6 @@ export class Navigation {
     }
 
     visibilityChanged(value) {
-        console.log(value)
         if (value) {
             this.showNavigation();
         } else {
@@ -46,10 +55,19 @@ export class Navigation {
         }
     }
 
+    instructionChanged(instruction, last) {
+        if (instruction) {
+            this.otherRoute = this.router.navigation.filter(nav => nav.title !== instruction.config.title)[0];
+        }
+    }
+
+    updateSettings(settings) {
+        this.currentFill = settings.headerShade.fill;
+        this.currentTint = settings.headerShade.primary;
+    }
+
     navigateToView(view) {
-        this.eventAggregator.publish('state:scroll-to', {
-            top: view.navSection.element.offsetTop + 1
-        });
+        this.eventAggregator.publish('state:view:set', view);
     }
 
     showNavigation() {

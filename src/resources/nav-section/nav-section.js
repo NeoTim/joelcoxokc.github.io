@@ -32,52 +32,14 @@ export class NavSection {
         if (this.element.classList.contains('last')) {
             this.positionClass = 'last';
         }
-        
-        // if (this.fixedTopHeader) {
-        //     this.mainContainer.appendChild(this.fixedTopHeader);
-        // }
-        // if (this.fixedBottomHeader) {
-        //     this.mainContainer.appendChild(this.fixedBottomHeader);
-        // }
-
-        // if (this.view.bgElement) {
-        //     this.view.bgElement.style.height = this.element.clientHeight + 'px';
-        // }
 
         this.eventAggregator.publish('nav-section:attached', this);
-
-        // let bgContainer = document.querySelector('.background-container');
-        // let height = this.element.clientHeight + 'px';
-        // let clone = null;
-
-        // if (bgContainer) {
-        //     this.clone = this.element.cloneNode();
-        //     Object.assign(this.clone.style, {
-        //         height: height,
-        //         minHeight: height,
-        //         maxHeight: height
-        //     });
-        //     bgContainer.appendChild(this.clone);
-        // }
-
-        // let clientHeight = this.element.clientHeight;
-        
-        // this.eventAggregator.subscribe('window:resize', ()=> {
-        //     if (clientHeight !== this.element.clientHeight) {
-        //         clientHeight = this.element.clientHeight;
-        //         height = this.element.clientHeight + 'px';
-        //         Object.assign(this.clone.style, {
-        //             height: height,
-        //             minHeight: height,
-        //             maxHeight: height
-        //         });
-        //     }
-        // });
     }
 
     viewChanged(view) {
         if (view) {
             view.setNavSection(this);
+            view.element = this.element;
         }
     } 
 
