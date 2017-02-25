@@ -1308,11 +1308,14 @@ define('resume/index',['exports', 'aurelia-framework', './title/title', './profi
                     index++;
                 }
 
+                if (topbarTitle === 0) {
+                    topbarTitle = false;
+                }
+
                 setAttr('topbar', topbar);
                 setAttr('bottombar', false);
                 setAttr('topbar-title', topbarTitle);
                 setAttr('bottombar-title', bottombarTitle);
-
                 var lastE = currentE;
                 window.requestAnimationFrame(function () {
                     if (lastE !== currentE) return;
@@ -2729,29 +2732,6 @@ define('resume/profile/profile',["exports"], function (exports) {
         this.props = props;
     };
 });
-define('resume/projects/projects',['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
-    'use strict';
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-    exports.Projects = undefined;
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    var Projects = exports.Projects = function Projects(projects) {
-        _classCallCheck(this, Projects);
-
-        this.props = {
-            projects: projects.list
-        };
-        console.log(this.props.projects);
-    };
-});
 define('resume/technology/technology',["exports"], function (exports) {
     "use strict";
 
@@ -2773,6 +2753,29 @@ define('resume/technology/technology',["exports"], function (exports) {
         };
 
         console.log(this.props.technologies);
+    };
+});
+define('resume/projects/projects',['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    exports.Projects = undefined;
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var Projects = exports.Projects = function Projects(projects) {
+        _classCallCheck(this, Projects);
+
+        this.props = {
+            projects: projects.list
+        };
+        console.log(this.props.projects);
     };
 });
 define('resume/title/title',['exports'], function (exports) {
@@ -3338,6 +3341,181 @@ define('resources/attributes/ripple/ripple',['exports', 'aurelia-framework'], fu
         return Ripple;
     }()) || _class) || _class);
 });
+define('resources/elements/checkbox/checkbox',['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    exports.Checkbox = undefined;
+
+    function _initDefineProp(target, property, descriptor, context) {
+        if (!descriptor) return;
+        Object.defineProperty(target, property, {
+            enumerable: descriptor.enumerable,
+            configurable: descriptor.configurable,
+            writable: descriptor.writable,
+            value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
+        });
+    }
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+        var desc = {};
+        Object['ke' + 'ys'](descriptor).forEach(function (key) {
+            desc[key] = descriptor[key];
+        });
+        desc.enumerable = !!desc.enumerable;
+        desc.configurable = !!desc.configurable;
+
+        if ('value' in desc || desc.initializer) {
+            desc.writable = true;
+        }
+
+        desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+            return decorator(target, property, desc) || desc;
+        }, desc);
+
+        if (context && desc.initializer !== void 0) {
+            desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+            desc.initializer = undefined;
+        }
+
+        if (desc.initializer === void 0) {
+            Object['define' + 'Property'](target, property, desc);
+            desc = null;
+        }
+
+        return desc;
+    }
+
+    function _initializerWarningHelper(descriptor, context) {
+        throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
+    }
+
+    var _dec, _dec2, _dec3, _dec4, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3;
+
+    var twoWay = { defaultBindingMode: 2 };
+
+    var Checkbox = exports.Checkbox = (_dec = (0, _aureliaFramework.inject)(Element), _dec2 = (0, _aureliaFramework.bindable)(twoWay), _dec3 = (0, _aureliaFramework.bindable)(twoWay), _dec4 = (0, _aureliaFramework.bindable)(twoWay), _dec(_class = (_class2 = function () {
+        function Checkbox(Element) {
+            _classCallCheck(this, Checkbox);
+
+            _initDefineProp(this, 'value', _descriptor, this);
+
+            _initDefineProp(this, 'model', _descriptor2, this);
+
+            _initDefineProp(this, 'checked', _descriptor3, this);
+
+            this.element = Element;
+        }
+
+        Checkbox.prototype.attached = function attached() {
+            var input = this.element.querySelector('input');
+            var label = input.labels[0];
+
+            if (label && label instanceof Element) {
+                label.classList.add('checkbox-label');
+            }
+        };
+
+        return Checkbox;
+    }(), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'value', [_dec2], {
+        enumerable: true,
+        initializer: function initializer() {
+            return null;
+        }
+    }), _descriptor2 = _applyDecoratedDescriptor(_class2.prototype, 'model', [_dec3], {
+        enumerable: true,
+        initializer: function initializer() {
+            return null;
+        }
+    }), _descriptor3 = _applyDecoratedDescriptor(_class2.prototype, 'checked', [_dec4], {
+        enumerable: true,
+        initializer: function initializer() {
+            return false;
+        }
+    })), _class2)) || _class);
+});
+define('resources/elements/icon/icon',['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    exports.Icon = undefined;
+
+    function _initDefineProp(target, property, descriptor, context) {
+        if (!descriptor) return;
+        Object.defineProperty(target, property, {
+            enumerable: descriptor.enumerable,
+            configurable: descriptor.configurable,
+            writable: descriptor.writable,
+            value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
+        });
+    }
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+        var desc = {};
+        Object['ke' + 'ys'](descriptor).forEach(function (key) {
+            desc[key] = descriptor[key];
+        });
+        desc.enumerable = !!desc.enumerable;
+        desc.configurable = !!desc.configurable;
+
+        if ('value' in desc || desc.initializer) {
+            desc.writable = true;
+        }
+
+        desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+            return decorator(target, property, desc) || desc;
+        }, desc);
+
+        if (context && desc.initializer !== void 0) {
+            desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+            desc.initializer = undefined;
+        }
+
+        if (desc.initializer === void 0) {
+            Object['define' + 'Property'](target, property, desc);
+            desc = null;
+        }
+
+        return desc;
+    }
+
+    function _initializerWarningHelper(descriptor, context) {
+        throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
+    }
+
+    var _dec, _dec2, _dec3, _class, _desc, _value, _class2, _descriptor;
+
+    var Template = '\n<template>\n    ${ico}\n</template>\n';
+
+    var Icon = exports.Icon = (_dec = (0, _aureliaFramework.customElement)('icon'), _dec2 = (0, _aureliaFramework.inlineView)(Template), _dec3 = (0, _aureliaFramework.inject)(Element), _dec(_class = _dec2(_class = _dec3(_class = (_class2 = function Icon(element) {
+        _classCallCheck(this, Icon);
+
+        _initDefineProp(this, 'ico', _descriptor, this);
+
+        element.classList.add('material-icons');
+    }, (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'ico', [_aureliaFramework.bindable], {
+        enumerable: true,
+        initializer: function initializer() {
+            return null;
+        }
+    })), _class2)) || _class) || _class) || _class);
+});
 define('resources/elements/dialog/dialog-container',['exports', 'aurelia-framework', 'resources/elements/dialog/dialog-result', 'aurelia-event-aggregator'], function (exports, _aureliaFramework, _dialogResult, _aureliaEventAggregator) {
     'use strict';
 
@@ -3525,181 +3703,6 @@ define('resources/elements/dialog/service',['exports', 'aurelia-framework', 'aur
         return DialogService;
     }()) || _class) || _class);
 });
-define('resources/elements/icon/icon',['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
-    'use strict';
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-    exports.Icon = undefined;
-
-    function _initDefineProp(target, property, descriptor, context) {
-        if (!descriptor) return;
-        Object.defineProperty(target, property, {
-            enumerable: descriptor.enumerable,
-            configurable: descriptor.configurable,
-            writable: descriptor.writable,
-            value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
-        });
-    }
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
-        var desc = {};
-        Object['ke' + 'ys'](descriptor).forEach(function (key) {
-            desc[key] = descriptor[key];
-        });
-        desc.enumerable = !!desc.enumerable;
-        desc.configurable = !!desc.configurable;
-
-        if ('value' in desc || desc.initializer) {
-            desc.writable = true;
-        }
-
-        desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-            return decorator(target, property, desc) || desc;
-        }, desc);
-
-        if (context && desc.initializer !== void 0) {
-            desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-            desc.initializer = undefined;
-        }
-
-        if (desc.initializer === void 0) {
-            Object['define' + 'Property'](target, property, desc);
-            desc = null;
-        }
-
-        return desc;
-    }
-
-    function _initializerWarningHelper(descriptor, context) {
-        throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
-    }
-
-    var _dec, _dec2, _dec3, _class, _desc, _value, _class2, _descriptor;
-
-    var Template = '\n<template>\n    ${ico}\n</template>\n';
-
-    var Icon = exports.Icon = (_dec = (0, _aureliaFramework.customElement)('icon'), _dec2 = (0, _aureliaFramework.inlineView)(Template), _dec3 = (0, _aureliaFramework.inject)(Element), _dec(_class = _dec2(_class = _dec3(_class = (_class2 = function Icon(element) {
-        _classCallCheck(this, Icon);
-
-        _initDefineProp(this, 'ico', _descriptor, this);
-
-        element.classList.add('material-icons');
-    }, (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'ico', [_aureliaFramework.bindable], {
-        enumerable: true,
-        initializer: function initializer() {
-            return null;
-        }
-    })), _class2)) || _class) || _class) || _class);
-});
-define('resources/elements/checkbox/checkbox',['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
-    'use strict';
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-    exports.Checkbox = undefined;
-
-    function _initDefineProp(target, property, descriptor, context) {
-        if (!descriptor) return;
-        Object.defineProperty(target, property, {
-            enumerable: descriptor.enumerable,
-            configurable: descriptor.configurable,
-            writable: descriptor.writable,
-            value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
-        });
-    }
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
-        var desc = {};
-        Object['ke' + 'ys'](descriptor).forEach(function (key) {
-            desc[key] = descriptor[key];
-        });
-        desc.enumerable = !!desc.enumerable;
-        desc.configurable = !!desc.configurable;
-
-        if ('value' in desc || desc.initializer) {
-            desc.writable = true;
-        }
-
-        desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-            return decorator(target, property, desc) || desc;
-        }, desc);
-
-        if (context && desc.initializer !== void 0) {
-            desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-            desc.initializer = undefined;
-        }
-
-        if (desc.initializer === void 0) {
-            Object['define' + 'Property'](target, property, desc);
-            desc = null;
-        }
-
-        return desc;
-    }
-
-    function _initializerWarningHelper(descriptor, context) {
-        throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
-    }
-
-    var _dec, _dec2, _dec3, _dec4, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3;
-
-    var twoWay = { defaultBindingMode: 2 };
-
-    var Checkbox = exports.Checkbox = (_dec = (0, _aureliaFramework.inject)(Element), _dec2 = (0, _aureliaFramework.bindable)(twoWay), _dec3 = (0, _aureliaFramework.bindable)(twoWay), _dec4 = (0, _aureliaFramework.bindable)(twoWay), _dec(_class = (_class2 = function () {
-        function Checkbox(Element) {
-            _classCallCheck(this, Checkbox);
-
-            _initDefineProp(this, 'value', _descriptor, this);
-
-            _initDefineProp(this, 'model', _descriptor2, this);
-
-            _initDefineProp(this, 'checked', _descriptor3, this);
-
-            this.element = Element;
-        }
-
-        Checkbox.prototype.attached = function attached() {
-            var input = this.element.querySelector('input');
-            var label = input.labels[0];
-
-            if (label && label instanceof Element) {
-                label.classList.add('checkbox-label');
-            }
-        };
-
-        return Checkbox;
-    }(), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'value', [_dec2], {
-        enumerable: true,
-        initializer: function initializer() {
-            return null;
-        }
-    }), _descriptor2 = _applyDecoratedDescriptor(_class2.prototype, 'model', [_dec3], {
-        enumerable: true,
-        initializer: function initializer() {
-            return null;
-        }
-    }), _descriptor3 = _applyDecoratedDescriptor(_class2.prototype, 'checked', [_dec4], {
-        enumerable: true,
-        initializer: function initializer() {
-            return false;
-        }
-    })), _class2)) || _class);
-});
 define('text!app.html', ['module'], function(module) { module.exports = "<template><require from=./app.css></require><div class=app-background></div><dialog-container></dialog-container><navigation instruction.bind=router.currentInstruction></navigation><container><main><router-view></router-view></main></container><div class=background-container></div></template>"; });
 define('text!blog/index.html', ['module'], function(module) { module.exports = "<template><blog-navigation></blog-navigation><router-view></router-view></template>"; });
 define('text!resume/index.html', ['module'], function(module) { module.exports = "<template><style></style><header class=topbars><div class=topbar-wrap><topbar ripple repeat.for=\"view of State.views\" data-index=${$index}><icon class=menu-icon ico=menu click.delegate=showNavigation($event)></icon><span class=bar-title></span></topbar></div></header><template repeat.for=\"view of State.views\"><nav-section class=\"${$first ? 'first' : $last ? 'last' : ''} app-${view.name}\" data-index=${$index} view.bind=view></nav-section></template><footer class=bottombars><div class=bottombar-wrap><bottombar ripple repeat.for=\"view of State.views\" data-index=${$index} click.delegate=\"navigateForward($event, $index)\"><span class=bar-title></span><icon class=direction-icon ico=arrow_forward></icon></bottombar></div></footer></template>"; });
@@ -3708,6 +3711,7 @@ define('text!app.css', ['module'], function(module) { module.exports = "@import 
 define('text!resources/header/header.html', ['module'], function(module) { module.exports = "<template><header ref=element class=app-header><div ripple class=header-content><nav class=left-nav><icon ico=menu class=menu-icon click.delegate=toggleNavigation($event)></icon></nav><nav class=center-nav><span ref=titleNode class=header-title>${props.title}</span></nav><nav class=right-nav><icon ico=arrow_back class=direction-icon click.delegate=navigateBack($event)></icon></nav></div></header></template>"; });
 define('text!resources/nav-section/nav-section.html', ['module'], function(module) { module.exports = "<template class=\"${view.shade.key}-tint-section ${view.isActive ? 'active' : ''} ${view.isScrolling ? 'scrolling' : ''} ${view.isPeeking ? 'peeking' : ''} ${view.isVisible ? 'visible' : ''}\"><section class=section-container><header ref=header click.delegate=headerClicked($event) class=nav-header><span if.bind=view.title class=header-title>${view.title}</span></header><compose containerless view-model.bind=view.viewModel></compose></section></template>"; });
 define('text!resources/navigation/navigation.html', ['module'], function(module) { module.exports = "<template><style></style><section><h3>${State.title}</h3><ul class=navigation-list css=\"color: ${currentTint};\"><li ripple data-use-fill=${view.fill} repeat.for=\"view of views\" data-index=${$index} click.delegate=navigateToView(view)><icon ico.bind=view.icon></icon><span class=text>${view.title}</span></li><li></li></ul></section></template>"; });
+define('text!resume/education/education.html', ['module'], function(module) { module.exports = "<template><template repeat.for=\"edu of props.educations\"><article class=card-${edu.id}><div class=card-image if.bind=edu.image><span if.bind=\"edu.className && !edu.image\" class=${edu.className}></span><img src.bind=edu.image class=${edu.className} alt.bind=edu.name></div><div class=card-content><div class=card-heading><div class=card-title>${edu.name}</div><div class=card-date>${edu.date}</div></div><ul class=card-details><li repeat.for=\"note of edu.notes\"><icon ico=chevron_right></icon><span class=text>${note}</span></li></ul></div></article></template></template>"; });
 define('text!resume/connect/connect-card.html', ['module'], function(module) { module.exports = "<template bindable=\"item, props\" class=\"connection connection-${item.name}\"><a href.bind=\"item.url || item.href || 'javascript:;'\" click.delegate=\"props.handleItemClick($event, item)\"><template if.bind=item.html><compose class=\"anim-logo anim-${item.name}-logo\" view=resume/connect/${item.name}-logo.html></compose></template><template if.bind=\"!item.html && item.icon\"><icon ico.bind=item.icon></icon></template><template if.bind=\"!item.html && item.logo\"><div class=connection-logo><img src.bind=item.logo></div></template><template if.bind=item.url><span class=anchor href.bind=item.url title=\"go to ${item.title}\">@${item.name}</span></template><template if.bind=item.value><span class=text>${item.value}</span></template></a><template if.bind=item.url><input ref=item.input click.delegate=item.input.select() class=url type=text value.bind=item.url title=\"${item.title} Web Address\"></template></template>"; });
 define('text!resume/connect/connect.html', ['module'], function(module) { module.exports = "<template><require from=resume/connect/connect-card.html as=connect-card></require><article class=\"connect-card private\"><template if.bind=robotUser.value><template repeat.for=\"item of props.private\"><connect-card props.bind=props item.bind=item></connect-card></template></template><template if.bind=!robotUser.value><button class=\"btn btn-blue\" click.delegate=validateUserIsNotARobot($event)>Contact</button></template></article><article class=connect-card><template repeat.for=\"item of props.public\"><connect-card props.bind=props item.bind=item></connect-card></template></article></template>"; });
 define('text!resume/connect/email-logo.html', ['module'], function(module) { module.exports = "<template><svg xmlns=http://www.w3.org/2000/svg fill=#000000 height=24 viewBox=\"0 0 24 24\" width=24><path d=\"M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z\"/><path d=\"M0 0h24v24H0z\" fill=none /></svg></template>"; });
@@ -3721,7 +3725,6 @@ define('text!resume/connect/robot-user.html', ['module'], function(module) { mod
 define('text!resume/connect/stackoverflow-logo.html', ['module'], function(module) { module.exports = "<template><svg viewBox=\"0 0 512 512\"><path d=\"M294.8 361.2l-122 0.1 0-26 122-0.1L294.8 361.2zM377.2 213.7L356.4 93.5l-25.7 4.5 20.9 120.2L377.2 213.7zM297.8 301.8l-121.4-11.2 -2.4 25.9 121.4 11.2L297.8 301.8zM305.8 267.8l-117.8-31.7 -6.8 25.2 117.8 31.7L305.8 267.8zM321.2 238l-105-62 -13.2 22.4 105 62L321.2 238zM346.9 219.7l-68.7-100.8 -21.5 14.7 68.7 100.8L346.9 219.7zM315.5 275.5v106.5H155.6V275.5h-20.8v126.9h201.5V275.5H315.5z\"/></svg><!--[if lt IE 9]><em>StackOverflow</em><![endif]--></template>"; });
 define('text!resume/connect/twitter-logo.html', ['module'], function(module) { module.exports = "<template><svg viewBox=\"0 0 512 512\"><path d=\"M419.6 168.6c-11.7 5.2-24.2 8.7-37.4 10.2 13.4-8.1 23.8-20.8 28.6-36 -12.6 7.5-26.5 12.9-41.3 15.8 -11.9-12.6-28.8-20.6-47.5-20.6 -42 0-72.9 39.2-63.4 79.9 -54.1-2.7-102.1-28.6-134.2-68 -17 29.2-8.8 67.5 20.1 86.9 -10.7-0.3-20.7-3.3-29.5-8.1 -0.7 30.2 20.9 58.4 52.2 64.6 -9.2 2.5-19.2 3.1-29.4 1.1 8.3 25.9 32.3 44.7 60.8 45.2 -27.4 21.4-61.8 31-96.4 27 28.8 18.5 63 29.2 99.8 29.2 120.8 0 189.1-102.1 185-193.6C399.9 193.1 410.9 181.7 419.6 168.6z\"/></svg><!--[if lt IE 9]><em>Twitter</em><![endif]--></template>"; });
 define('text!resume/experience/experience.html', ['module'], function(module) { module.exports = "<template><template repeat.for=\"xp of props.experiences\"><article class=card-${xp.id}><div class=card-image if.bind=xp.image><span if.bind=\"xp.className && !xp.image\" class=${xp.className}></span><img src.bind=xp.image class=${xp.className} alt.bind=xp.name></div><div class=card-content><div class=card-heading><div class=card-title>${xp.name}</div><div class=card-date>${xp.date}</div></div><ul class=card-details><li repeat.for=\"note of xp.notes\"><icon ico=chevron_right></icon><span class=text>${note}</span></li></ul><ul class=card-tags><li repeat.for=\"stack of xp.stack\">${stack}</li></ul></div></article></template></template>"; });
-define('text!resume/education/education.html', ['module'], function(module) { module.exports = "<template><template repeat.for=\"edu of props.educations\"><article class=card-${edu.id}><div class=card-image if.bind=edu.image><span if.bind=\"edu.className && !edu.image\" class=${edu.className}></span><img src.bind=edu.image class=${edu.className} alt.bind=edu.name></div><div class=card-content><div class=card-heading><div class=card-title>${edu.name}</div><div class=card-date>${edu.date}</div></div><ul class=card-details><li repeat.for=\"note of edu.notes\"><icon ico=chevron_right></icon><span class=text>${note}</span></li></ul></div></article></template></template>"; });
 define('text!resume/profile/profile.html', ['module'], function(module) { module.exports = "<template><style>@media screen and (max-width:1200px){.app-profile .row{flex-direction:column}.app-profile .row .profile-info{width:100%}.app-profile .row .profile-info ul{margin:24px}}</style><article><div class=profile-image><img src=\"https://avatars0.githubusercontent.com/u/4668188?v=3&s=460\" alt=\"\"></div><div class=profile-content><ul class=profile-detail><li><label>Name</label><div class=value><p>${props.name}</p></div></li><li><label>Birthday</label><div class=value><p>${props.birthday}</p></div></li><li><label>Titles</label><div class=value><p repeat.for=\"title of props.titles\">${title}</p></div></li><li><label>Locations</label><div class=value><p repeat.for=\"loc of props.locations\">${loc}</p></div></li><li><label>Info</label><div class=value><p>${props.info}</p></div></li></ul></div></article></template>"; });
 define('text!resume/projects/projects.html', ['module'], function(module) { module.exports = "<template><template repeat.for=\"project of props.projects\"><article class=card-${project.id}><div class=card-image><span if.bind=\"project.className && !project.image\" class=${project.className}></span><img if.bind=project.image class=${project.className} src.bind=project.image alt.bind=project.name></div><div class=card-content><div class=card-heading><div class=card-title>${project.name}</div><div class=card-date>${project.date}</div></div><ul class=card-details><li repeat.for=\"note of project.notes\"><icon ico=chevron_right></icon><span class=text>${note}</span></li></ul><ul class=card-tags><li repeat.for=\"stack of project.stack\">${stack}</li></ul></div></article></template></template>"; });
 define('text!resume/technology/technology.html', ['module'], function(module) { module.exports = "<template><template repeat.for=\"tech of props.technologies\"><article><h1>${tech.title}</h1><ul><li repeat.for=\"item of tech.list\" class=card-item-${item.name}><img src.bind=item.img alt.bind=item.name><span class=text>${item.title}</span></li></ul></article></template></template>"; });

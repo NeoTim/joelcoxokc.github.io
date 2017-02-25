@@ -214,12 +214,15 @@ export class Resume {
                 last = section;
                 index++;
             }
+            
+            if (topbarTitle === 0) {
+                topbarTitle = false;
+            }
 
             setAttr('topbar', topbar);
             setAttr('bottombar', false);
             setAttr('topbar-title', topbarTitle);
             setAttr('bottombar-title', bottombarTitle);
-            
             let lastE = currentE;
             window.requestAnimationFrame(()=> {
                 if (lastE !== currentE) return;
