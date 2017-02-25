@@ -97,190 +97,13 @@ export class State {
             const scrollBottom = scrollTop + scrollHeight;
             const headerHeight = 56;
 
-            if (lastView) {
-                lastView.isActive = false;
-                doc.classList.remove(`view-${lastView.name}-active`);
-                if (lastView.coords.bottom() < scrollTop + headerHeight) {
-                }
-            }
-
-            
-            let index = this.views.indexOf(newView);
-
             if (newView) {
-                newView.isActive = true;
-                doc.classList.add(`view-${newView.name}-active`);
                 if (newView.element) {
                     newView.element.scrollIntoView();
                 }
             }
             this.initial = false;
             this.isNavigationEvent = false;
-        }
-    }
-
-    _updateViewPosition(scroll, view, index, views) {
-        let top = view.coords.top();
-        let bottom = view.coords.bottom();
-        let prev = views[index-1];
-        let halfScroll = scroll.top + (scroll.height / 2);
-        
-        view.isNext = false;
-        view.hideHeaderTitle = false;
-
-        if (prev && prev.isActive && prev.showTopbar && top > (scroll.bottom - 56)) {
-            view.isNext = true;
-        }
-
-        if (bottom < (scroll.top + 8)) {
-            // console.log('step 1', view.name)
-            view.isActive = false;
-            view.showTopbar = false;
-            view.showTitle = false;
-            return false;
-        }
-
-        if (top > scroll.bottom) {
-            // console.log('step 2', view.name)
-            view.isActive = false;
-            view.showTopbar = false;
-            view.showTitle = false;
-            return false;
-        }
-
-        if (top > scroll.top + 8 && top < halfScroll) {
-            // console.log('step 3', view.name)
-            view.isActive = true;
-            view.showTitle = true;
-            view.showTopbar = false;
-            return true;
-        }
-
-        if (top < scroll.top + 8 && bottom > halfScroll) {
-            view.isActive = true;
-            view.showTitle = true;
-            view.showTopbar = true;
-            view.hideHeaderTitle = true;
-
-            if (top < scroll.top - 8) {
-              // console.log('step 4.2', view.name)
-                view.hideHeaderTitle = false;
-                view.showTitle = false;
-            } else {
-              // console.log('step 4', view.name)
-            }
-            return true;
-        }
-
-        if (top < scroll.top && bottom > (scroll.top + 56)) {
-            view.isActive = false;
-            view.showTitle = false;
-            view.showTopbar = true;
-            // console.log('step 5', view.name)
-        }
-
-        if (top > (scroll.top - 8) && top < (scroll.bottom - 56)) {
-            view.showTitle = true;
-            if (top > halfScroll) {
-                view.isActive = false;
-                view.showTopbar = false;
-                // console.log('step 6.2', view.name)
-            } else {
-                view.isActive = true;
-                view.showTopbar = false;
-                // console.log('step 6', view.name)
-                return true;
-            }
-            return false;
-        }
-
-        if (top < scroll.top + 8 && bottom > (scroll.top + 56)) {
-            view.isActive = true;
-            view.showTopbar = true;
-            
-            if (bottom < halfScroll) {
-                view.isActive = false;
-                // console.log('step 7.2', view.name)
-            }
-
-            if (top < scroll.top - 8) {
-                view.showTitle = false;
-                // console.log('step 7.3', view.name)
-            } else {
-                // console.log('step 7', view.name)
-                view.showTitle = true;
-            }
-            return true;
-        }
-    }
-
-    handleScroll(event) {
-        let scroll = ScrollInstruction();
-        let views  = this.views;
-        let view   = null;
-        let found  = null;
-        let next   = null;
-        let prev   = null;
-
-        let index  = 0;
-        while(view = views[index++]) {
-            view.isActive = false;
-            view.isNext = false;
-        }
-
-        index = 0;
-        view = null;
-
-        while(view = views[index++]) {
-            if (this._updateViewPosition(scroll, view, index-1, views)) {
-                found = view;
-                prev = views[index-2];
-                continue;
-            }
-            
-            if (found && !next) {
-                next = view;
-            }
-        }
-
-        if (found && found.isActive && found.showTopbar) {
-
-            this.header.updateSettings({
-                headerFill: found.fill,
-                headerShade: found.shade,
-                headerTitle: found.title,
-                showHeader: true,
-                headerName: found.name,
-                showHeaderTitle: !found.hideHeaderTitle
-            });
-            this.view = found;
-        }
-
-        if (prev && prev.showTopbar) {
-
-            this.header.updateSettings({
-                title: prev.title,
-                showHeader: true,
-                headerName: prev.name,
-                headerFill: prev.fill,
-                headerShade: prev.shade,
-                showHeaderTitle: !prev.hideHeaderTitle
-            });
-        }
-
-        if (next && next.isNext) {
-            this.footer.updateSettings({
-                footerFill: next.fill,
-                footerShade: next.shade,
-                footerName: next.name,
-                footerTitle: next.title,
-                showFooter: true,
-                showFooterTitle: true
-            });
-        } else {
-            this.footer.updateSettings({
-                showFooter: false
-            });
         }
     }
 
@@ -294,6 +117,7 @@ export class State {
             this.view = next;
         }
     }
+
     handleNavigateBack() {
         let top = this.view.coords.top();
         let scrollTop = document.body.scrollTop;
@@ -309,8 +133,4 @@ export class State {
             this.view.element.scrollIntoView();
         }
     }
-
-    setHeaderBackground(value) {
-    }
-
 }

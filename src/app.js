@@ -36,14 +36,6 @@ export class App {
         this.Color = Color;
         this.eventAggregator = EventAggregator;
 
-        State.registerNode(
-            this.header = Header()
-        );
-
-        State.registerNode(
-            this.footer = Footer()
-        );
-
         this.resume = Resume();
 
         this.resume.views.forEach(view => State.registerView(view));
@@ -108,15 +100,5 @@ export class App {
 
     attached() {
         this.State.scrollElement = document.body;
-        const container = document.querySelector('container');
-        const sections = document.querySelectorAll('container > main > nav-section');
-
-        window.onresize = (event)=> {
-            
-        }
-
-        window.onscroll = (event)=> {
-            this.eventAggregator.publish('window:scroll', event);
-        }
     }
 }

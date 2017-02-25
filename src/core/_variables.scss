@@ -12,6 +12,7 @@ $light-tint-disabled: rgba(255,255,255,0.50);
 $light-tint-divider: rgba(255,255,255,0.12);
 
 
+
 $dark-grey: #323232;
 
 $amber: #ffC107;
@@ -63,6 +64,28 @@ $theme-tan: #D9D9D9;
 $theme-blue: #284B63;
 
 
+$shades: (
+    dark: (
+        primary: $dark-tint-primary,
+        secondary: $dark-tint-secondary,
+        disabled: $dark-tint-disabled,
+        divider: $dark-tint-divider
+    ),
+    light: (
+        primary: $light-tint-primary,
+        secondary: $light-tint-secondary,
+        disabled: $light-tint-disabled,
+        divider: $light-tint-divider
+    )
+);
+
+@function get-shade-for-theme-fill($fill) {
+    @if $fill == $theme-blue or $fill == $theme-brown {
+        @return map-get($shades, light);
+    }
+    @return map-get($shades, dark);
+}
+
 // $title-fill: white;
 // $title-tint: $dark-tint-primary;
 
@@ -71,13 +94,14 @@ $title-tint: $dark-tint-primary;
 $title-divider: $dark-tint-divider;
 $title-secondary: $dark-tint-secondary;
 $title-disabled: $dark-tint-disabled;
-
+$title-shade: map-get($shades, dark);
 
 $profile-fill: $theme-blue;
 $profile-tint: $light-tint-primary;
 $profile-divider: $dark-tint-divider;
 $profile-secondary: $dark-tint-secondary;
 $profile-disabled: $dark-tint-disabled;
+$profile-shade: map-get($shades, light);
 
 
 $projects-fill: $theme-tan;
@@ -85,6 +109,7 @@ $projects-tint: $dark-tint-primary;
 $projects-divider: $dark-tint-divider;
 $projects-secondary: $dark-tint-secondary;
 $projects-disabled: $dark-tint-disabled;
+$projects-shade: map-get($shades, dark);
 
 
 $xp-fill: $theme-teal;
@@ -92,6 +117,7 @@ $xp-tint: $dark-tint-primary;
 $xp-divider: $dark-tint-divider;
 $xp-secondary: $dark-tint-secondary;
 $xp-disabled: $dark-tint-disabled;
+$xp-shade: map-get($shades, dark);
 
 
 $edu-fill: $theme-tan;
@@ -99,6 +125,7 @@ $edu-tint: $dark-tint-primary;
 $edu-divider: $dark-tint-divider;
 $edu-secondary: $dark-tint-secondary;
 $edu-disabled: $dark-tint-disabled;
+$edu-shade: map-get($shades, dark);
 
 
 $tech-fill: $theme-brown;
@@ -106,6 +133,7 @@ $tech-tint: $light-tint-primary;
 $tech-divider: $dark-tint-divider;
 $tech-secondary: $dark-tint-secondary;
 $tech-disabled: $dark-tint-disabled;
+$tech-shade: map-get($shades, light);
 
 
 $connect-fill: $theme-tan;
@@ -113,6 +141,7 @@ $connect-tint: $dark-tint-primary;
 $connect-divider: $dark-tint-divider;
 $connect-secondary: $dark-tint-secondary;
 $connect-disabled: $dark-tint-disabled;
+$connect-shade: map-get($shades, dark);
 
 
 
@@ -127,37 +156,58 @@ $headers: (title, profile, projects, experience, education, technology, connect)
 $views: (
     (
         name: title,
+        title: Title,
         fill: $title-fill,
-        tint: $title-tint
+        tint: $title-tint,
+        shade: $title-shade,
+        index: 0
     ),
     (
         name: profile,
+        title: Profile,
         fill: $profile-fill,
-        tint: $profile-tint
+        tint: $profile-tint,
+        shade: $profile-shade,
+        index: 1
     ),
     (
         name: projects,
+        title: Projects,
         fill: $projects-fill,
-        tint: $projects-tint
+        tint: $projects-tint,
+        shade: $projects-shade,
+        index: 2
     ),
     (
         name: experience,
+        title: Experience,
         fill: $xp-fill,
-        tint: $xp-tint
+        tint: $xp-tint,
+        shade: $xp-shade,
+        index: 3
     ),
     (
         name: education,
+        title: Education,
         fill: $edu-fill,
-        tint: $edu-tint
+        tint: $edu-tint,
+        shade: $edu-shade,
+        index: 4
     ),
     (
         name: technology,
+        title: Technology,
         fill: $tech-fill,
-        tint: $tech-tint
+        tint: $tech-tint,
+        shade: $tech-shade,
+        index: 5
     ),
     (
         name: connect,
+        title: Connect,
         fill: $connect-fill,
-        tint: $connect-tint
+        tint: $connect-tint,
+        shade: $connect-shade,
+        index: 6
     )
 );

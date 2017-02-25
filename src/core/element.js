@@ -28,3 +28,12 @@ Element.prototype.css = function(props = {}) {
         Object.assign(this.style, props);
     }
 }
+
+document.sleep = function(time = 0) {
+    return new Promise(resolve => {
+        let id = setTimeout(()=> {
+            resolve();
+            clearTimeout(id);
+        }, time);
+    })
+}

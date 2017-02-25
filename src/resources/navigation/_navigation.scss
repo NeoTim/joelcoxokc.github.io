@@ -106,7 +106,7 @@ navigation {
             }
 
             icon {
-                color: $dark-tint-primary;
+                color: inherit;
                 pointer-events: none;
                 margin: 12px;
             }
@@ -119,7 +119,6 @@ navigation {
                 line-height: 48px;
                 letter-spacing: 1.34px;
                 user-select: none;
-                color: $dark-tint-primary;
             }
 
             &.active {

@@ -1,13 +1,12 @@
 <template>
     <style>
         navigation ul li.active span.text {
-            color: ${currentTint};
         }
     </style>
-    <section css="background-color: ${props.fill}">
-        <h3 css="color:${State.view.fill === '#D9D9D9' ? 'rgba(0,0,0,0.5)' : State.view.fill}">${State.title}</h3>
+    <section>
+        <h3>${State.title}</h3>
         <ul class="navigation-list"  css="color: ${currentTint};">
-            <li ripple data-use-fill="${view.fill}" repeat.for="view of views" class="${view.isActive ? 'active' : ''}" click.delegate="navigateToView(view)">
+            <li ripple data-use-fill="${view.fill}" repeat.for="view of views" data-index="${$index}" click.delegate="navigateToView(view)">
                 <icon ico.bind="view.icon"></icon>
                 <span class="text">${view.title}</span>
             </li>

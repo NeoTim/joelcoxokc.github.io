@@ -76,19 +76,25 @@ export class Navigation {
         let container = document.querySelector('container');
         let main = document.querySelector('main');
 
-        container.classList.remove('hide-navigation');
-        container.classList.remove('hiding-navigation');
+        // container.classList.remove('hide-navigation');
+        // container.classList.remove('hiding-navigation');
         
-        container.addEventListener('animationend', listener = (event)=> {
+        container.addEventListener('transitionend', listener = (event)=> {
             if (event.target === container) {
-                container.classList.add('show-navigation');
-                container.classList.remove('showing-navigation');
-                container.removeEventListener('animationend', listener);
+                // container.classList.add('show-navigation');
+                // container.classList.remove('showing-navigation');
+                container.removeEventListener('transitionend', listener);
                 console.log('animationend show')
             }
         });
 
-        container.classList.add('showing-navigation');
+        container.style.transition = 'transform 0.25s ease-out';
+        
+        window.requestAnimationFrame(()=> {
+            container.style.transform = 'translateX(200px)'
+        })
+
+        // container.classList.add('showing-navigation');
 
         this.resizeListener = this.eventAggregator.subscribe('window:resize', ()=> {
             this.visibility = false;
@@ -119,17 +125,24 @@ export class Navigation {
         main.removeEventListener('mousedown', this.clickListener, true);
         main.removeEventListener('touchstart', this.touchListener, true);
 
-        container.classList.remove('show-navigation');
-        container.classList.remove('showing-navigation');
+        // container.classList.remove('show-navigation');
+        // container.classList.remove('showing-navigation');
 
-        container.addEventListener('animationend', listener = (event)=> {
+        container.addEventListener('transitionend', listener = (event)=> {
             if (event.target === container) {
-                container.classList.remove('hiding-navigation');
-                container.removeEventListener('animationend', listener);
+                // container.classList.remove('hiding-navigation');
+                container.style.transform = '';
+                container.removeEventListener('transitionend', listener);
                 console.log('animationend hide')
             }
         });
 
-        container.classList.add('hiding-navigation');
+        container.style.transition = 'transform 0.25s ease-in';
+        
+        window.requestAnimationFrame(()=> {
+            container.style.transform = 'translateX(0px)'
+        })
+
+        // container.classList.add('hiding-navigation');
     }
 }

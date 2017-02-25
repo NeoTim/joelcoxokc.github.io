@@ -1,5 +1,27 @@
 <template>
+
+    <style>
+        .bar-title {
+            /*transform: translateY(calc(100vh - ${transform}px));*/
+        }
+    </style>
+    <header class="topbars">
+        <div class="topbar-wrap">
+            <topbar ripple repeat.for="view of State.views" data-index="${$index}">
+                <icon class="menu-icon" ico="menu" click.delegate="showNavigation($event)"></icon>
+                <span class="bar-title"></span>
+            </topbar>
+        </div>
+    </header>
     <template repeat.for="view of State.views">
-        <nav-section class="${$first ? 'first' : $last ? 'last' : ''} app-${view.name}" view.bind="view"></nav-section>
+        <nav-section class="${$first ? 'first' : $last ? 'last' : ''} app-${view.name}" data-index="${$index}" view.bind="view"></nav-section>
     </template>
+    <footer class="bottombars">
+        <div class="bottombar-wrap">
+            <bottombar ripple repeat.for="view of State.views" data-index="${$index}" click.delegate="navigateForward($event, $index)">
+                <span class="bar-title"></span>
+                <icon class="direction-icon" ico="arrow_forward"></icon>
+            </bottombar>
+        </div>
+    </footer>
 </template>

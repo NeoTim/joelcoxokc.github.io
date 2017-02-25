@@ -3,13 +3,10 @@
   <div class="app-background"></div>
   <dialog-container></dialog-container>
   <navigation instruction.bind="router.currentInstruction"></navigation>
-
   <container>
-    <compose containerless view-model.bind="header"></compose>
     <main>
       <router-view></router-view>
     </main>
-    <compose containerless view-model.bind="footer"></compose>
   </container>
   <div class="background-container"></div>
 </template>

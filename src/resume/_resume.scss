@@ -1,0 +1,14 @@
+@mixin View($view) {
+    @include layout-view(
+        $name:  map-get($view, name),
+        $fill:  map-get($view, fill),
+        $title: map-get($view, title),
+        $shade: map-get($view, shade),
+        $index: map-get($view, index)
+    );
+}
+
+
+@each $view in $views {
+    @include View($view);
+}

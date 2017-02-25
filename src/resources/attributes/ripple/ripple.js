@@ -46,7 +46,13 @@ export class Ripple {
     }
 
     ripple(event) {
-        this.element.style.position = 'relative';
+
+        let position = window.getComputedStyle(this.element).getPropertyValue('position');
+
+        if (position !== 'absolute' && position !== 'relative') {
+            this.element.style.position = 'relative';
+        }
+
         
         let container = this._getContainer();
         let background = this._getBackground();

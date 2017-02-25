@@ -8,11 +8,8 @@
     <section class="section-container">
     
         <header ref="header"
-                show.bind="view.showTitle"
                 click.delegate="headerClicked($event)" 
-                class="
-                    nav-section-header 
-                    app-${view.name}-header">
+                class="nav-header">
             <span if.bind="view.title" class="header-title">${view.title}</span>
         </header>
 

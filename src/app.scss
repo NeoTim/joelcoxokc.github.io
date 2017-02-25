@@ -9,6 +9,8 @@
 @import 'resources/footer/_footer.scss';
 @import 'resources/elements/dialog/_dialog.scss';
 @import 'resources/elements/checkbox/_checkbox.scss';
+@import 'core/_layout.scss';
+@import 'resume/_resume.scss';
 
 *::-webkit-scrollbar {
     display: none;
@@ -29,6 +31,16 @@ html {
     overflow-x: hidden;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch; /* lets it scroll lazy */
+
+    &.platform-ios {
+        user-select: none;
+        -webkit-user-select: none;
+
+        button, icon, a, li {
+            touch-action: manipulation;
+            -ms-touch-action: manipulation;
+        }
+    }
 }
 
 body {
@@ -37,6 +49,8 @@ body {
     position: relative;
     width: 100%;
     max-width: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 button {
@@ -92,6 +106,7 @@ container {
     z-index: 3;
     pointer-events: none;
     box-shadow: -2px 0 4px rgba(0,0,0,0.2);
+    -webkit-backface-visibility: hidden;
 
     > * {
         pointer-events: auto;
@@ -107,6 +122,13 @@ main {
     z-index: 5;
     max-width: 100%;
     overflow-x: hidden;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+navigation {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 icon {
@@ -142,7 +164,6 @@ icon {
 
 nav-section {
     height: auto;
-    min-height: 100vh;
     flex: 1 0 auto;
     min-width: 100%;
 }
@@ -168,136 +189,136 @@ nav-section {
 $viewIndex: 0;
 $names: (title, profile, projects, experience, education, technology);
 
-@each $view in $views {
-    // $i: index($names, $name);
-    $i: index($views, $view);
-    // @warn $i + 1;
-    $next: false;
+// @each $view in $views {
+//     // $i: index($names, $name);
+//     $i: index($views, $view);
+//     // @warn $i + 1;
+//     $next: false;
 
-    @if $i < length($views) {
-        $next: nth($views, $i + 1);
-    }
+//     @if $i < length($views) {
+//         $next: nth($views, $i + 1);
+//     }
 
     
-    // $next: map-get($views, title);
+//     // $next: map-get($views, title);
 
 
-    $name: map-get($view, name);
-    $fill: map-get($view, fill);
-    $tint: map-get($view, tint);
+//     $name: map-get($view, name);
+//     $fill: map-get($view, fill);
+//     $tint: map-get($view, tint);
 
 
-    header.header-#{$name} {
-        background-color: $fill;
-        color: $tint;
+//     header.header-#{$name} {
+//         background-color: $fill;
+//         color: $tint;
 
-        icon {color: $tint}
-        .header-title {color: $tint}
-    }
+//         icon {color: $tint}
+//         .header-title {color: $tint}
+//     }
 
-    nav-section.app-#{$name} {
-        background-color: $fill;
-    }
+//     nav-section.app-#{$name} {
+//         background-color: $fill;
+//     }
 
-    @if $next {
-        .background-container {
-            nav-section.app-#{$name} + nav-section {
-                @include join-vertical-gradient($fill, map-get($next, fill));
-            }
-        }
-    }
+//     @if $next {
+//         .background-container {
+//             nav-section.app-#{$name} + nav-section {
+//                 @include join-vertical-gradient($fill, map-get($next, fill));
+//             }
+//         }
+//     }
 
 
-    .view-#{$name} {
-        &-active {
-            @include navigation-list-state(
-                $fill: $fill,
-                $tint: $tint
-            );
-        }
+//     .view-#{$name} {
+//         &-active {
+//             @include navigation-list-state(
+//                 $fill: $fill,
+//                 $tint: $tint
+//             );
+//         }
 
-        &-no-header-title {
-            header.header-#{$name} {
-                .header-title {
-                    opacity: 0;
-                    visibility: hidden;
-                }
-            }
-        }
+//         &-no-header-title {
+//             header.header-#{$name} {
+//                 .header-title {
+//                     opacity: 0;
+//                     visibility: hidden;
+//                 }
+//             }
+//         }
 
-        &-topbar {
-            header.header-#{$name} {
-                @include set-header(
-                    $top: true,
-                    $visible: true,
-                    $align-title: left,
-                    $align-icon: right
-                );
-            }
+//         &-topbar {
+//             header.header-#{$name} {
+//                 @include set-header(
+//                     $top: true,
+//                     $visible: true,
+//                     $align-title: left,
+//                     $align-icon: right
+//                 );
+//             }
 
-            &.view-#{$name}-no-header-title {
-                header.header-#{$name} {
-                    .header-title {
-                        opacity: 0;
-                        visibility: hidden;
-                    }
-                }
-            }
-        }
+//             &.view-#{$name}-no-header-title {
+//                 header.header-#{$name} {
+//                     .header-title {
+//                         opacity: 0;
+//                         visibility: hidden;
+//                     }
+//                 }
+//             }
+//         }
 
-        &-scrolling {
-        }
+//         &-scrolling {
+//         }
 
-        &-title {
-            &:not(.view-#{$name}-topbar) {
-                header.header-#{$name} {
-                    @include set-header(
-                        $top: true,
-                        $visible: false,
-                        $align-title: center
-                    );
+//         &-title {
+//             &:not(.view-#{$name}-topbar) {
+//                 header.header-#{$name} {
+//                     @include set-header(
+//                         $top: true,
+//                         $visible: false,
+//                         $align-title: center
+//                     );
 
-                    .header-title {
-                        opacity: 0;
-                        visibility: hidden;
-                    }
-                }
-            }
+//                     .header-title {
+//                         opacity: 0;
+//                         visibility: hidden;
+//                     }
+//                 }
+//             }
 
-            nav-section.app-#{$name} {
-                header.nav-section-header {
-                    @include set-header(
-                        $top: true,
-                        $visible: true,
-                        $align-title: center
-                    );
-                }
-            }
-        }
+//             nav-section.app-#{$name} {
+//                 header.nav-section-header {
+//                     @include set-header(
+//                         $top: true,
+//                         $visible: true,
+//                         $align-title: center
+//                     );
+//                 }
+//             }
+//         }
 
-        &-peek {
-            header.header-#{$name} {
-                @include set-header(
-                    $bottom: true,
-                    $visible: true,
-                    $align-title: right,
-                    $align-icon: right
-                );
-            }
-        }
+//         &-peek {
+//             header.header-#{$name} {
+//                 @include set-header(
+//                     $bottom: true,
+//                     $visible: true,
+//                     $align-title: right,
+//                     $align-icon: right
+//                 );
+//             }
+//         }
 
-        &-next {
-            header.header-#{$name} {
-                @include set-header(
-                    $bottom: true,
-                    $visible: true,
-                    $align-title: right,
-                    $align-icon: right
-                );
-            }
-        }
-    }
-}
+//         &-next {
+//             header.header-#{$name} {
+//                 @include set-header(
+//                     $bottom: true,
+//                     $visible: true,
+//                     $align-title: right,
+//                     $align-icon: right
+//                 );
+//             }
+//         }
+//     }
+// }
 
 .view-title-topbar {
     header.app-header {
@@ -374,15 +395,15 @@ $names: (title, profile, projects, experience, education, technology);
 }
 
 .app-title {
-    background-color: $title-fill;
+    // background-color: $title-fill;
 
     &-header {
-        background-color: $title-fill;
+        // background-color: $title-fill;
     }
 }
 
 .app-profile {
-    background-color: $profile-fill;
+    // background-color: $profile-fill;
 
     article {
         flex: 1 0 auto;
@@ -432,24 +453,24 @@ $names: (title, profile, projects, experience, education, technology);
     }
 
     &-header {
-        background-color: $profile-fill;
+        // background-color: $profile-fill;
 
         icon {
-            color: $profile-tint;
+            // color: $profile-tint;
         }
         
         .header-title {
-            color: $profile-tint;
+            // color: $profile-tint;
         }
     }
 
     .header-title {
-        color: $profile-tint;
+        // color: $profile-tint;
     }
 }
 
 .app-projects {
-    background-color: $projects-fill;
+    // background-color: $projects-fill;
     @include card-element();
 
     .project-image {
@@ -489,12 +510,12 @@ $names: (title, profile, projects, experience, education, technology);
     }
 
     &-header {
-        background-color: $projects-fill;
+        // background-color: $projects-fill;
     }
 }
 
 .app-experience {
-    background-color: $xp-fill;
+    // background-color: $xp-fill;
 
     @include card-element();
 
@@ -530,12 +551,12 @@ $names: (title, profile, projects, experience, education, technology);
     }
 
     &-header {
-        background-color: $xp-fill;
+        // background-color: $xp-fill;
     }
 }
 
 .app-education {
-    background-color: $edu-fill;
+    // background-color: $edu-fill;
     
 
     @include card-element(
@@ -551,14 +572,14 @@ $names: (title, profile, projects, experience, education, technology);
     }
     
     &-header {
-        background-color: $edu-fill;
-        color: $edu-tint;
-        icon {color: $edu-tint}
+        // background-color: $edu-fill;
+        // color: $edu-tint;
+        // icon {color: $edu-tint}
     }
 }
 
 .app-technology {
-    background-color: $tech-fill;
+    // background-color: $tech-fill;
     
     h1 {
         font-size: 32px;
@@ -588,7 +609,7 @@ $names: (title, profile, projects, experience, education, technology);
         }
     }
     &-header {
-        background-color: $tech-fill;
+        // background-color: $tech-fill;
     }
 }
 

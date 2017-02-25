@@ -1,0 +1,295 @@
+@mixin on-load() {
+    header.topbars {
+        @include topbars-header();
+
+        topbar {
+            @include topbar-layout();
+        }
+    }
+
+    footer.bottombars {
+        @include bottombars-footer();
+
+        bottombar {
+            @include bottombar-layout();
+        }
+    }
+}
+
+%bar-title {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    color: inherit;
+    font-size: 24px;
+    line-height: 56px;
+    padding: 0 56px;
+    margin: 0 auto;
+    transition: all 0.1 linear, transform 0s ease;
+    
+    &:before {
+        display: block;
+        position: relative;
+        font-size: inherit;
+        font-weight: inherit;
+        line-height: inherit;
+        color: inherit;
+    }
+
+    @media screen and (min-width: 1200px) {
+        padding: 0 56px;
+    }
+}
+
+@mixin topbars-header() {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: flex-start;
+    min-height: 56px;
+    height: 56px;
+    z-index: 24;
+    background-color: $theme-tan;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+
+    .topbar-wrap {
+        display: block;
+        position: relative;
+        flex: 1;
+    }
+
+    icon {
+        width: 56px;
+        height: 56px;
+        line-height: 56px;
+        text-align: center;
+        cursor: pointer;
+        pointer-events: auto;
+        z-index: 2;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+    }
+
+    @media screen and (min-width: 1200px) {
+        margin-left: 200px;
+    }
+}
+
+@mixin topbar-layout() {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    min-width: 100%;
+    min-height: 56px;
+        height: 56px;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: transparent;
+
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.1s linear;
+}
+
+@mixin bottombars-footer() {
+    position: fixed;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: flex-start;
+    z-index: 24;
+    
+    .bottombar-wrap {
+        display: block;
+        position: relative;
+        flex: 1;
+    }
+
+    icon {
+        width: 56px;
+        height: 56px;
+        line-height: 56px;
+        text-align: center;
+        cursor: pointer;
+        pointer-events: auto;
+        z-index: 2;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    @media screen and (min-width: 1200px) {
+        margin-left: 200px;
+    }
+}
+
+@mixin bottombar-layout() {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-end;
+    min-height: 56px;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: transparent;
+
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.1s linear;
+}
+
+@mixin layout-view($title:null, $name:null, $fill:null, $index:0, $shade:null) {
+    $tint:      map-get($shade, primary);
+    $secondary: map-get($shade, secondary);
+    $divider:   map-get($shade, divider);
+    $disabled:  map-get($shade, disabled);
+    $child:     ($index - 1);
+    topbar,
+    bottombar {
+        &[data-index="#{$index}"] {
+            z-index: $index;
+
+            .bar-title {
+                @extend %bar-title;
+                
+                &:before {
+                    content: "#{$title}";
+                }
+            }
+        }
+    }
+
+    header {
+        topbar[data-index="#{$index}"] {
+            background-color: $fill;
+            border-color: $divider;
+            color: $tint;
+        }
+    }
+
+    footer {
+        bottombar[data-index="#{$index}"] {
+            background-color: $fill;
+            border-color: $divider;
+            color: $tint;
+        }
+    }
+
+    nav-section[data-index="#{$index}"] {
+        background-color: lighten($fill, 5%);
+        color: $tint;
+
+        header.nav-header {
+            background-color: $fill;
+        }
+
+        .header-title {
+            color: $secondary;
+        }
+    }
+
+    html[navigation="#{$index}"] {
+        navigation {
+            background-color: $fill;
+            color: $tint;
+        }
+    }
+
+    html[topbar="#{$index}"] {
+        navigation {
+            > section {
+                background-color: $fill;
+                
+                > h3 {
+                    color: $fill;
+                    @if ($fill == $theme-tan) {
+                        color: $dark-tint-secondary;
+                    }
+                }
+
+                > ul {
+                    li[data-index="#{$index}"] {
+                        background-color: transparent;
+                        color: $tint;
+                    }
+                }
+            }
+        }
+
+        topbar[data-index="#{$index}"] {
+            border-color: transparent;
+            visibility: visible;
+            opacity: 1;
+
+            .bar-title {
+                visibility: hidden;
+                opacity: 0;
+            }
+        }
+
+        &[topbar-title="#{$index}"] {
+            topbar[data-index="#{$index}"] {
+                border-color: $divider;
+
+                .bar-title {
+                    opacity: 1;
+                    visibility: visible;
+                }
+            }
+        }
+    }
+
+    html[bottombar="#{$index}"] {
+        bottombar[data-index="#{$index}"] {
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+
+    @if $index == 0 {
+        topbar[data-index="#{$index}"] {
+            background-color: $fill;
+        }
+
+        nav-section[data-index="#{$index}"] {
+            > section {
+                background-color: $fill;
+                
+                header.nav-header {
+                    display: none;
+                }
+            }
+        }
+    }
+}
+
+@include on-load();
