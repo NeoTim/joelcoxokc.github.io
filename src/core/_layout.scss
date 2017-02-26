@@ -56,7 +56,7 @@
     min-height: 56px;
     height: 56px;
     z-index: 24;
-    background-color: $theme-tan;
+    background-color: $theme-lt;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
 
@@ -231,7 +231,7 @@
                 
                 > h3 {
                     color: $fill;
-                    @if ($fill == $theme-tan) {
+                    @if ($fill == $theme-lt) {
                         color: $dark-tint-secondary;
                     }
                 }

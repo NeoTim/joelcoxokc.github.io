@@ -6,7 +6,7 @@
     <section>
         <h3>${State.title}</h3>
         <ul class="navigation-list"  css="color: ${currentTint};">
-            <li ripple data-use-fill="${view.fill}" repeat.for="view of views" data-index="${$index}" click.delegate="navigateToView(view)">
+            <li ripple data-use-fill="${view.shade.fill}" repeat.for="view of views" data-index="${$index}" click.delegate="navigateToView(view)">
                 <icon ico.bind="view.icon"></icon>
                 <span class="text">${view.title}</span>
             </li>

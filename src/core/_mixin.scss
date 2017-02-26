@@ -74,6 +74,13 @@
             );
         }
 
+        .card-badges {
+            @include inline-badge-list(
+                $text-tint:$text-tint, 
+                $outline: $outline
+            );
+        }
+
         .card-tags {
             @include inline-tag-list(
                 $text-tint: $text-tint
@@ -124,6 +131,24 @@
     color: $text-tint;
     padding-left: 24px;
     padding-right: 12px;
+
+    > span {
+        font-size: inherit;
+        line-height: inherit;
+        font-weight: inherit;
+        color: inherit;
+    }
+    
+    span.bar {
+        opacity: 0.5;
+    }
+
+    small {
+        font-size: 16px;
+        color: inherit;
+        font-weight: inherit;
+        line-height: inherit;
+    }
 }
 
 @mixin card-date($text-tint: $dark-tint-disabled) {
@@ -172,10 +197,10 @@
 @mixin grid-card() {
     display: inline-block;
     margin: 12px;
-    max-width: 100px;
+    max-width: 120px;
     min-width: 100px;
-    max-height: 136px;
-    min-height: 136px;
+    max-height: 124px;
+    min-height: 124px;
     background-color: white;
     padding-bottom: 34px;
     box-shadow: 0 3px 4px -3px rgba(0,0,0,0.2), 0 3px 4px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.1);
@@ -185,12 +210,15 @@
         display: block;
         width: inherit;
         max-width: inherit;
+        max-height: 100px;
+        max-width: 100px;
+        margin: 10px 10px 0 10px;
     }
 
     span {
         display: block;
         text-align: center;
-        font-size: 18px;
+        font-size: 16px;
         font-weight: bold;
         line-height: 24px;
         position: absolute;
@@ -254,6 +282,17 @@
         font-weight: normal;
         color: $text-tint;
         margin: 0 8px 0 0;
+    }
+}
+
+@mixin inline-badge-list($text-tint: $dark-tint-primary, $outline: $dark-tint-divider) {
+    @include inline-tag-list($text-tint);
+
+    margin: 0 0 12px 0;
+
+    li {
+        border-radius: 6px;
+        border: 1px solid $outline;
     }
 }
 

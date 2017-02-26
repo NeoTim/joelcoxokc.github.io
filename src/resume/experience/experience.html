@@ -2,14 +2,23 @@
     <template repeat.for="xp of props.experiences">
         <article class="card-${xp.id}">
             <div class="card-image" if.bind="xp.image">
-                <span if.bind="xp.className && !xp.image" class="${xp.className}"></span>
                 <img src.bind="xp.image" class="${xp.className}" alt.bind="xp.name"/>
+            </div>
+            <div class="card-image" if.bind="xp.custom">
+                <span class="${xp.className}"></span>
             </div>
             <div class="card-content">
                 <div class="card-heading">
-                    <div class="card-title">${xp.name}</div>
+                    <div class="card-title">
+                        <span>${xp.name}</span>
+                        <span class="bar" if.bind="xp.position">&nbsp;|&nbsp;</span>
+                        <small if.bind="xp.position">${xp.position}</small>
+                    </div>
                     <div class="card-date">${xp.date}</div>
                 </div>
+                <ul class="card-badges" if.bind="xp.badges.length">
+                    <li repeat.for="badge of xp.badges">${badge}</li>
+                </ul>
                 <ul class="card-details">
                     <li repeat.for="note of xp.notes">
                         <icon ico="chevron_right"></icon>
