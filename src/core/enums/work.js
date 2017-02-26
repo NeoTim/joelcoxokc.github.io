@@ -39,7 +39,7 @@ export class WorkEnums {
     };
 
     TheLiked = {
-        name: 'The Liked | Contract',
+        name: 'The Liked',
         id: 'theliked',
         date: '2016',
         link: 'http://theliked.com',
@@ -70,7 +70,7 @@ export class WorkEnums {
     };
 
     WoltersKluwer = {
-        name: 'Wolters Kluwer | Contract',
+        name: 'Wolters Kluwer',
         date: '2016',
         id: 'wolters-kluwer',
         link: 'http://wolterskluwer.com',
@@ -136,7 +136,7 @@ export class WorkEnums {
     };
 
     plusAmp = {
-        name: 'PlusAMP | Contract',
+        name: 'PlusAMP',
         date: '2015',
         id: 'plusamp',
         image: 'plusamp-logo.jpg',
